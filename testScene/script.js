@@ -15,6 +15,20 @@ const sizes = {
   height: window.innerHeight
 }
 
+
+
+
+
+var soundUrl = "sounds/sample2.wav";
+var irUrl = "IRs/ambisonic2binaural_filters/aalto2016_N1.wav";
+var ambiIrUrl = "IRs/ambisonicRIRs/room_1_bf.wav";
+
+var maxOrder = 1;
+var soundBuffer, sound, context;
+var convolver, mirror, rotator, decoder, analyser, converterF2A, gainOut, encoder;
+
+
+
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
@@ -28,14 +42,75 @@ scene.add(camera)
 // Controls, is it canvas or document.body?
 const controls = new PointerLockControls(camera, document.body)
 const splash = document.querySelector("#splash");
+
+document.querySelector("#load").addEventListener("click", (e) => {
+
+  e.stopPropagation();
+  // Setup audio context and variables
+  var AudioContext = window.AudioContext // Default
+  || window.webkitAudioContext; // Safari and old versions of Chrome
+  context = new AudioContext; // Create and Initialize the Audio Context
+
+    // added resume context to handle Firefox suspension of it when new IR loaded
+  // see: http://stackoverflow.com/questions/32955594/web-audio-scriptnode-not-called-after-button-onclick
+  context.onstatechange = function() {
+    if (context.state === "suspended") { context.resume(); }
+  }
+
+    // load and assign samples
+    loadSample(soundUrl, assignSample2SoundBuffer);
+    loadSample(irUrl, assignSample2Filters);
+    // loadSample(ambiIrUrl, assignSample2Convolver);
+
+// initialize encoder
+encoder = new ambisonics.monoEncoder(context, 1);
+console.log(encoder);
+// initialize mirroring
+mirror = new ambisonics.sceneMirror(context, 1);
+console.log(mirror);
+// initialize decoder
+decoder = new ambisonics.binDecoder(context, 1);
+console.log(decoder);
+// initialize intensity analyser
+analyser = new ambisonics.intensityAnalyser(context);
+console.log(analyser);
+// output gain
+gainOut = context.createGain();
+
+// connect graph
+encoder.out.connect(mirror.in);
+mirror.out.connect(decoder.in);
+mirror.out.connect(analyser.in);
+decoder.out.connect(gainOut);
+gainOut.connect(context.destination);
+
+
+
+
+})
+
 splash.addEventListener('click', () => {
   controls.lock();
 })
 controls.addEventListener('lock', () => {
   splash.style.display = 'none';
+
+  sound = context.createBufferSource();
+  sound.buffer = soundBuffer;
+  sound.loop = true;
+  sound.connect(encoder.in);
+  sound.start(0);
+  sound.isPlaying = true;
+  document.getElementById('play').disabled = true;
+  document.getElementById('stop').disabled = false;
 })
 controls.addEventListener('unlock', () => {
-  splash.style.display = 'block'
+  splash.style.display = 'block';
+
+  sound.stop(0);
+  sound.isPlaying = false;
+  document.getElementById('play').disabled = false;
+  document.getElementById('stop').disabled = true;
 })
 scene.add( controls.getObject() );
 
@@ -67,56 +142,39 @@ window.addEventListener("gamepadconnected", updateUI);
 // if mobile - touch or device orientation controls
 
 
-
-
-
-// Setup audio context and variables
-var AudioContext = window.AudioContext // Default
-    || window.webkitAudioContext; // Safari and old versions of Chrome
-var context = new AudioContext; // Create and Initialize the Audio Context
-
-// added resume context to handle Firefox suspension of it when new IR loaded
-// see: http://stackoverflow.com/questions/32955594/web-audio-scriptnode-not-called-after-button-onclick
-context.onstatechange = function() {
-    if (context.state === "suspended") { context.resume(); }
+// function to load samples
+function loadSample(url, doAfterLoading) {
+  var fetchSound = new XMLHttpRequest(); // Load the Sound with XMLHttpRequest
+  fetchSound.open("GET", url, true); // Path to Audio File
+  fetchSound.responseType = "arraybuffer"; // Read as Binary Data
+  fetchSound.onload = function() {
+      console.log("loaded" + url)
+      context.decodeAudioData(fetchSound.response, doAfterLoading, onDecodeAudioDataError);
+  }
+  fetchSound.send();
 }
 
-var soundUrl = "sounds/sample2.wav";
-var irUrl = "IRs/ambisonic2binaural_filters/aalto2016_N1.wav";
-var ambiIrUrl = "IRs/ambisonicRIRs/room_1_bf.wav";
+// function to assign sample to the sound buffer for playback (and enable playbutton)
+var assignSample2SoundBuffer = function(decodedBuffer) {
+  soundBuffer = decodedBuffer;
+  document.getElementById('play').disabled = false;
+}
+// function to assign sample to the filter buffers for convolution
+var assignSample2Filters = function(decodedBuffer) {
+decoder.updateFilters(decodedBuffer);
+}
 
-var maxOrder = 1;
-var soundBuffer, sound;
 
-// initialise encoder (convolver really)
-var convolver = new ambisonics.convolver(context, maxOrder);
-console.log(convolver);
-// initialize ambisonic mirroring
-var mirror = new ambisonics.sceneMirror(context, maxOrder);
-console.log(mirror);
-// initialize ambisonic rotator
-var rotator = new ambisonics.sceneRotator(context, maxOrder);
-// console.log(rotator);
-// initialize ambisonic decoder
-var decoder = new ambisonics.binDecoder(context, maxOrder);
-console.log(decoder);
-// initialize ambisonic analyser
-var analyser = new ambisonics.intensityAnalyser(context);
-console.log(analyser);
-// FuMa to ACN converter
-var converterF2A = new ambisonics.converters.wxyz2acn(context);
-console.log(converterF2A);
-// output gain
-var gainOut = context.createGain();
+// function called when audiocontext.decodeAudioData fails to decode a given audio file, e.g. in Safari with .ogg vorbis format
+function onDecodeAudioDataError(error) {
+  var url = 'hjre';
+alert("Browser cannot decode audio data..." + "\n\nError: " + error + "\n\n(If you re using Safari and get a null error, this is most likely due to Apple's shady plan going on to stop the .ogg format from easing web developer's life :)");
+}
 
-// connect graph
-convolver.out.connect(converterF2A.in);
-converterF2A.out.connect(mirror.in);
-mirror.out.connect(analyser.in);
-// rotator.out.connect(decoder.in);
-// rotator.out.connect(analyser.in);
-decoder.out.connect(gainOut);
-gainOut.connect(context.destination);
+
+
+
+
 
 const gui = new GUI()
 gui.add(state, "azimuth", -Math.PI, Math.PI);
@@ -197,12 +255,26 @@ const tick = () =>
       euler.setFromQuaternion( camera.quaternion );
       state.azimuth = euler.y;
       state.elevation = euler.x;
+      // Define mouse drag on spatial map .png local impact
+
+      if(encoder != null) {
+        encoder.azim = -euler.y * 180 / Math.PI;
+        encoder.elev = euler.x * 180 / Math.PI;
+        encoder.updateGains();
+      }
     } 
     //or simulate pointerlock from GUI
     else {
       euler.y = state.azimuth;
       euler.x = state.elevation;
       camera.quaternion.setFromEuler( euler );
+
+      if(encoder != null){
+        encoder.azim = -state.azimuth * 180 / Math.PI;
+        encoder.elev = state.azimuth * 180 / Math.PI;
+        encoder.updateGains();
+        console.log(encoder)
+      }
     }
 
 

@@ -2,7 +2,7 @@
 const handler = {
     set: function (obj, prop, value) {
       obj[prop] = value;
-      console.log(`stateChange: ${prop}: ${value}`);
+    //   console.log(`stateChange: ${prop}: ${value}`);
       return true;
     },
   };
