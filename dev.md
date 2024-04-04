@@ -45,3 +45,5 @@ do we control azimuth and elevation from controls, then map to a 3D vector in TH
     does this mean pointerlock is invalid? no
 
 
+next step is ambisonic playback
+get the scene rotator working

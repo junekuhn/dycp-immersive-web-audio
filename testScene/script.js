@@ -1,10 +1,10 @@
+import "./js/init.js";
 import * as THREE from 'three'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import GUI from 'lil-gui'
-// import { CanvasCapture } from 'canvas-capture';
 import * as ambisonics from 'ambisonics';
 import Gamepad from './js/gamepad.js';
-
+import { state } from './js/state.js';
 
 
 /**
@@ -95,7 +95,7 @@ console.log(convolver);
 var mirror = new ambisonics.sceneMirror(context, maxOrder);
 console.log(mirror);
 // initialize ambisonic rotator
-// var rotator = new ambisonics.sceneRotator(context, maxOrder);
+var rotator = new ambisonics.sceneRotator(context, maxOrder);
 // console.log(rotator);
 // initialize ambisonic decoder
 var decoder = new ambisonics.binDecoder(context, maxOrder);
@@ -119,6 +119,10 @@ decoder.out.connect(gainOut);
 gainOut.connect(context.destination);
 
 const gui = new GUI()
+gui.add(state, "azimuth", -Math.PI, Math.PI);
+gui.add(state, "elevation", -Math.PI/2, Math.PI/2 );
+
+
 
 const textureLoader = new THREE.TextureLoader();
 
@@ -186,9 +190,22 @@ const clock = new THREE.Clock()
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+    const euler = new THREE.Euler( 0, 0, 0, 'YXZ' );
 
-    // Update controls
-    // controls.update()
+    // if using pointerlock, update state from camera
+    if(controls.isLocked) {
+      euler.setFromQuaternion( camera.quaternion );
+      state.azimuth = euler.y;
+      state.elevation = euler.x;
+    } 
+    //or simulate pointerlock from GUI
+    else {
+      euler.y = state.azimuth;
+      euler.x = state.elevation;
+      camera.quaternion.setFromEuler( euler );
+    }
+
+
 
     // scene.children.map(child => {
     //     child.rotation.x += 0.001
