@@ -12,6 +12,8 @@ export const state = new Proxy(
     {
       azimuth: 0,
       elevation: 0,
+      pausedAt: 0,
+      playStart: 0,
     },
     handler
 );

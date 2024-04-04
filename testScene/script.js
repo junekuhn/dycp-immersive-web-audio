@@ -94,13 +94,16 @@ splash.addEventListener('click', () => {
 })
 controls.addEventListener('lock', () => {
   splash.style.display = 'none';
+  var offset = state.pausedAt;
 
   sound = context.createBufferSource();
   sound.buffer = soundBuffer;
   sound.loop = true;
   sound.connect(encoder.in);
-  sound.start(0);
+  sound.start(0, offset);
   sound.isPlaying = true;
+  state.playStart = context.currentTime - offset;
+  state.pausedAt = 0;
   document.getElementById('play').disabled = true;
   document.getElementById('stop').disabled = false;
 })
@@ -114,14 +117,49 @@ controls.addEventListener('unlock', () => {
 })
 scene.add( controls.getObject() );
 
+let UpArrowDown = false, LeftArrowDown = false, DownArrowDown = false, RightArrowDown = false;
+
 const onKeyDown = (e) => {
   switch (e.code) {
-
+    case "Space":
+      toggleAudio();
+      break;
+    case "ArrowLeft":
+      LeftArrowDown = true;
+      break;
+    case "ArrowUp":
+      UpArrowDown = true;
+      break;
+    case "ArrowRight":
+      RightArrowDown = true;
+      break;
+    case "ArrowDown":
+      DownArrowDown = true;
+      break;
+    default:
+      break;
   }
 }
 
 const onKeyUp = (e) => {
-
+  switch (e.code) {
+    case "Space":
+      break;
+    case "ArrowLeft":
+      LeftArrowDown = false;
+      break;
+    case "ArrowUp":
+      UpArrowDown = false;
+      break;
+    case "ArrowRight":
+      RightArrowDown = false;
+      break;
+    case "ArrowDown":
+      DownArrowDown = false;
+      break;
+    default:
+      break;
+  }
 }
 
 document.addEventListener( 'keydown', onKeyDown );
@@ -170,6 +208,33 @@ function onDecodeAudioDataError(error) {
   var url = 'hjre';
 alert("Browser cannot decode audio data..." + "\n\nError: " + error + "\n\n(If you re using Safari and get a null error, this is most likely due to Apple's shady plan going on to stop the .ogg format from easing web developer's life :)");
 }
+
+const toggleAudio = () => {
+  if(context == null) return;
+
+  if(sound.isPlaying) {
+
+
+    sound.isPlaying = false;
+    var elapsed = context.currentTime - state.playStart;
+    sound.stop();
+    state.pausedAt = elapsed;
+    document.getElementById('play').disabled = false;
+    document.getElementById('stop').disabled = true;
+  } else {
+    var offset = state.pausedAt;
+    sound = context.createBufferSource();
+    sound.buffer = soundBuffer;
+    sound.loop = true;
+    sound.connect(encoder.in);
+    sound.start(0, offset);
+    sound.isPlaying = true;
+    state.playStart = context.currentTime - offset;
+    state.pausedAt = 0;
+    document.getElementById('play').disabled = true;
+    document.getElementById('stop').disabled = false;
+  }
+} 
 
 
 
@@ -253,6 +318,30 @@ const tick = () =>
     // if using pointerlock, update state from camera
     if(controls.isLocked) {
       euler.setFromQuaternion( camera.quaternion );
+
+      let speed = 0.01;
+
+      if(UpArrowDown) {
+        euler.x += speed;
+        euler.x = Math.max( Math.PI/2 - controls.maxPolarAngle, Math.min( Math.PI/2 - controls.minPolarAngle, euler.x ) );
+        camera.quaternion.setFromEuler( euler );
+      } else if(DownArrowDown) {
+        euler.x -= speed;
+        euler.x = Math.max( Math.PI/2 - controls.maxPolarAngle, Math.min( Math.PI/2 - controls.minPolarAngle, euler.x ) );
+        camera.quaternion.setFromEuler( euler ); 
+      }
+
+      if(LeftArrowDown) {
+        euler.y += speed;
+        camera.quaternion.setFromEuler( euler ); 
+      } else if (RightArrowDown) {
+        euler.y -= speed;
+        camera.quaternion.setFromEuler( euler ); 
+      }
+
+
+      
+
       state.azimuth = euler.y;
       state.elevation = euler.x;
       // Define mouse drag on spatial map .png local impact
@@ -262,6 +351,8 @@ const tick = () =>
         encoder.elev = euler.x * 180 / Math.PI;
         encoder.updateGains();
       }
+
+
     } 
     //or simulate pointerlock from GUI
     else {
@@ -273,7 +364,6 @@ const tick = () =>
         encoder.azim = -state.azimuth * 180 / Math.PI;
         encoder.elev = state.azimuth * 180 / Math.PI;
         encoder.updateGains();
-        console.log(encoder)
       }
     }
 
