@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testbed</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <canvas class="webgl"></canvas>
+    <script type="module" src="./script.js"></script>
+    <audio id="sample0" loop preload="auto" style="display: none">
+        <source src="sounds/sample0.wav" type="audio/wav">
+    </audio>
+    <audio id="sample1" loop preload="auto" style="display: none">
+        <source src="sounds/sample1.wav" type="audio/wav">
+    </audio>
+    <audio id="sample2" loop preload="auto" style="display: none">
+        <source src="sounds/sample2.wav" type="audio/wav">
+    </audio>
+    <audio id="sample3" loop preload="auto" style="display: none">
+        <source src="sounds/sample3.wav" type="audio/wav">
+    </audio>
+    <div id="splash">
+        <div id="header">
+            <div>
+                Testbed for positional
+            </div>
+            <div id="gamepads">
+                No Gamepads Connected
+            </div>
+            <div id="device">
+                
+            </div>
+            <div id="sofa">
+                Default SOFA file
+            </div>
+            <div id="webcam">
+                Webcam tracking off
+            </div>
+        </div>
+        <div id="buttons">
+            <button id="load">LOAD</button>
+            <button id="play">PLAY</button>
+            <button id="stop"></button>
+            <select id="whichJoystick">
+                <option id="left" value="0" selected>Left Joystick</option>
+                <option id="right" value="1">Right Joystick</option>
+            </select>
+        </div>
+
+        <div id="footer">
+    
+        </div>
+    </div>
+</body>
+</html>

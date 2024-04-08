@@ -3,6 +3,8 @@ vite
 modules
 
 
+# Ambisonics
+
 numeric is not defined
 - it's a dependency of ambisonics and it's not defined there
 installing via config doesn't work
@@ -47,3 +49,9 @@ do we control azimuth and elevation from controls, then map to a 3D vector in TH
 
 next step is ambisonic playback
 get the scene rotator working
+
+pointerlock doesn't work with touchstart
+
+# Positional Audio
+
+
