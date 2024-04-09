@@ -3,7 +3,7 @@ vite
 modules
 
 
-# Ambisonics
+# Ambisonics (3 dof)
 
 numeric is not defined
 - it's a dependency of ambisonics and it's not defined there
@@ -52,6 +52,22 @@ get the scene rotator working
 
 pointerlock doesn't work with touchstart
 
-# Positional Audio
+# Positional Audio (6 dof)
 
+looking is the same as the ambisonic scene
+setting up a scene like the example from three.js but you can tab your way through different positions
+double tap on mobile / tablet
+tab joystick down on controller
+
+mouse in pointerlock, click for moving forward
+Arrow keys for looking, spacebar for moving forward
+using azimuth and elevation for looking around, and dedicating the lower left to moving forward
+joystick for looking, a button for moving forward
+
+Why? because this isn't intended for gaming, we're trying to simplify controls to the necessities
+instead of 8 kinds of movement, we only need 5 (4 looking, 1 movement)
+
+# ambisonics 6DOF?
+
+what if you could, from positional audio sources, mix, convolve and present ambisonics?
 

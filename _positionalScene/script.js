@@ -3,14 +3,19 @@ import * as THREE from 'three'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import GUI from 'lil-gui'
 import Gamepad from './js/gamepad.js';
-import { state } from './js/state.js';
+import { state, actions } from './js/state.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
+import { PositionalAudioHelper } from 'three/examples/jsm/helpers/PositionalAudioHelper.js';
+import { modeq } from "numeric";
+
 
 let TouchControls = {
     enabled: false,
     isLocked: false,
   }
+
+
 
 /**
  * Constants
@@ -21,9 +26,9 @@ const sizes = {
   }
 const soundUrl = "sounds/sample2.wav";
 const listenerPositions = [
-    new THREE.Vector3(0,0,0),
-    new THREE.Vector3(3,0,-3),
-    new THREE.Vector3(-3,0,3),
+    new THREE.Vector3(0,5,0),
+    new THREE.Vector3(3,5,-3),
+    new THREE.Vector3(-3,5,3),
 ]
 const audioPositions = [
     new THREE.Vector3(5,5,0),
@@ -32,6 +37,8 @@ const audioPositions = [
     new THREE.Vector3(0,5,-5),
 ]
 const sounds = [];
+const modeSelect = document.querySelector("#whichMode");
+let moveForward = false;
 
 let soundBuffer, sound, context;
 let UpArrowDown = false, LeftArrowDown = false, DownArrowDown = false, RightArrowDown = false;
@@ -40,7 +47,7 @@ let UpArrowDown = false, LeftArrowDown = false, DownArrowDown = false, RightArro
 const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(0, 5, 0)
+camera.position.copy( listenerPositions[state.positionIndex] )
 scene.add(camera)
 
 // Controls, is it canvas or document.body?
@@ -51,9 +58,18 @@ const light = new THREE.DirectionalLight( 0xffffff, 3 );
 light.position.set( 0, 0.5, 1 ).normalize();
 scene.add( light );
 
-const helper = new THREE.GridHelper( 1000, 10, 0x444444, 0x444444 );
+const helper = new THREE.GridHelper( 1000, 10, 0xfff, 0xfff );
 helper.position.y = 4;
 scene.add( helper );
+
+const xbox = new Gamepad();
+const gamepadElement = document.querySelector('#gamepads');
+const joystickSelect = document.querySelector('#whichJoystick');
+const updateUI = () => {
+  gamepadElement.innerHTML = xbox.gamepads
+  console.log(xbox.gamepads)
+}
+window.addEventListener("gamepadconnected", updateUI);
 
 const enterScene = () => {
     splash.style.display = 'none';
@@ -69,14 +85,14 @@ const enterScene = () => {
             const material1 = new THREE.MeshPhongMaterial( { color: 0xffaa00, flatShading: true, shininess: 0 } );
 
             const mesh1 = new THREE.Mesh( sphere, material1 );
-            mesh1.position.set( soundPosition);
-            mesh1.scale.set(5,5,5)
+            mesh1.position.set( soundPosition.x, soundPosition.y, soundPosition.z );
+            mesh1.scale.set(.05,.05,.05)
             scene.add( mesh1 );
 
             const songElement = document.getElementById( `sample${i}` );
 
             sound.setMediaElementSource( songElement );
-            sound.setRefDistance( 20 );
+            sound.setRefDistance( 0.5 );
             songElement.play();
             
             mesh1.add( sound );
@@ -146,6 +162,88 @@ fontLoader.load('./fonts/Mukta_Bold.json',
     }
 )
 
+const nextPosition = () => {
+    // In VR when you teleport, it's instant, no fade in fade out
+    actions.increment();
+
+    if (state.positionIndex > listenerPositions.length) {
+        state.positionIndex = 0;
+    }
+
+    camera.position.copy ( listenerPositions[ state.positionIndex ] );
+}
+
+
+document.addEventListener('keydown', (e) => {
+
+    //if locked
+    if (controls.isLocked) e.preventDefault();
+
+    if(modeSelect.value == "tab") {
+        //esc key still allows for unlock
+        switch(e.code) {
+            case "Tab":
+                nextPosition();
+                break;
+            default:
+                break;
+        }
+    } else if (modeSelect.value == "move") {
+        switch(e.code) {
+            case "Space":
+                moveForward = true;
+                break;
+        }
+    }
+})
+
+document.addEventListener('keyup', (e) => {
+
+    switch(e.code) {
+        case "Space":
+            moveForward = false;
+            break;
+        default:
+            break;
+    }
+})
+
+document.addEventListener('mousedown', () => {
+    if(controls.isLocked) {
+        moveForward = true;
+    }
+});
+
+document.addEventListener('mouseup', () => {
+    moveForward = false;
+});
+
+/* Based on this http://jsfiddle.net/brettwp/J4djY/*/
+function detectDoubleTapClosure() {
+    let lastTap = 0;
+    let timeout;
+    return function detectDoubleTap(event) {
+      const curTime = new Date().getTime();
+      const tapLen = curTime - lastTap;
+      if (tapLen < 500 && tapLen > 0) {
+        console.log('Double tapped!');
+        nextPosition();
+        event.preventDefault();
+      } else {
+        timeout = setTimeout(() => {
+          clearTimeout(timeout);
+        }, 500);
+      }
+      lastTap = curTime;
+    };
+  }
+  
+  /* Regex test to determine if user is on mobile */
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      document.body.addEventListener('touchend', detectDoubleTapClosure(), { passive: false });
+  }
+
+
 
 
 
@@ -162,7 +260,17 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 const tick = () =>
 {
-    const euler = new THREE.Euler( 0, 0, 0, 'YXZ' );
+    const lookEuler = new THREE.Euler( 0, 0, 0, 'YXZ' );
+    const speed = 0.02;
+
+    //if moveforward, then move along XZ plane in direction of camera
+    if(moveForward) {
+        const direction = new THREE.Vector3();
+        camera.getWorldDirection( direction );
+        //neutralize y
+        direction.y = 0;
+        camera.position.add( direction.multiplyScalar( speed ) );
+    }
 
     // Render
     renderer.render(scene, camera)

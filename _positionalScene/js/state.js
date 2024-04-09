@@ -14,15 +14,21 @@ export const state = new Proxy(
       elevation: 0,
       pausedAt: 0,
       playStart: 0,
+      positionIndex: 0,
+      // modes "tab / move"
+      mode: "tab"
     },
     handler
 );
 
-// export const actions = {
-//     increment: () => {
-//         state.counter++;
-//     },
-//     decrement: () => {
-//         state.counter--;
-//     },
-// };
+export const actions = {
+    increment: () => {
+        state.positionIndex++;
+    },
+    decrement: () => {
+        state.positionIndex--;
+    },
+    toggleMode: () => {
+       state.mode = state.mode == "tab" ? "move" : "tab";
+    }
+};
