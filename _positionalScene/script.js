@@ -1,13 +1,13 @@
 import "./js/init.js";
 import * as THREE from 'three'
-import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
-import GUI from 'lil-gui'
+import { MouseOnlyControls } from "../controls/MouseOnlyControls.js";
+import { KeyboardAccessControls } from "../controls/KeyboardAccessControls.js";
+// import GUI from 'lil-gui'
 import Gamepad from './js/gamepad.js';
 import { state, actions } from './js/state.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
-import { PositionalAudioHelper } from 'three/examples/jsm/helpers/PositionalAudioHelper.js';
-import { modeq } from "numeric";
+// import { PositionalAudioHelper } from 'three/examples/jsm/helpers/PositionalAudioHelper.js';
 
 
 let TouchControls = {
@@ -51,7 +51,9 @@ camera.position.copy( listenerPositions[state.positionIndex] )
 scene.add(camera)
 
 // Controls, is it canvas or document.body?
-const controls = new PointerLockControls(camera, document.body)
+const controls = new MouseOnlyControls(camera, document.body)
+const keyboardControls = new KeyboardAccessControls(camera, document.body)
+keyboardControls.setDiscretePositions(listenerPositions);
 const splash = document.querySelector("#splash");
 
 const light = new THREE.DirectionalLight( 0xffffff, 3 );
@@ -162,62 +164,6 @@ fontLoader.load('./fonts/Mukta_Bold.json',
     }
 )
 
-const nextPosition = () => {
-    // In VR when you teleport, it's instant, no fade in fade out
-    actions.increment();
-
-    if (state.positionIndex > listenerPositions.length) {
-        state.positionIndex = 0;
-    }
-
-    camera.position.copy ( listenerPositions[ state.positionIndex ] );
-}
-
-
-document.addEventListener('keydown', (e) => {
-
-    //if locked
-    if (controls.isLocked) e.preventDefault();
-
-    if(modeSelect.value == "tab") {
-        //esc key still allows for unlock
-        switch(e.code) {
-            case "Tab":
-                nextPosition();
-                break;
-            default:
-                break;
-        }
-    } else if (modeSelect.value == "move") {
-        switch(e.code) {
-            case "Space":
-                moveForward = true;
-                break;
-        }
-    }
-})
-
-document.addEventListener('keyup', (e) => {
-
-    switch(e.code) {
-        case "Space":
-            moveForward = false;
-            break;
-        default:
-            break;
-    }
-})
-
-document.addEventListener('mousedown', () => {
-    if(controls.isLocked) {
-        moveForward = true;
-    }
-});
-
-document.addEventListener('mouseup', () => {
-    moveForward = false;
-});
-
 /* Based on this http://jsfiddle.net/brettwp/J4djY/*/
 function detectDoubleTapClosure() {
     let lastTap = 0;
@@ -263,15 +209,10 @@ const tick = () =>
     const lookEuler = new THREE.Euler( 0, 0, 0, 'YXZ' );
     const speed = 0.02;
 
-    //if moveforward, then move along XZ plane in direction of camera
-    if(moveForward) {
-        const direction = new THREE.Vector3();
-        camera.getWorldDirection( direction );
-        //neutralize y
-        direction.y = 0;
-        camera.position.add( direction.multiplyScalar( speed ) );
-    }
 
+    controls.update();
+    keyboardControls.update();
+    
     // Render
     renderer.render(scene, camera)
 

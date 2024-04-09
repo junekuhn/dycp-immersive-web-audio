@@ -1,6 +1,7 @@
 import "../_positionalScene/js/init.js";
 import * as THREE from 'three'
-import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
+import { MouseOnlyControls } from "../controls/MouseOnlyControls.js";
+import { KeyboardAccessControls } from "../controls/KeyboardAccessControls.js"
 import GUI from 'lil-gui'
 import * as ambisonics from 'ambisonics';
 import Gamepad from '../_positionalScene/js/gamepad.js';
@@ -9,7 +10,7 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 
 let TouchControls = {
-  enabled: true,
+  enabled: false,
   isLocked: false,
 }
 
@@ -39,7 +40,8 @@ camera.position.set(0, 5, 0)
 scene.add(camera)
 
 // Controls, is it canvas or document.body?
-const controls = new PointerLockControls(camera, document.body)
+const controls = new MouseOnlyControls(camera, document.body)
+const keyboardControls = new KeyboardAccessControls(camera, document.body)
 const splash = document.querySelector("#splash");
 
 //joystick select
@@ -398,30 +400,13 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
     const euler = new THREE.Euler( 0, 0, 0, 'YXZ' );
 
-    // if using pointerlock, update state from camera
+    keyboardControls.update();
+
+    // if using MouseOnly, update state from camera
     if(controls.isLocked) {
       euler.setFromQuaternion( camera.quaternion );
 
-      let speed = 0.01;
       let gamepadSpeed = 0.05;
-
-      if(UpArrowDown) {
-        euler.x += speed;
-        euler.x = Math.max( Math.PI/2 - controls.maxPolarAngle, Math.min( Math.PI/2 - controls.minPolarAngle, euler.x ) );
-      } else if(DownArrowDown) {
-        euler.x -= speed;
-        euler.x = Math.max( Math.PI/2 - controls.maxPolarAngle, Math.min( Math.PI/2 - controls.minPolarAngle, euler.x ) );
-      }
-
-      if(LeftArrowDown) {
-        euler.y += speed; 
-      } else if (RightArrowDown) {
-        euler.y -= speed;
-      }
-
-      // scene.children.map(child => {
-      //     child.rotation.x += 0.001
-      // })
 
       xbox.update();
       if(joystickSelect.value == 0) {
@@ -468,7 +453,7 @@ const tick = () =>
       }
       
     } 
-    //or simulate pointerlock from GUI
+    //or simulate MouseOnly from GUI
     else {
       euler.y = state.azimuth;
       euler.x = state.elevation;
