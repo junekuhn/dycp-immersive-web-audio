@@ -12,11 +12,10 @@ const _euler = new Euler( 0, 0, 0, 'YXZ' );
 
 class KeyboardAccessControls {
 
-    constructor(camera, domElement, hitBoxElement = null) {
+    constructor(camera, domElement) {
 
         this.camera = camera;
         this.domElement = domElement;
-        this.hitBoxElement = hitBoxElement;
         this.lookSpeed = 0.01;
         this.moveSpeed = 0.01;
 
@@ -27,6 +26,7 @@ class KeyboardAccessControls {
         this.moveForward = false;
         this.moveLeft = false;
         this.moveRight = false;
+        this.moveUp = false;
 
         this.tabularMovement = false;
         this.discretePositions = [];

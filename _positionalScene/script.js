@@ -2,18 +2,13 @@ import "./js/init.js";
 import * as THREE from 'three'
 import { MouseOnlyControls } from "../controls/MouseOnlyControls.js";
 import { KeyboardAccessControls } from "../controls/KeyboardAccessControls.js";
+import { TouchAccessControls } from "../controls/TouchAccessControls.js";
 // import GUI from 'lil-gui'
 import Gamepad from './js/gamepad.js';
 import { state, actions } from './js/state.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 // import { PositionalAudioHelper } from 'three/examples/jsm/helpers/PositionalAudioHelper.js';
-
-
-let TouchControls = {
-    enabled: false,
-    isLocked: false,
-  }
 
 
 
@@ -51,9 +46,12 @@ camera.position.copy( listenerPositions[state.positionIndex] )
 scene.add(camera)
 
 // Controls, is it canvas or document.body?
-const controls = new MouseOnlyControls(camera, document.body)
-const keyboardControls = new KeyboardAccessControls(camera, document.body)
+const controls = new MouseOnlyControls(camera, document.body);
+const keyboardControls = new KeyboardAccessControls(camera, document.body);
+const touchControls = new TouchAccessControls(camera, document.body);
+
 keyboardControls.setDiscretePositions(listenerPositions);
+
 const splash = document.querySelector("#splash");
 
 const light = new THREE.DirectionalLight( 0xffffff, 3 );
@@ -105,8 +103,8 @@ const enterScene = () => {
     splash.style.display = 'block';
   }
 splash.addEventListener('click', () => {
-    if(TouchControls.enabled) {
-      TouchControls.isLocked = true;
+    if(touchControls.enabled) {
+      touchControls.isLocked = true;
       enterScene();
     } else {
       controls.lock();
@@ -212,6 +210,7 @@ const tick = () =>
 
     controls.update();
     keyboardControls.update();
+    touchControls.update();
     
     // Render
     renderer.render(scene, camera)

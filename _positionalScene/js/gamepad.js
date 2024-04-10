@@ -122,8 +122,7 @@ export default class GamePad {
         let rightX  = this.gamepads[pad].axes[2]; // Pan  Z || Right X
         
         let rightY = this.gamepads[pad].axes[3]; // Roll X || Right Y
-        let triggerLeft = this.gamepads[pad].axes[4]; // Roll Y || Trigger Left
-        let triggerRight = this.gamepads[pad].axes[5]; // Roll Z || Trigger Right
+
         
         if (leftX < -this.SPACEMOUSE_THRESHOLD ||
             leftX > this.SPACEMOUSE_THRESHOLD) {
@@ -144,16 +143,7 @@ export default class GamePad {
             rightY > this.SPACEMOUSE_THRESHOLD) {
           this.right.y = rightY;
         }
-  
-        // if (triggerLeft < -this.SPACEMOUSE_THRESHOLD ||
-        //     triggerLeft > this.SPACEMOUSE_THRESHOLD) {
-        //   this.right.x = triggerLeft;
-        // }
-  
-        // if (triggerRight < -this.SPACEMOUSE_THRESHOLD ||
-        //     triggerRight > this.SPACEMOUSE_THRESHOLD) {
-        //   this.right.y = triggerRight;
-        // }
+ 
       }
     }
     

@@ -8,6 +8,7 @@ html,
 body
 {
     overflow: hidden;
+    /* touch-action: none; */
 }
 
 .webgl

@@ -2,6 +2,16 @@ vite
 
 modules
 
+What's left
+write a controls class for orientation
+button press for forward movement
+lower left for forward movement (touch controls)
+    a sprite for this box
+tidy scene
+typescript
+link audio and font files for build
+ambisonic audio class?
+
 
 # Ambisonics (3 dof)
 
@@ -67,7 +77,38 @@ joystick for looking, a button for moving forward
 Why? because this isn't intended for gaming, we're trying to simplify controls to the necessities
 instead of 8 kinds of movement, we only need 5 (4 looking, 1 movement)
 
+
+
+
 # ambisonics 6DOF?
 
 what if you could, from positional audio sources, mix, convolve and present ambisonics?
+useful especially if you wanted to perform
+
+# 3D Alt text
+
+on tab - scene description readout
+for forward movement - define zones, and on entry of the zone readout
+
+ScreenReaderControls?
+kind of implies that there be read outs of 3D objects and scene
+
+
+# controls object
+
+automatically assigns values
+
+MouseOnlyControls - PointerLock extended for gallery settings
+    methods for modifying defaults
+    easing
+KeyboardAccessControls - Arrow Keys, Spacebar, 
+    methods for modifying defaults
+TouchAccessControls - like pointerlock but touch, move with hit area
+    requires a hit box dom element
+GamepadAccessControls - one handed joystick + button 
+
+When it comes to art, better access means a better experience for everyone.
+
+onpointerdown is not relevant, because a touch event should not move you by default
+
 

@@ -1,18 +1,17 @@
 import "../_positionalScene/js/init.js";
 import * as THREE from 'three'
 import { MouseOnlyControls } from "../controls/MouseOnlyControls.js";
-import { KeyboardAccessControls } from "../controls/KeyboardAccessControls.js"
+import { KeyboardAccessControls } from "../controls/KeyboardAccessControls.js";
+import { GamepadAccessControls } from "../controls/GamepadAccessControls.js";
+import { TouchAccessControls } from "../controls/TouchAccessControls.js";
+import { AmbisonicAudio } from "../controls/AmbisonicAudio.js";
 import GUI from 'lil-gui'
 import * as ambisonics from 'ambisonics';
 import Gamepad from '../_positionalScene/js/gamepad.js';
+
 import { state } from '../_positionalScene/js/state.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
-
-let TouchControls = {
-  enabled: false,
-  isLocked: false,
-}
 
 
 
@@ -41,11 +40,13 @@ scene.add(camera)
 
 // Controls, is it canvas or document.body?
 const controls = new MouseOnlyControls(camera, document.body)
-const keyboardControls = new KeyboardAccessControls(camera, document.body)
+const keyboardControls = new KeyboardAccessControls(camera, document.body);
+const touchControls = new TouchAccessControls(camera, document.body);
 const splash = document.querySelector("#splash");
 
-//joystick select
-
+const listener = new THREE.AudioListener();
+camera.add(listener);
+const ambisonicAudio = new AmbisonicAudio(listener, camera)
 
 const initAmbisonics = (e) => {
 
@@ -117,9 +118,7 @@ const pauseBuffer = () => {
 
 const loadButton = document.querySelector("#load");
 loadButton.addEventListener("click", initAmbisonics)
-// loadButton.addEventListener("touchstart", initAmbisonics)
 // hitting enter simulates a click
-
 
 const enterScene = () => {
   splash.style.display = 'none';
@@ -130,9 +129,9 @@ const exitScene = () => {
   pauseBuffer();
 }
 splash.addEventListener('click', () => {
-  if(TouchControls.enabled) {
+  if(touchControls.enabled) {
     enterScene();
-    TouchControls.isLocked = true;
+    touchControls.isLocked = true;
   } else {
     controls.lock();
     controls.addEventListener('lock', enterScene)
@@ -140,53 +139,6 @@ splash.addEventListener('click', () => {
     scene.add( controls.getObject() );
   }
 })
-
-
-const onKeyDown = (e) => {
-  switch (e.code) {
-    case "Space":
-      toggleAudio();
-      break;
-    case "ArrowLeft":
-      LeftArrowDown = true;
-      break;
-    case "ArrowUp":
-      UpArrowDown = true;
-      break;
-    case "ArrowRight":
-      RightArrowDown = true;
-      break;
-    case "ArrowDown":
-      DownArrowDown = true;
-      break;
-    default:
-      break;
-  }
-}
-
-const onKeyUp = (e) => {
-  switch (e.code) {
-    case "Space":
-      break;
-    case "ArrowLeft":
-      LeftArrowDown = false;
-      break;
-    case "ArrowUp":
-      UpArrowDown = false;
-      break;
-    case "ArrowRight":
-      RightArrowDown = false;
-      break;
-    case "ArrowDown":
-      DownArrowDown = false;
-      break;
-    default:
-      break;
-  }
-}
-
-document.addEventListener( 'keydown', onKeyDown );
-document.addEventListener( 'keyup', onKeyUp );
 
 //font
 const fontLoader = new FontLoader()
@@ -229,63 +181,13 @@ fontLoader.load('./fonts/Mukta_Bold.json',
     }
 )
 
-
-const xbox = new Gamepad();
+const xbox = new GamepadAccessControls(camera);
 const gamepadElement = document.querySelector('#gamepads');
-const joystickSelect = document.querySelector('#whichJoystick');
 const updateUI = () => {
   gamepadElement.innerHTML = xbox.gamepads
   console.log(xbox.gamepads)
 }
 window.addEventListener("gamepadconnected", updateUI);
-
-
-// device detection
-// if laptop, mouse and usb default
-// if tablet - touch controls
-// if mobile - touch or device orientation controls
-let previousTouchX = 0, previousTouchY = 0, touchIdentifier;
-let touchX = 0, touchY = 0;
-
-const onTouchMove = (event) =>
-{
-    for (const touch of event.changedTouches)
-    {
-        if (touch.identifier == touchIdentifier)
-        {
-            event.preventDefault(); // avoid scrolling whilst dragging
-            touchX = touch.clientX - previousTouchX;
-            previousTouchX = touch.clientX;
-            touchY = touch.clientY - previousTouchY;
-            previousTouchY = touch.clientY;
-        }
-    }
-};
-
-const onTouchStart = (event) =>
-{
-    if(TouchControls.isLocked) {
-      //set init touch for first finger only
-      previousTouchY = event.changedTouches[0].clientY
-      previousTouchX = event.changedTouches[0].clientX
-      touchIdentifier = event.changedTouches[0].identifier;
-      window.addEventListener ("touchmove", onTouchMove);
-      window.addEventListener ("touchend", onTouchEnd);
-      event.preventDefault();
-    }
-};
-
-const onTouchEnd = (event) =>
-{
-    previousTouchY = undefined;
-    touchX = 0;
-    touchY = 0;
-    window.removeEventListener ("touchmove", onTouchMove);
-    window.removeEventListener ("touchend", onTouchEnd);
-    event.preventDefault();
-};
-window.addEventListener('touchstart', onTouchStart);
-
 
 // function to load samples
 function loadSample(url, doAfterLoading) {
@@ -308,8 +210,6 @@ var assignSample2SoundBuffer = function(decodedBuffer) {
 var assignSample2Filters = function(decodedBuffer) {
 decoder.updateFilters(decodedBuffer);
 }
-
-
 // function called when audiocontext.decodeAudioData fails to decode a given audio file, e.g. in Safari with .ogg vorbis format
 function onDecodeAudioDataError(error) {
   var url = 'hjre';
@@ -328,23 +228,12 @@ const toggleAudio = () => {
   }
 } 
 
-const gui = new GUI()
-gui.add(state, "azimuth", -Math.PI, Math.PI);
-gui.add(state, "elevation", -Math.PI/2, Math.PI/2 );
-
-const textureLoader = new THREE.TextureLoader();
-
 const planarGeometry = new THREE.PlaneGeometry(100, 100, 10, 10);
 const planarMaterial = new THREE.MeshBasicMaterial({color: "white"});
 const planarMesh = new THREE.Mesh(planarGeometry, planarMaterial);
 planarMesh.position.set(0,0,2)
 planarMesh.rotation.x = -Math.PI/2;
 scene.add(planarMesh)
-
-// const defaultLight = new THREE.AmbientLight(new THREE.Color(0xF29), 0.8);
-// scene.add(defaultLight);
-
-
 
 window.addEventListener('resize', () =>
 {
@@ -360,27 +249,6 @@ window.addEventListener('resize', () =>
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
-/**
- * Camera
- */
-// Base camera
-// const res = 800;
-// const camera = new THREE.OrthographicCamera(
-//     -res * 0.5,
-//     res * 0.5,
-//     res * 0.5,
-//     -res * 0.5,
-//     0,
-//     1000
-// )
-// camera.position.z = 100
-// scene.add(camera)
-
-
-
-
-
-
 
 /**
  * Renderer
@@ -392,93 +260,29 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-const clock = new THREE.Clock()
-
 
 const tick = () =>
 {
-    const elapsedTime = clock.getElapsedTime()
     const euler = new THREE.Euler( 0, 0, 0, 'YXZ' );
 
     keyboardControls.update();
+    xbox.update();
+    touchControls.update();
 
-    // if using MouseOnly, update state from camera
     if(controls.isLocked) {
-      euler.setFromQuaternion( camera.quaternion );
-
-      let gamepadSpeed = 0.05;
-
-      xbox.update();
-      if(joystickSelect.value == 0) {
-        euler.y -= xbox.left.x * gamepadSpeed;
-        euler.x -= xbox.left.y * gamepadSpeed;
-        euler.x = Math.max( Math.PI/2 - controls.maxPolarAngle, Math.min( Math.PI/2 - controls.minPolarAngle, euler.x ) );
-      } else if (joystickSelect.value == 1) {
-        euler.y -= xbox.right.x * gamepadSpeed;
-        euler.x -= xbox.right.y * gamepadSpeed;
-        euler.x = Math.max( Math.PI/2 - controls.maxPolarAngle, Math.min( Math.PI/2 - controls.minPolarAngle, euler.x ) );
-      }
-
-      camera.quaternion.setFromEuler( euler ); 
-      
-
-      state.azimuth = euler.y;
-      state.elevation = euler.x;
-      // Define mouse drag on spatial map .png local impact
-
       if(encoder != null) {
+        euler.setFromQuaternion(camera.quaternion);
         encoder.azim = -euler.y * 180 / Math.PI;
         encoder.elev = euler.x * 180 / Math.PI;
-        encoder.updateGains();
-      }
-
-
-    } else if (TouchControls.isLocked) {
-      const touchSpeed = 0.004;
-      euler.setFromQuaternion( camera.quaternion );
-      euler.y += touchX * touchSpeed;
-      euler.x -= touchY * touchSpeed;
-      euler.x = Math.max( Math.PI/2 - controls.maxPolarAngle, Math.min( Math.PI/2 - controls.minPolarAngle, euler.x ) );
-
-      camera.quaternion.setFromEuler( euler ); 
-
-      state.azimuth = euler.y;
-      state.elevation = euler.x;
-      // Define mouse drag on spatial map .png local impact
-
-      if(encoder != null) {
-        encoder.azim = -euler.y * 180 / Math.PI;
-        encoder.elev = euler.x * 180 / Math.PI;
-        encoder.updateGains();
-      }
-      
-    } 
-    //or simulate MouseOnly from GUI
-    else {
-      euler.y = state.azimuth;
-      euler.x = state.elevation;
-      camera.quaternion.setFromEuler( euler );
-
-      if(encoder != null){
-        encoder.azim = -state.azimuth * 180 / Math.PI;
-        encoder.elev = state.azimuth * 180 / Math.PI;
         encoder.updateGains();
       }
     }
-
-
-
-
-
-
 
     // Render
     renderer.render(scene, camera)
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
-
-    // console.log(controls.getDirection(new THREE.Vector3(1,1,1)))\
 
 }
 
