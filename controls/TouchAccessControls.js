@@ -43,13 +43,6 @@ class TouchAccessControls {
 
         const hitbox = this.domElement.ownerDocument.createElement('div');
         hitbox.id = "hitbox";
-        hitbox.style.position = "absolute";
-        hitbox.style.zIndex = "10";
-        hitbox.style.backgroundColor = "pink"
-        hitbox.style.left = "0px";
-        hitbox.style.bottom = "0px";
-        hitbox.style.width = "20%";
-        hitbox.style.height = "15%";
         this.domElement.ownerDocument.body.appendChild(hitbox);
 
     }

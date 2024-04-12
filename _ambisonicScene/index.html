@@ -9,7 +9,56 @@
 <body>
     <canvas class="webgl"></canvas>
     <script type="module" src="./script.js"></script>
-    <div id="splash">
+    <div class="slide" id="welcome" style="display: none;">
+        <div class="container">
+            <h1 class="title">Immersive Web Audio</h1>
+        </div>
+        <div class="button-container">
+            <button class="big-button">Enter</button>
+            <hr/>
+            <button class="big-button">Info</button>
+        </div>
+        <div class="grant-container">
+            <img class="grant-img" src="./images/grant_png_white.png" alt="Arts Council England Logo"/>
+        </div>
+    </div>
+    <div class="slide" id="headphones" style="display: none;">
+        <div class="container">
+            <h1 class="title">Put on some headphones, wired or bluetooth</h1>
+        </div>
+        <div class="button-container">
+            <button class="big-button">Continue</button>
+        </div>
+    </div>
+    <div class="slide" id="controls"  style="display: none;">
+        <div class="container">
+            <h1 class="title">Choose your controls (this can be changed later)</h1>
+        </div>
+        <div class="button-container">
+            <button class="big-button">Mouse</button>
+            <button class="big-button">Keyboard</button>
+            <button class="big-button">Xbox / Playstation Controller</button>
+        </div>
+    </div>
+    <div class="slide" id="info" style="display: none;">
+        <div class="container">
+            <h1 class="title">Info</h1>
+        </div>
+        <section>
+            <article>
+                <p>I’m a neurodivergent computational artist, looking to divest the sensorial wonders of immersive media from the directives of profit.</p>
+                <br>
+                <p> I argue that Meta, Google, Microsoft, and Apple present this medium as a pay-to-play, whether you’re trading your money, privacy, or more recently the autonomy of your own body.  And with their approach comes a one-size-fits-most that maintains the heteronormative patriarchal ableist hegemony.</p>
+                <br>
+                <p>Through the Develop Your Creative Practice grant, I am building a toolkit for artists,  web developers, and musicians to build immersive experiences accessible to screen readers in the browser. This approach aims to utilize open web standards to enable myself and others to create website installations that allow for hybridity with in-person immersive installations like projections and speaker arrays.</p>
+                <br>
+                <p>Through this development opportunity I am building community and interest around immersive web audio.  If you or your organisation would like to get involved, please reach out with your community building ideas.  If you or your organisation would like to hire me or a member of this artist/developer  community in the future, please reach out via contact details below:</p>
+                <br>
+                <p><a href="mailto:june@junebug.codes">june@junebug.codes</a></p>
+            </article>
+        </section>
+    </div>
+    <div id="HOD" style="display: none;">
         <div id="header">
             <div>
                 Testbed for ambisonics
@@ -35,9 +84,6 @@
                 <option id="left" value="0" selected>Left Joystick</option>
                 <option id="right" value="1">Right Joystick</option>
             </select>
-        </div>
-        <div id="footer">
-    
         </div>
     </div>
 </body>

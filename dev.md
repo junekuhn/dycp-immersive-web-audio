@@ -3,14 +3,13 @@ vite
 modules
 
 What's left
-write a controls class for orientation
 button press for forward movement
-lower left for forward movement (touch controls)
-    a sprite for this box
-tidy scene
+a sprite for this box
 typescript
 link audio and font files for build
-ambisonic audio class?
+ambisonic audio class
+splash screen
+3d alt text / captioning
 
 
 # Ambisonics (3 dof)
@@ -93,6 +92,12 @@ for forward movement - define zones, and on entry of the zone readout
 ScreenReaderControls?
 kind of implies that there be read outs of 3D objects and scene
 
+captioning
+html can add a text track
+vttcue's can be added to an audio element
+
+the exception being buffer source files
+
 
 # controls object
 
@@ -111,4 +116,11 @@ When it comes to art, better access means a better experience for everyone.
 
 onpointerdown is not relevant, because a touch event should not move you by default
 
+
+# User Flow
+
+controls calibration, mouse, arrows, controller, touch
+choice of controller
+choice of background / scene
+cache for user preferences
 

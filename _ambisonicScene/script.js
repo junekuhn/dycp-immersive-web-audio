@@ -42,7 +42,7 @@ scene.add(camera)
 const controls = new MouseOnlyControls(camera, document.body)
 const keyboardControls = new KeyboardAccessControls(camera, document.body);
 const touchControls = new TouchAccessControls(camera, document.body);
-const splash = document.querySelector("#splash");
+const splash = document.querySelector("#HOD");
 
 const listener = new THREE.AudioListener();
 camera.add(listener);

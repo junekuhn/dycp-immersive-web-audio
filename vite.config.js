@@ -2,7 +2,7 @@ import glsl from 'vite-plugin-glsl'
 import { defineConfig } from "vite";
 
 export default defineConfig({
-    root: '_positionalScene/',
+    root: '_ambisonicScene/',
     publicDir: '../static/',
     base: './',
     server:
