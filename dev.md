@@ -11,6 +11,14 @@ ambisonic audio class
 splash screen
 3d alt text / captioning
 
+Before publish
+Fonts
+settings page
+when choosing controls, load audio
+controls based on selection and device
+ambisonic player controls 
+
+
 
 # Ambisonics (3 dof)
 

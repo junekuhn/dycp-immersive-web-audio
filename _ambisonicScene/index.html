@@ -4,19 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Testbed</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Exo">
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
     <canvas class="webgl"></canvas>
     <script type="module" src="./script.js"></script>
+    <script type="module" src="./slides.js"></script>
     <div class="slide" id="welcome" style="display: none;">
         <div class="container">
             <h1 class="title">Immersive Web Audio</h1>
         </div>
         <div class="button-container">
-            <button class="big-button">Enter</button>
+            <button class="big-button" id="enter-button">Enter</button>
             <hr/>
-            <button class="big-button">Info</button>
+            <button class="big-button" id="info-button">Info</button>
         </div>
         <div class="grant-container">
             <img class="grant-img" src="./images/grant_png_white.png" alt="Arts Council England Logo"/>
@@ -27,7 +29,7 @@
             <h1 class="title">Put on some headphones, wired or bluetooth</h1>
         </div>
         <div class="button-container">
-            <button class="big-button">Continue</button>
+            <button class="big-button" id="continue-button">Continue</button>
         </div>
     </div>
     <div class="slide" id="controls"  style="display: none;">
@@ -35,9 +37,9 @@
             <h1 class="title">Choose your controls (this can be changed later)</h1>
         </div>
         <div class="button-container">
-            <button class="big-button">Mouse</button>
-            <button class="big-button">Keyboard</button>
-            <button class="big-button">Xbox / Playstation Controller</button>
+            <button class="big-button" id="mouse-button">Mouse</button>
+            <button class="big-button" id="keyboard-button">Keyboard</button>
+            <button class="big-button" id="controller-button">Xbox / Playstation Controller</button>
         </div>
     </div>
     <div class="slide" id="info" style="display: none;">
@@ -58,33 +60,35 @@
             </article>
         </section>
     </div>
-    <div id="HOD" style="display: none;">
-        <div id="header">
-            <div>
-                Testbed for ambisonics
-            </div>
+    <div class="slide" id="HOD" style="display: none;">
+        <div id="settings">
+            <h1>Settings</h1>
             <div id="gamepads">
                 No Gamepads Connected
             </div>
             <div id="device">
-                
+                Mouse Priority Controls
+                <select id="whichJoystick">
+                    <option id="left" value="0" selected>Left Joystick</option>
+                    <option id="right" value="1">Right Joystick</option>
+                </select>
             </div>
             <div id="sofa">
                 Default SOFA file
             </div>
-            <div id="webcam">
-                Webcam tracking off
-            </div>
+            <button class="black-button" id="exit-settings">Exit Settings</button>
         </div>
-        <div id="buttons">
-            <button id="load">LOAD</button>
-            <button id="play">PLAY</button>
-            <button id="stop"></button>
-            <select id="whichJoystick">
-                <option id="left" value="0" selected>Left Joystick</option>
-                <option id="right" value="1">Right Joystick</option>
-            </select>
-        </div>
+    </div>
+    <div id="audio-player">
+        <h2>Title of Track</h2>
+        <audio controls id='audio-element' >
+          <source src='sounds/BF_rec1.ogg' type='audio/ogg' />
+          <source src='sounds/BF_rec1.wav' type='audio/wav' />
+        </audio>
+        <button id="load">RELOAD</button>
+    </div>
+    <div id="settings-icon">
+        Settings
     </div>
 </body>
 </html>

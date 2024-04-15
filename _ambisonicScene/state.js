@@ -16,7 +16,13 @@ export const state = new Proxy(
       playStart: 0,
       positionIndex: 0,
       // modes "tab / move"
-      mode: "tab"
+      mode: "tab",
+      slide: "welcome",
+      preferences: {
+        controls: "",
+        joystick: "",
+        sensitivity: 0.5,
+      }
     },
     handler
 );

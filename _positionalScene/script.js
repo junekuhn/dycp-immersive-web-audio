@@ -5,7 +5,7 @@ import { KeyboardAccessControls } from "../controls/KeyboardAccessControls.js";
 import { TouchAccessControls } from "../controls/TouchAccessControls.js";
 // import GUI from 'lil-gui'
 import Gamepad from './js/gamepad.js';
-import { state, actions } from './js/state.js';
+import { state, actions } from '../_ambisonicScene/state.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 // import { PositionalAudioHelper } from 'three/examples/jsm/helpers/PositionalAudioHelper.js';

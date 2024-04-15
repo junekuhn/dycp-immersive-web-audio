@@ -9,7 +9,7 @@ import GUI from 'lil-gui'
 import * as ambisonics from 'ambisonics';
 import Gamepad from '../_positionalScene/js/gamepad.js';
 
-import { state } from '../_positionalScene/js/state.js';
+import { state } from './state.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 
@@ -120,25 +120,25 @@ const loadButton = document.querySelector("#load");
 loadButton.addEventListener("click", initAmbisonics)
 // hitting enter simulates a click
 
-const enterScene = () => {
-  splash.style.display = 'none';
-  createAndStartBuffer();
-}
-const exitScene = () => {
-  splash.style.display = 'block';
-  pauseBuffer();
-}
-splash.addEventListener('click', () => {
-  if(touchControls.enabled) {
-    enterScene();
-    touchControls.isLocked = true;
-  } else {
-    controls.lock();
-    controls.addEventListener('lock', enterScene)
-    controls.addEventListener('unlock', exitScene);
-    scene.add( controls.getObject() );
-  }
-})
+// const enterScene = () => {
+//   splash.style.display = 'none';
+//   createAndStartBuffer();
+// }
+// const exitScene = () => {
+//   splash.style.display = 'block';
+//   pauseBuffer();
+// }
+// splash.addEventListener('click', () => {
+//   if(touchControls.enabled) {
+//     enterScene();
+//     touchControls.isLocked = true;
+//   } else {
+//     controls.lock();
+//     controls.addEventListener('lock', enterScene)
+//     controls.addEventListener('unlock', exitScene);
+//     scene.add( controls.getObject() );
+//   }
+// })
 
 //font
 const fontLoader = new FontLoader()
