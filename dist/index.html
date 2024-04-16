@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testbed</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Exo">
+  <script type="module" crossorigin src="/dycp-immersive-web-audio/assets/index-BI-Yih5r.js"></script>
+  <link rel="stylesheet" crossorigin href="/dycp-immersive-web-audio/assets/index-CksFDzKT.css">
+</head>
+<body>
+    <canvas class="webgl"></canvas>
+    <div class="slide" id="welcome" style="display: none;">
+        <div class="container">
+            <h1 class="title">Immersive Web Audio</h1>
+        </div>
+        <div class="button-container">
+            <button class="big-button" id="enter-button">Enter</button>
+            <hr/>
+            <button class="big-button" id="info-button">Info</button>
+        </div>
+        <div class="grant-container">
+            <img class="grant-img" src="./images/grant_png_white.png" alt="Arts Council England Logo"/>
+        </div>
+    </div>
+    <div class="slide" id="headphones" style="display: none;">
+        <div class="container">
+            <h1 class="title">Put on some headphones, wired or bluetooth</h1>
+        </div>
+        <div class="button-container">
+            <button class="big-button" id="continue-button">Continue</button>
+        </div>
+    </div>
+    <div class="slide" id="controls"  style="display: none;">
+        <div class="container">
+            <h1 class="title">Choose your controls (this can be changed later)</h1>
+        </div>
+        <div class="button-container">
+            <button class="big-button" id="mouse-button">Mouse</button>
+            <button class="big-button" id="keyboard-button">Keyboard</button>
+            <button class="big-button" id="controller-button">Xbox / Playstation Controller</button>
+        </div>
+    </div>
+    <div class="slide" id="info" style="display: none;">
+        <div class="container">
+            <h1 class="title">Info</h1>
+        </div>
+        <section>
+            <article>
+                <p>I’m a neurodivergent computational artist, looking to divest the sensorial wonders of immersive media from the directives of profit.</p>
+                <br>
+                <p> I argue that Meta, Google, Microsoft, and Apple present this medium as a pay-to-play, whether you’re trading your money, privacy, or more recently the autonomy of your own body.  And with their approach comes a one-size-fits-most that maintains the heteronormative patriarchal ableist hegemony.</p>
+                <br>
+                <p>Through the Develop Your Creative Practice grant, I am building a toolkit for artists,  web developers, and musicians to build immersive experiences accessible to screen readers in the browser. This approach aims to utilize open web standards to enable myself and others to create website installations that allow for hybridity with in-person immersive installations like projections and speaker arrays.</p>
+                <br>
+                <p>Through this development opportunity I am building community and interest around immersive web audio.  If you or your organisation would like to get involved, please reach out with your community building ideas.  If you or your organisation would like to hire me or a member of this artist/developer  community in the future, please reach out via contact details below:</p>
+                <br>
+                <p><a href="mailto:june@junebug.codes">june@junebug.codes</a></p>
+            </article>
+        </section>
+    </div>
+    <div class="slide" id="HOD" style="display: none;">
+        <div id="settings">
+            <h1>Settings</h1>
+            <div id="gamepads">
+                No Gamepads Connected
+            </div>
+            <div id="device">
+                Mouse Priority Controls
+                <select id="whichJoystick">
+                    <option id="left" value="0" selected>Left Joystick</option>
+                    <option id="right" value="1">Right Joystick</option>
+                </select>
+            </div>
+            <div id="sofa">
+                Default SOFA file
+            </div>
+            <button class="black-button" id="exit-settings">Exit Settings</button>
+        </div>
+    </div>
+    <div id="audio-player">
+        <h2>Title of Track</h2>
+        <audio controls id='audio-element' >
+          <source src='sounds/BF_rec1.ogg' type='audio/ogg' />
+          <source src='sounds/BF_rec1.wav' type='audio/wav' />
+        </audio>
+        <button id="load">RELOAD</button>
+        <button id="play">PLAY</button>
+    </div>
+    <div id="settings-icon">
+        Settings
+    </div>
+</body>
+</html>
