@@ -26,9 +26,9 @@ const sizes = {
   height: window.innerHeight
 }
 
-const soundUrl = "sounds/sample2.wav";
-const irUrl = "IRs/ambisonic2binaural_filters/aalto2016_N1.wav";
-const ambiIrUrl = "IRs/ambisonicRIRs/room_1_bf.wav";
+const soundUrl = "../public/sounds/sample2.wav";
+const irUrl = "../public/IRs/ambisonic2binaural_filters/aalto2016_N1.wav";
+const ambiIrUrl = "../public/IRs/ambisonicRIRs/room_1_bf.wav";
 
 const maxOrder = 1;
 let soundBuffer, sound, context;

@@ -138,3 +138,4 @@ I'm not sure why I only get one value per frame
 I need a 2D array to send to the shader
 
 I think I discovered that because the circle is inside out I have reverse the equation
+the convolver helped, and it works somehow
