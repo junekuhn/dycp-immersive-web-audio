@@ -13,6 +13,9 @@ import { state } from './state.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 
+import intensityVertexShader from './glsl/intensityVertex.glsl'
+import intensityFragmentShader from './glsl/intensityFragment.glsl'
+
 
 
 /**
@@ -25,10 +28,12 @@ const sizes = {
 
 const soundUrl = "sounds/sample2.wav";
 const irUrl = "IRs/ambisonic2binaural_filters/aalto2016_N1.wav";
+const ambiIrUrl = "IRs/ambisonicRIRs/room_1_bf.wav";
 
 const maxOrder = 1;
 let soundBuffer, sound, context;
-let mirror, decoder, analyser, gainOut, encoder;
+let mirror, decoder, analyser, gainOut, encoder, convolver, converter, rotator;
+let numCircles = 30;
 let UpArrowDown = false, LeftArrowDown = false, DownArrowDown = false, RightArrowDown = false;
 
 // Canvas
@@ -42,7 +47,7 @@ scene.add(camera)
 const controls = new MouseOnlyControls(camera, document.body)
 const keyboardControls = new KeyboardAccessControls(camera, document.body);
 const touchControls = new TouchAccessControls(camera, document.body);
-const splash = document.querySelector("#HOD");
+const splash = document.querySelector("#play");
 
 const listener = new THREE.AudioListener();
 camera.add(listener);
@@ -63,13 +68,22 @@ const initAmbisonics = (e) => {
     if (context.state === "suspended") { context.resume(); }
   }
 
-  // load and assign samples
-  loadSample(soundUrl, assignSample2SoundBuffer);
-  loadSample(irUrl, assignSample2Filters);
+// load and assign samples
+loadSample(soundUrl, assignSample2SoundBuffer);
+loadSample(irUrl, assignSample2Filters);
+loadSample(ambiIrUrl, assignSample2Convolver);
 
   // initialize encoder
   encoder = new ambisonics.monoEncoder(context, 1);
   console.log(encoder);
+    // initialise encoder (convolver really)
+  convolver = new ambisonics.convolver(context, maxOrder);
+  console.log(convolver);
+  // FuMa to ACN converter
+converter = new ambisonics.converters.wxyz2acn(context);
+console.log(converter);
+rotator = new ambisonics.sceneRotator(context, maxOrder);
+console.log(rotator);
   // initialize mirroring
   mirror = new ambisonics.sceneMirror(context, 1);
   console.log(mirror);
@@ -82,10 +96,12 @@ const initAmbisonics = (e) => {
   // output gain
   gainOut = context.createGain();
 
-  // connect graph
-  encoder.out.connect(mirror.in);
-  mirror.out.connect(decoder.in);
-  mirror.out.connect(analyser.in);
+// connect graph
+convolver.out.connect(converter.in);
+converter.out.connect(mirror.in);
+  mirror.out.connect(rotator.in);
+  rotator.out.connect(decoder.in);
+  rotator.out.connect(analyser.in);
   decoder.out.connect(gainOut);
   gainOut.connect(context.destination);
 
@@ -98,13 +114,12 @@ const createAndStartBuffer = () => {
   sound = context.createBufferSource();
   sound.buffer = soundBuffer;
   sound.loop = true;
-  sound.connect(encoder.in);
+  sound.connect(convolver.in);
   sound.start(0, offset);
   sound.isPlaying = true;
   state.playStart = context.currentTime - offset;
   state.pausedAt = 0;
   document.getElementById('play').disabled = true;
-  document.getElementById('stop').disabled = false;
 }
 
 const pauseBuffer = () => {
@@ -113,32 +128,65 @@ const pauseBuffer = () => {
   sound.stop();
   state.pausedAt = elapsed;
   document.getElementById('play').disabled = false;
-  document.getElementById('stop').disabled = true;
 }
 
 const loadButton = document.querySelector("#load");
 loadButton.addEventListener("click", initAmbisonics)
 // hitting enter simulates a click
 
-// const enterScene = () => {
-//   splash.style.display = 'none';
-//   createAndStartBuffer();
-// }
-// const exitScene = () => {
-//   splash.style.display = 'block';
-//   pauseBuffer();
-// }
-// splash.addEventListener('click', () => {
-//   if(touchControls.enabled) {
-//     enterScene();
-//     touchControls.isLocked = true;
-//   } else {
-//     controls.lock();
-//     controls.addEventListener('lock', enterScene)
-//     controls.addEventListener('unlock', exitScene);
-//     scene.add( controls.getObject() );
-//   }
-// })
+const enterScene = () => {
+  createAndStartBuffer();
+}
+const exitScene = () => {
+  pauseBuffer();
+}
+splash.addEventListener('click', () => {
+  if(touchControls.enabled) {
+    enterScene();
+    touchControls.isLocked = true;
+  } else {
+    controls.lock();
+    controls.addEventListener('lock', enterScene)
+    controls.addEventListener('unlock', exitScene);
+    scene.add( controls.getObject() );
+  }
+})
+
+function updateCircles(params, cnv) {
+  var xy = angles2pixels(params[0], params[1], cnv);
+  var radius = 30*(1-params[2]);
+  var opacity = 1;
+
+  if (circles.length<numCircleLim) {
+      var circle = new Circle(xy[0], xy[1], radius, opacity);
+      circles.push(circle);
+  }
+  else {
+      var circle = new Circle(xy[0], xy[1], radius, opacity);
+      circles.shift();
+      circles.push(circle);
+      for (var i=0; i<numCircleLim-1; i++) circles[i].opacity = opacityLim + i*(1-opacityLim)/numCircleLim;
+  }
+}
+
+let circleArray = new Array(30).fill(new THREE.Vector2(0, 0));
+let intensityArray = new Array(30).fill(0);
+
+const sphereGeom = new THREE.SphereGeometry(50, 100, 50);
+const sphereMat = new THREE.RawShaderMaterial({
+  vertexShader: intensityVertexShader,
+  fragmentShader: intensityFragmentShader,
+  // wireframe: true,
+  transparent: true,
+  uniforms: {
+    uIntensity: { value: intensityArray },
+    uTime: { value: 0 },
+    uCircle: { value: circleArray },
+  },
+  side: THREE.BackSide,
+})
+const intensityMesh = new THREE.Mesh(sphereGeom, sphereMat);
+scene.add(intensityMesh);
 
 //font
 const fontLoader = new FontLoader()
@@ -210,6 +258,12 @@ var assignSample2SoundBuffer = function(decodedBuffer) {
 var assignSample2Filters = function(decodedBuffer) {
 decoder.updateFilters(decodedBuffer);
 }
+
+// function to assign sample to the filter buffers for convolution
+var assignSample2Convolver = function(decodedBuffer) {
+  convolver.updateFilters(decodedBuffer);
+}
+
 // function called when audiocontext.decodeAudioData fails to decode a given audio file, e.g. in Safari with .ogg vorbis format
 function onDecodeAudioDataError(error) {
   var url = 'hjre';
@@ -233,7 +287,7 @@ const planarMaterial = new THREE.MeshBasicMaterial({color: "white"});
 const planarMesh = new THREE.Mesh(planarGeometry, planarMaterial);
 planarMesh.position.set(0,0,2)
 planarMesh.rotation.x = -Math.PI/2;
-scene.add(planarMesh)
+// scene.add(planarMesh)
 
 window.addEventListener('resize', () =>
 {
@@ -260,9 +314,16 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
+const clock = new THREE.Clock();
 
 const tick = () =>
 {
+
+    const elapsedTime = clock.getElapsedTime();
+
+    // Update material
+    sphereMat.uniforms.uTime.value = elapsedTime;
+
     const euler = new THREE.Euler( 0, 0, 0, 'YXZ' );
 
     keyboardControls.update();
@@ -270,14 +331,28 @@ const tick = () =>
     touchControls.update();
 
     if(controls.isLocked) {
-      if(encoder != null) {
         euler.setFromQuaternion(camera.quaternion);
-        encoder.azim = -euler.y * 180 / Math.PI;
-        encoder.elev = euler.x * 180 / Math.PI;
-        encoder.updateGains();
-      }
+        rotator.yaw = -euler.y * 180 / Math.PI;
+        rotator.pitch = euler.x * 180 / Math.PI;
+        rotator.updateRotMtx();
+
+    
+
     }
 
+    if(analyser != null) {
+      // Update audio analyser buffers
+      analyser.updateBuffers();
+      const params = analyser.computeIntensity();
+
+      intensityArray.shift();
+      intensityArray.push(Math.log(params[2]) / (-20))
+      sphereMat.uniforms.uIntensity.value = intensityArray;
+      //i want the reflection
+      circleArray.shift();
+      circleArray.push(new THREE.Vector2( -params[0]/360 + 0.5, -params[1]/180 + 0.5 ));
+      sphereMat.uniforms.uCircle.value = circleArray;
+    }
     // Render
     renderer.render(scene, camera)
 

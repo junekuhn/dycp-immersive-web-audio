@@ -12,7 +12,7 @@ class TouchAccessControls {
         this.camera = camera;
         this.domElement = domElement;
 
-        this.enabled = true;
+        this.enabled = false;
         this.isLocked = false;
 
         this.touchX = 0;
