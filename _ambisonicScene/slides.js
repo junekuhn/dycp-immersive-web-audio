@@ -47,6 +47,11 @@ continueButton.addEventListener('click', ()=> {
 settingsIcon.addEventListener('click', () => {
     changeSlide("HOD")
 })
+settingsIcon.addEventListener('keydown', e => {
+    if(e.code == "Space" || e.code == "Enter") {
+        changeSlide("HOD") 
+    }
+})
 
 mouseButton.addEventListener('click', enterScene);
 keyboardButton.addEventListener('click', enterScene);

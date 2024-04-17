@@ -97,15 +97,7 @@ h2 {
     padding: 0px 10px 10px 10px;
     border-radius: 10px;
   }
-  
-  #load {
-    margin: 15px 0px 0px 0px;
-    padding: 10px;
-    background-color: black;
-    color: white;
-    border: 1px solid white;
-    border-radius: 5px;
-  }
+
 
 .button-container {
     display: flex;
@@ -179,7 +171,7 @@ hr {
     position: absolute;
     right: 5%;
     top: 5%;
-    width: 100px;
+    width: 50px;
 }
 
 section {

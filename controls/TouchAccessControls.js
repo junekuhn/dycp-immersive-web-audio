@@ -34,7 +34,10 @@ class TouchAccessControls {
 
         this.domElement.ownerDocument.addEventListener( 'touchstart', this._onTouchStart );
 
-        this.createHitBox();
+        if(this.enabled) {
+            this.createHitBox();
+        }
+
 
 
     }

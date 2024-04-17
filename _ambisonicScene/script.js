@@ -26,15 +26,14 @@ const sizes = {
   height: window.innerHeight
 }
 
-const soundUrl = "../public/sounds/sample2.wav";
-const irUrl = "../public/IRs/ambisonic2binaural_filters/aalto2016_N1.wav";
-const ambiIrUrl = "../public/IRs/ambisonicRIRs/room_1_bf.wav";
+const soundUrl = "./sounds/sample2.wav";
+const irUrl = "./IRs/ambisonic2binaural_filters/aalto2016_N1.wav";
+const ambiIrUrl = "./IRs/ambisonicRIRs/room_1_bf.wav";
 
 const maxOrder = 1;
 let soundBuffer, sound, context;
 let mirror, decoder, analyser, gainOut, encoder, convolver, converter, rotator;
 let numCircles = 30;
-let UpArrowDown = false, LeftArrowDown = false, DownArrowDown = false, RightArrowDown = false;
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -48,6 +47,7 @@ const controls = new MouseOnlyControls(camera, document.body)
 const keyboardControls = new KeyboardAccessControls(camera, document.body);
 const touchControls = new TouchAccessControls(camera, document.body);
 const splash = document.querySelector("#play");
+const hod = document.querySelector("#scene-info");
 
 const listener = new THREE.AudioListener();
 camera.add(listener);
@@ -130,14 +130,16 @@ const pauseBuffer = () => {
   document.getElementById('play').disabled = false;
 }
 
-const loadButton = document.querySelector("#load");
+const loadButton = document.querySelector("#controls");
 loadButton.addEventListener("click", initAmbisonics)
 // hitting enter simulates a click
 
 const enterScene = () => {
+  hod.style.display = 'none';
   createAndStartBuffer();
 }
 const exitScene = () => {
+  hod.style.display = 'block'
   pauseBuffer();
 }
 splash.addEventListener('click', () => {
@@ -169,8 +171,8 @@ function updateCircles(params, cnv) {
   }
 }
 
-let circleArray = new Array(30).fill(new THREE.Vector2(0, 0));
-let intensityArray = new Array(30).fill(0);
+let circleArray = new Array(numCircles).fill(new THREE.Vector2(0, 0));
+let intensityArray = new Array(numCircles).fill(0);
 
 const sphereGeom = new THREE.SphereGeometry(50, 100, 50);
 const sphereMat = new THREE.RawShaderMaterial({

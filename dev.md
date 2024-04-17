@@ -6,13 +6,10 @@ What's left
 button press for forward movement
 a sprite for this box
 typescript
-link audio and font files for build
 ambisonic audio class
-splash screen
 3d alt text / captioning
 
 Before publish
-Fonts
 settings page
 when choosing controls, load audio
 controls based on selection and device
