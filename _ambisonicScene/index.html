@@ -9,8 +9,9 @@
 </head>
 <body>
     <canvas class="webgl"></canvas>
-    <script type="module" src="./script.js"></script>
-    <script type="module" src="./slides.js"></script>
+    <script type="module" src="./js/ambisonic.js"></script>
+    <script type="module" src="./js/positional.js"></script>
+    <script type="module" src="./js/slides.js"></script>
     <div class="slide" id="welcome" style="display: none;">
         <div class="container">
             <h1 class="title">Immersive Web Audio</h1>
@@ -32,14 +33,13 @@
             <button class="big-button" id="continue-button">Continue</button>
         </div>
     </div>
-    <div class="slide" id="controls"  style="display: none;">
+    <div class="slide" id="scene"  style="display: none;">
         <div class="container">
-            <h1 class="title">Choose your controls (this can be changed later)</h1>
+            <h1 class="title">Choose the Scene</h1>
         </div>
         <div class="button-container">
-            <button class="big-button" id="mouse-button">Mouse</button>
-            <button class="big-button" id="keyboard-button">Keyboard</button>
-            <button class="big-button" id="controller-button">Xbox / Playstation Controller</button>
+            <button class="big-button" id="scene-one-button">Ambisonic Soundfield</button>
+            <button class="big-button" id="scene-two-button">3D Positional</button>
         </div>
     </div>
     <div class="slide" id="info" style="display: none;">
@@ -103,5 +103,17 @@
                 </svg>
         </div>
     </div>
+    <audio id="sample0" loop preload="auto" style="display: none">
+        <source src="./sounds/sample0.wav" type="audio/wav">
+    </audio>
+    <audio id="sample1" loop preload="auto" style="display: none">
+        <source src="./sounds/sample1.wav" type="audio/wav">
+    </audio>
+    <audio id="sample2" loop preload="auto" style="display: none">
+        <source src="./sounds/sample2.wav" type="audio/wav">
+    </audio>
+    <audio id="sample3" loop preload="auto" style="display: none">
+        <source src="./sounds/sample3.wav" type="audio/wav">
+    </audio>
 </body>
 </html>

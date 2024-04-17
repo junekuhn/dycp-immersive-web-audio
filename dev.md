@@ -9,11 +9,10 @@ typescript
 ambisonic audio class
 3d alt text / captioning
 
-Before publish
-settings page
-when choosing controls, load audio
-controls based on selection and device
-ambisonic player controls 
+scene switcher
+switch in settings
+tidy positional scene
+
 
 
 
