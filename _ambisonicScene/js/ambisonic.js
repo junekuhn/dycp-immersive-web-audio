@@ -27,6 +27,7 @@ let sphereMat, circleArray, keyboardControls,
   let soundBuffer, sound, context, camera, scene;
   let mirror, decoder, analyser, gainOut, encoder, convolver, converter, rotator;
   let numCircles = 30, intensityArray;
+  let enterScene, exitScene
  
 export function initAmbisonicScene() {
 
@@ -47,7 +48,7 @@ const listener = new THREE.AudioListener();
 camera.add(listener);
 const ambisonicAudio = new AmbisonicAudio(listener, camera)
 
-const initAmbisonics = (e) => {
+initAmbisonicScene.initAmbisonics = (e) => {
   
     e.stopPropagation();
   
@@ -124,19 +125,20 @@ const initAmbisonics = (e) => {
     document.getElementById('play').disabled = false;
   }
   
-  const loadButton = document.querySelector("#scene");
-  loadButton.addEventListener("click", initAmbisonics)
+
+  initAmbisonicScene.loadButton = document.querySelector("#scene");
+  initAmbisonicScene.loadButton.addEventListener("click", initAmbisonicScene.initAmbisonics)
   // hitting enter simulates a click
   
-  const enterScene = () => {
+  enterScene = () => {
     hod.style.display = 'none';
     createAndStartBuffer();
   }
-  const exitScene = () => {
+  exitScene = () => {
     hod.style.display = 'block'
     pauseBuffer();
   }
-  splash.addEventListener('click', () => {
+  const splashFunction =  () => {
     if(touchControls.enabled) {
       enterScene();
       touchControls.isLocked = true;
@@ -146,8 +148,9 @@ const initAmbisonics = (e) => {
       controls.addEventListener('unlock', exitScene);
       scene.add( controls.getObject() );
     }
-  })
-  
+  }
+  splash.addEventListener('click', splashFunction)
+
 
 circleArray = new Array(numCircles).fill(new THREE.Vector2(0, 0));
 intensityArray = new Array(numCircles).fill(0);

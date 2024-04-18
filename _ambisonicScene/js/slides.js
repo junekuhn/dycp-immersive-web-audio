@@ -1,7 +1,6 @@
 import "./init.js";
-import * as THREE from 'three';
 import { initAmbisonicScene, tick } from "./ambisonic.js";
-import { state, actions } from "./state.js";
+import { state } from "./state.js";
 import { initPositionalScene, renderPositionalScene } from "./positional.js";
 
 const welcome = document.querySelector("#welcome");
@@ -14,6 +13,7 @@ const continueButton = document.querySelector("#continue-button")
 
 const sceneOneButton = document.querySelector("#scene-one-button")
 const sceneTwoButton = document.querySelector("#scene-two-button")
+const sceneSelect = document.querySelector("#scene-select")
 
 const settingsIcon = document.querySelector("#settings-icon");
 const exitSettings = document.querySelector("#exit-settings");
@@ -38,9 +38,11 @@ const enterScene = (sceneName = null) => {
     }
 
     if(state.scene == "ambisonic") {
+        sceneSelect.value = 0;
         initAmbisonicScene()
         tick()
     } else if (state.scene == "positional") {
+        sceneSelect.value = 1;
         initPositionalScene()
         renderPositionalScene()
     }
@@ -62,12 +64,20 @@ continueButton.addEventListener('click', ()=> {
     changeSlide("scene");
 });
 
+//settings pane
 settingsIcon.addEventListener('click', () => {
     changeSlide("HOD")
 })
 settingsIcon.addEventListener('keydown', e => {
     if(e.code == "Space" || e.code == "Enter") {
         changeSlide("HOD") 
+    }
+})
+sceneSelect.addEventListener("change", e => {
+    if(e.target.value == 0) {
+        enterScene("ambisonic")
+    } else if (e.target.value == 1) {
+        enterScene("positional")
     }
 })
 

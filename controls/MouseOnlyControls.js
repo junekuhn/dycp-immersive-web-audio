@@ -34,12 +34,16 @@ class MouseOnlyControls extends EventDispatcher {
         this.movementEnabled = true;
         this.movingForward = false;
         this.distance = 0.05;
+		this.tabularMovement = false;
+		this.tabIndex = 0;
+		this.discretePositions = [];
 
 		this._onMouseMove = onMouseMove.bind( this );
 		this._onPointerlockChange = onPointerlockChange.bind( this );
 		this._onPointerlockError = onPointerlockError.bind( this );
         this._onMouseDown = onMouseDown.bind( this );
         this._onMouseUp = onMouseUp.bind( this );
+		this._onDoubleClick = onDblClick.bind( this );
 
 		this.connect();
 
@@ -52,6 +56,7 @@ class MouseOnlyControls extends EventDispatcher {
 		this.domElement.ownerDocument.addEventListener( 'pointerlockerror', this._onPointerlockError );
         this.domElement.ownerDocument.addEventListener( 'mousedown' , this._onMouseDown );
         this.domElement.ownerDocument.addEventListener( 'mouseup', this._onMouseUp );
+		this.domElement.ownerDocument.addEventListener( 'dblclick', this._onDoubleClick );
 
 	}
 
@@ -188,5 +193,24 @@ function onPointerlockError() {
 	console.error( 'THREE.MouseOnlyControls: Unable to use Pointer Lock API' );
 
 }
+
+function onDblClick (event) {
+
+	if(this.tabularMovement) {
+
+	  event.preventDefault();
+
+	  this.tabIndex++;
+
+	  if (this.tabIndex > this.discretePositions.length-1) {
+		  this.tabIndex = 0;
+	  }
+
+	  camera.position.copy ( this.discretePositions[ this.tabIndex ] );
+
+	} else {
+	  console.error("Set Discrete Positions First")
+	}
+  }
 
 export { MouseOnlyControls };

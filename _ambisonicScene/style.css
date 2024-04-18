@@ -185,6 +185,13 @@ p {
 
 a:visited, a:hover, a:active, a:link {
     color: white;
+    font-weight: 300;
+}
+
+.outbound-links {
+    font-size: 18px;
+    margin-left: 5%;
+    width: 50%;
 }
 
 @media only screen and (min-width: 1000px) {

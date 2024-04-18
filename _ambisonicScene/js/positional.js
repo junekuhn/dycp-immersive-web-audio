@@ -8,6 +8,9 @@ import { state, actions } from './state.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 
+import volumeFragmentShader from '../glsl/volumeFragment.glsl';
+import volumeVertexShader from '../glsl/volumeVertex.glsl'
+
 
 /**
  * Constants
@@ -22,17 +25,22 @@ const listenerPositions = [
     new THREE.Vector3(-3,5,3),
 ]
 const audioPositions = [
-    new THREE.Vector3(5,5,0),
-    new THREE.Vector3(-5,5,0),
-    new THREE.Vector3(0,5,5),
-    new THREE.Vector3(0,5,-5),
+    new THREE.Vector3(2,5,1),
+    new THREE.Vector3(3,5,-5),
+    new THREE.Vector3(4,5,-2),
+    new THREE.Vector3(-3,5,-5),
 ]
-const sounds = [];
+let sounds = [];
 
 let scene, camera,
-  controls, keyboardControls, touchControls, xbox;
+  controls, keyboardControls, touchControls, xbox,
+  materials = [], analysers = [],
+  enterScene, exitScene;
+
+const average = array => array.reduce((a, b) => a + b) / array.length;
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
+const hod = document.querySelector("#scene-info");
 const splash = document.querySelector("#play");
 
 export function initPositionalScene() {
@@ -53,9 +61,13 @@ export function initPositionalScene() {
   light.position.set( 0, 0.5, 1 ).normalize();
   scene.add( light );
 
-  const helper = new THREE.GridHelper( 1000, 10, 0xfff, 0xfff );
-  helper.position.y = 4;
+  const ambient = new THREE.AmbientLight( 0xffffff, 0.7 );
+  scene.add( ambient );
+
+  const helper = new THREE.GridHelper( 100, 20, 0xffffff, 0xffffff );
+  helper.position.y = 3;
   scene.add( helper );
+
 
   xbox = new GamepadAccessControls(camera);
   const updateUI = () => {
@@ -65,9 +77,8 @@ export function initPositionalScene() {
   window.addEventListener("gamepadconnected", updateUI);
 
 
-
-  const enterScene = () => {
-    splash.style.display = 'none';
+ enterScene = () => {
+    hod.style.display = 'none';
 
     if(sounds.length < 1) {
         // create the PositionalAudio object (passing in the listener)
@@ -75,9 +86,22 @@ export function initPositionalScene() {
             const sound = new THREE.PositionalAudio(listener) 
             sounds.push( sound );
 
-            const sphere = new THREE.SphereGeometry( 20, 32, 16 );
+            const analyser = new THREE.AudioAnalyser(sound)
+            analysers.push(analyser)
 
-            const material1 = new THREE.MeshPhongMaterial( { color: 0xffaa00, flatShading: true, shininess: 0 } );
+            const sphere = new THREE.SphereGeometry( 10, 32, 16 );
+
+            const material1 = new THREE.ShaderMaterial({
+              vertexShader: volumeVertexShader,
+              fragmentShader: volumeFragmentShader,
+              uniforms: {
+                volume: { value: 0 }
+              },
+              transparent: true,
+              side: THREE.FrontSide
+            })
+
+            materials.push(material1);
 
             const mesh1 = new THREE.Mesh( sphere, material1 );
             mesh1.position.set( soundPosition.x, soundPosition.y, soundPosition.z );
@@ -92,10 +116,20 @@ export function initPositionalScene() {
             
             mesh1.add( sound );
         })
+    } else {
+      sounds.map((sound, i) => {
+        const songElement = document.getElementById( `sample${i}` ); 
+        songElement.play();
+      })
     }
   }
-  const exitScene = () => {
-    splash.style.display = 'block';
+exitScene = () => {
+    hod.style.display = 'block';
+
+    sounds.map((sound, i) => {
+      const songElement = document.getElementById( `sample${i}` );
+      songElement.pause();
+    })
   }
   splash.addEventListener('click', () => {
     if(touchControls.enabled) {
@@ -193,6 +227,7 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 const clock = new THREE.Clock();
+let prevVolumes = [0,0,0,0];
 
 export function renderPositionalScene() 
 {
@@ -200,6 +235,17 @@ export function renderPositionalScene()
     keyboardControls.update();
     touchControls.update();
     xbox.update();
+
+    //analyse volume manually because three.js hasn't implemented this yet
+    sounds.map((sound, i) => {
+      analysers[i].analyser.getByteTimeDomainData(analysers[i].data)
+      const volumeValue = average(analysers[i].data) - 127;
+      const dist = volumeValue - prevVolumes[i];
+      materials[i].uniforms.volume.value = prevVolumes[i] + dist * 0.1;
+      prevVolumes[i] = prevVolumes[i] + dist * 0.1;
+    })
+
+
     
     // Render
     renderer.render(scene, camera)

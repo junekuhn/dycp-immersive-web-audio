@@ -46,6 +46,11 @@
         <div class="container">
             <h1 class="title">Info</h1>
         </div>
+        <div class="outbound-links">
+            <h3><a href="https://github.com/junekuhn/dycp-immersive-web-audio">Source</a></h3>
+            <h3><a href="https://discord.gg/MFDb2eRDU8">Discord</a></h3>
+            <h3><a href="https://junebug.codes">June's Website</a></h3>
+        </div>
         <section>
             <article>
                 <p>I’m a neurodivergent computational artist, looking to divest the sensorial wonders of immersive media from the directives of profit.</p>
@@ -76,14 +81,19 @@
                 </select>
             </div>
             <div>
-                Mouse Controls: Click to Move forward <br>
-                Arrow Key to look, Spacebar to move forward <br>
-                Touch Drag to look, touch box to move forward <br>
-                Joystick to look, A button to move forward 
+                Mouse Controls: Click to Move forward, double click to teleport <br>
+                Arrow Key to look, Spacebar to move forward, tab to teleport <br>
+                Touch Drag to look, touch box to move forward, double tap to teleport <br>
+                Joystick to look, A button to move forward, b to teleport
             </div>
             <div id="sofa">
                 Default SOFA file
             </div>
+            <label for="scene-select">Switch Scene</label>
+            <select id="scene-select">
+                <option value="0" selected>Ambisonic Soundfield</option>
+                <option value="1">3D Positional</option>
+            </select>
             <button class="black-button" id="exit-settings">Exit Settings</button>
         </div>
     </div>
