@@ -4,7 +4,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
     root: './scene/',
     publicDir: '../public/',
-    base: '/dycp-immerive-web-audio/',
+    base: '/dycp-immersive-web-audio/',
     server:
     {
         host: true, // Open to local network and display URL
