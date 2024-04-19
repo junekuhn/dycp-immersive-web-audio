@@ -3,26 +3,16 @@ vite
 modules
 
 What's left (MVP)
-    button press for forward movement
-    a sprite for this box
+    gamepad testing
+
+    url parameters?
 
     scene switcher
         switch in settings
         difficult, as you'd have to set everything up as a class etc to dispose
     switch the sounds in positional, don't love them
-    - replace ajax with fetch
-    - make sure mouse controls are how I want them
-    - loading screen
-    - touch controls
-        - hit testing
 
-
-
-other
-3d alt text / captioning
-typescript
-ambisonic audio class
-
+    test with screen reader
 
 
 # Ambisonics (3 dof)

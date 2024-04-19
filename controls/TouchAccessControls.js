@@ -1,6 +1,7 @@
 import {
     Vector3,
-    Euler
+    Euler,
+    ImageLoader
 } from 'three';
 
 const _euler = new Euler(0,0,0,'YXZ');
@@ -45,6 +46,7 @@ class TouchAccessControls {
     createHitBox() {
 
         const hitbox = this.domElement.ownerDocument.createElement('div');
+
         hitbox.id = "hitbox";
         this.domElement.ownerDocument.body.appendChild(hitbox);
 

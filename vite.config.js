@@ -2,9 +2,9 @@ import glsl from 'vite-plugin-glsl'
 import { defineConfig } from "vite";
 
 export default defineConfig({
-    root: '_ambisonicScene/',
+    root: './scene/',
     publicDir: '../public/',
-    base: '/dycp-immersive-web-audio/',
+    base: '/dycp-immerive-web-audio/',
     server:
     {
         host: true, // Open to local network and display URL

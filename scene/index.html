@@ -6,11 +6,13 @@
     <title>Testbed</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Exo">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Martel">
-  <script type="module" crossorigin src="/dycp-immerive-web-audio/assets/index-DJyxtEOE.js"></script>
-  <link rel="stylesheet" crossorigin href="/dycp-immerive-web-audio/assets/index-CNCJR_Fr.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
     <canvas class="webgl"></canvas>
+    <script type="module" src="./js/ambisonic.js"></script>
+    <script type="module" src="./js/positional.js"></script>
+    <script type="module" src="./js/slides.js"></script>
     <div class="slide" id="welcome">
         <div class="container">
             <h1 class="title">Immersive Web Audio</h1>
@@ -118,16 +120,16 @@
         <div class="loading-bar"></div>
     </div>
     <audio id="sample0" loop preload="auto" style="display: none">
-        <source src="/dycp-immerive-web-audio/assets/baselayer-CXwbK3aA.mp3" type="audio/mpeg">
+        <source src="./sounds/baselayer.mp3" type="audio/mpeg">
     </audio>
     <audio id="sample1" loop preload="auto" style="display: none">
-        <source src="/dycp-immerive-web-audio/assets/melody1-D9zAY1dL.mp3" type="audio/mpeg">
+        <source src="./sounds/melody1.mp3" type="audio/mpeg">
     </audio>
     <audio id="sample2" loop preload="auto" style="display: none">
-        <source src="/dycp-immerive-web-audio/assets/melody2-B97zHUwK.mp3" type="audio/mpeg">
+        <source src="./sounds/melody2.mp3" type="audio/mpeg">
     </audio>
     <audio id="sample3" loop preload="auto" style="display: none">
-        <source src="/dycp-immerive-web-audio/assets/bitsbobs-DlFzgfmx.mp3" type="audio/mpeg">
+        <source src="./sounds/bitsbobs.mp3" type="audio/mpeg">
     </audio>
 </body>
 </html>
