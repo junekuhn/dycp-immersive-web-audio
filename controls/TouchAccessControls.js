@@ -16,6 +16,8 @@ class TouchAccessControls {
         this.enabled = false;
         this.isLocked = false;
 
+        this.forwardMovementEnabled = false;
+
         this.touchX = 0;
         this.touchY = 0;
         this.previousTouchX = 0;
@@ -35,7 +37,7 @@ class TouchAccessControls {
 
         this.domElement.ownerDocument.addEventListener( 'touchstart', this._onTouchStart );
 
-        if(this.enabled) {
+        if(this.enabled && this.forwardMovementEnabled) {
             this.createHitBox();
         }
 
@@ -63,7 +65,7 @@ class TouchAccessControls {
 
     update() {
 
-        if(this.moveForward) {
+        if(this.moveForward && this.forwardMovementEnabled) {
             const direction = new Vector3();
             this.camera.getWorldDirection( direction );
       

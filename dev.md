@@ -3,16 +3,14 @@ vite
 modules
 
 What's left (MVP)
-    gamepad testing
-
-    url parameters?
+    make the whole website gamepad accessible
+        you could try to focus elements
+    mobile and tablet debugging
 
     scene switcher
         switch in settings
         difficult, as you'd have to set everything up as a class etc to dispose
-    switch the sounds in positional, don't love them
 
-    test with screen reader
 
 
 # Ambisonics (3 dof)

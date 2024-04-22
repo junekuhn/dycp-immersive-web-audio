@@ -14,7 +14,7 @@ class GamepadAccessControls {
           (navigator.getGamepads && navigator.getGamepads());
 
         this.camera = camera;
-        this.gamepadSpeed = 0.05;
+        this.gamepadSpeed = 0.02;
         this.ticking = false;
 
         this.minPolarAngle = 0;
@@ -35,6 +35,12 @@ class GamepadAccessControls {
         this.gamepads = [];
         this.prevRawGamepadTypes = [];
         this.prevTimestamps = [];
+
+        this.buttons = new Array(17).fill({pressed: false});
+        this.buttonsUp = [];
+
+        this.forwardMovementEnabled = false;
+        this.forwardSpeed = 0.04;
     
         this.init();
       }
@@ -61,6 +67,9 @@ class GamepadAccessControls {
 
       startPolling() {
         console.log('Controller Connected!');
+
+
+
         if (!this.ticking) {
           this.ticking = true;
           this.update();
@@ -88,6 +97,19 @@ class GamepadAccessControls {
             _euler.y -= this.right.x * this.gamepadSpeed;
             _euler.x -= this.right.y * this.gamepadSpeed;
             _euler.x = Math.max( Math.PI/2 - this.maxPolarAngle, Math.min( Math.PI/2 - this.minPolarAngle, _euler.x ) );
+          }
+
+          if (this.forwardMovementEnabled) {
+            const aButtonPressed = this.gamepads[0].buttons[0].pressed;
+            if (aButtonPressed){
+              const direction = new Vector3();
+              this.camera.getWorldDirection( direction );
+        
+              //neutralize y
+              direction.y = 0;
+        
+              this.camera.position.add( direction.multiplyScalar( this.forwardSpeed ) );
+            }
           }
     
           this.camera.quaternion.setFromEuler( _euler ); 
@@ -158,6 +180,20 @@ class GamepadAccessControls {
               rightY > this.SPACEMOUSE_THRESHOLD) {
             this.right.y = rightY;
           }
+          const buttonPressedArray = this.gamepads[pad].buttons
+
+          buttonPressedArray.map((button, i) => {
+            //look for a change of state to off 
+            //comparing previous to current
+            if(!button.pressed && this.buttons[i].pressed ) {
+              this.buttonsUp[i] = true;
+            } else {
+              this.buttonsUp[i] = false;
+            }
+          })
+  
+  
+          this.buttons = buttonPressedArray;
         }
       }
       

@@ -21,7 +21,7 @@ import intensityFragmentShader from '../glsl/intensityFragment.glsl'
 let sphereMat, circleArray, keyboardControls, 
   controls, touchControls, xbox;
 
-  const soundUrl = "./sounds/simulation_three.ogg";
+  const soundUrl = "./sounds/sample2.wav";
   const irUrl = "./IRs/ambisonic2binaural_filters/aalto2016_N1.wav";
   const ambiIrUrl = "./IRs/ambisonicRIRs/room_1_bf.wav";
   const imageUrl = "./images/arrow.png"
@@ -270,11 +270,15 @@ fontLoader.load('./fonts/Mukta_Bold.json',
 
 xbox = new GamepadAccessControls(camera);
 const gamepadElement = document.querySelector('#gamepads');
-const updateUI = () => {
-  gamepadElement.innerHTML = xbox.gamepads
-  console.log(xbox.gamepads)
+const updateUI = (flag) => {
+  if (flag) {
+    gamepadElement.innerHTML = "Gamepad Connected"
+  } else {
+    gamepadElement.innerHTML = "Gamepad Disconnected"
+  }
 }
-window.addEventListener("gamepadconnected", updateUI);
+window.addEventListener("gamepadconnected", () => updateUI(true));
+window.addEventListener("gamepaddisconnected", () => updateUI(false) );
 
 const toggleAudio = () => {
   if(context == null) {

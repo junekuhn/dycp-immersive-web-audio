@@ -54,6 +54,7 @@ export function initPositionalScene() {
   controls = new MouseOnlyControls(camera, document.body);
   keyboardControls = new KeyboardAccessControls(camera, document.body);
   touchControls = new TouchAccessControls(camera, document.body);
+  touchControls.forwardMovementEnabled = true;
 
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
     touchControls.enabled = true;
@@ -74,11 +75,17 @@ export function initPositionalScene() {
 
 
   xbox = new GamepadAccessControls(camera);
-  const updateUI = () => {
-    gamepadElement.innerHTML = xbox.gamepads
-    console.log(xbox.gamepads)
+  xbox.forwardMovementEnabled = true;
+  const gamepadElement = document.querySelector('#gamepads');
+  const updateUI = (flag) => {
+    if (flag) {
+      gamepadElement.innerHTML = "Gamepad Connected"
+    } else {
+      gamepadElement.innerHTML = "Gamepad Disconnected"
+    }
   }
-  window.addEventListener("gamepadconnected", updateUI);
+  window.addEventListener("gamepadconnected", () => updateUI(true));
+  window.addEventListener("gamepaddisconnected", () => updateUI(false) );
 
 
  enterScene = () => {
