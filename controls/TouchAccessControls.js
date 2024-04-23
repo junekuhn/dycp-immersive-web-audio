@@ -16,7 +16,13 @@ class TouchAccessControls {
         this.enabled = false;
         this.isLocked = false;
 
+        this.curTime, this.tapLen;
+        this.lastTap = 0;
+        this.timeout;
+
         this.forwardMovementEnabled = false;
+        this.tabularMovement = false;
+
 
         this.touchX = 0;
         this.touchY = 0;
@@ -34,23 +40,23 @@ class TouchAccessControls {
         this._onTouchMove = this.onTouchMove.bind( this );
         this._onTouchEnd = this.onTouchEnd.bind( this );
         this._onHitBoxEnd = this.onHitBoxEnd.bind( this );
+        // this._onDoubleTap = this.onDoubleTap.bind( this );
 
         this.domElement.ownerDocument.addEventListener( 'touchstart', this._onTouchStart );
-
-        if(this.enabled && this.forwardMovementEnabled) {
-            this.createHitBox();
-        }
-
+        // this.domElement.ownerDocument.addEventListener('touchend', this.onDoubleTap, { passive: false });
 
 
     }
 
-    createHitBox() {
+    createHitBoxes() {
 
         const hitbox = this.domElement.ownerDocument.createElement('div');
+        const pause = this.domElement.ownerDocument.createElement('div');
 
         hitbox.id = "hitbox";
+        pause.id = "pause";
         this.domElement.ownerDocument.body.appendChild(hitbox);
+        this.domElement.ownerDocument.body.appendChild(pause);
 
     }
 
@@ -81,11 +87,17 @@ class TouchAccessControls {
         if(this.isLocked) {
 
           //if in hitbox
-          if(event.target.id == "hitbox") {
+          if(event.target.id == "hitbox" ) {
 
             this.domElement.ownerDocument.addEventListener( 'touchend', this._onHitBoxEnd );
 
             this.moveForward = true;
+
+          } else if (event.target.id == "pause"){
+
+            this.domElement.ownerDocument.addEventListener( 'touchend', this._onHitBoxEnd );
+
+            this.isLocked = false;
 
           } else {
 
@@ -95,6 +107,7 @@ class TouchAccessControls {
               this.touchIdentifier = event.changedTouches[0].identifier;
               this.domElement.ownerDocument.addEventListener( 'touchmove', this._onTouchMove );
               this.domElement.ownerDocument.addEventListener( 'touchend', this._onTouchEnd );
+
               
           }
     
@@ -146,6 +159,43 @@ class TouchAccessControls {
       this.domElement.ownerDocument.removeEventListener( 'touchend', this._onHitBoxEnd );
 
     }
+    
+    setDoubleTap(callback) {
+
+      this.domElement.ownerDocument.addEventListener('touchend', 
+        (e) => this.onDoubleTap(e, callback),
+        { passive: false }
+      ); 
+      this.tabularMovement = true;
+
+    }
+
+    /* Based on this http://jsfiddle.net/brettwp/J4djY/*/
+    onDoubleTap (e, callback) {
+
+      //don't teleport if clicking on hitbox
+      if(e.target.id == "hitbox" || e.target.id == "pause") return;
+ 
+      this.curTime = new Date().getTime();
+      this.tapLen = this.curTime - this.lastTap;
+
+      if (this.tapLen < 500 && this.tapLen > 0) {
+
+        callback();
+        e.preventDefault();
+
+      } else {
+
+        this.timeout = setTimeout(() => {
+          clearTimeout(this.timeout);
+        }, 500);
+
+      }
+
+      this.lastTap = this.curTime;
+    
+     }
+  
 
 }
 

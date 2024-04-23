@@ -43,7 +43,7 @@ class MouseOnlyControls extends EventDispatcher {
 		this._onPointerlockError = onPointerlockError.bind( this );
         this._onMouseDown = onMouseDown.bind( this );
         this._onMouseUp = onMouseUp.bind( this );
-		this._onDoubleClick = onDblClick.bind( this );
+		this._onContextMenu = onContextMenu.bind( this );
 
 		this.connect();
 
@@ -56,7 +56,8 @@ class MouseOnlyControls extends EventDispatcher {
 		this.domElement.ownerDocument.addEventListener( 'pointerlockerror', this._onPointerlockError );
         this.domElement.ownerDocument.addEventListener( 'mousedown' , this._onMouseDown );
         this.domElement.ownerDocument.addEventListener( 'mouseup', this._onMouseUp );
-		this.domElement.ownerDocument.addEventListener( 'dblclick', this._onDoubleClick );
+		this.domElement.ownerDocument.addEventListener( 'dblclick', this.onDblClick );
+		this.domElement.ownerDocument.addEventListener( 'contextmenu' , this._onContextMenu );
 
 	}
 
@@ -67,6 +68,8 @@ class MouseOnlyControls extends EventDispatcher {
 		this.domElement.ownerDocument.removeEventListener( 'pointerlockerror', this._onPointerlockError );
         this.domElement.ownerDocument.removeEventListener( 'mousedown', this._onMouseDown );
         this.domElement.ownerDocument.removeEventListener( 'mouseup', this._onMouseUp );
+		this.domElement.ownerDocument.removeEventListener( 'dblclick', this.onDblClick );
+		this.domElement.ownerDocument.removeEventListener( 'oncontextmenu', this._onContextMenu )
 
 	}
 
@@ -103,6 +106,10 @@ class MouseOnlyControls extends EventDispatcher {
 
 	}
 
+	setDblClick(callback) {
+		window.addEventListener( 'dblclick' , (e) => this.onDblClick(e, callback));
+	}
+
 
 
 	lock() {
@@ -125,6 +132,13 @@ class MouseOnlyControls extends EventDispatcher {
 
         }
     }
+
+	onDblClick (e, callback) {
+		if (this.isLocked) {
+			e.preventDefault;
+			callback();
+		}
+	}
 
 }
 
@@ -194,23 +208,14 @@ function onPointerlockError() {
 
 }
 
-function onDblClick (event) {
 
-	if(this.tabularMovement) {
 
-	  event.preventDefault();
+  function onContextMenu(event) {
 
-	  this.tabIndex++;
-
-	  if (this.tabIndex > this.discretePositions.length-1) {
-		  this.tabIndex = 0;
-	  }
-
-	  camera.position.copy ( this.discretePositions[ this.tabIndex ] );
-
-	} else {
-	  console.error("Set Discrete Positions First")
+	if(this.isLocked === true) {
+		this.unlock();
 	}
+
   }
 
 export { MouseOnlyControls };

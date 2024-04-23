@@ -207,6 +207,18 @@ const loadingManager = new THREE.LoadingManager(
   }
   splash.addEventListener('click', splashFunction)
 
+  //the exception to keyboard controls
+  window.addEventListener('keydown', (e) => {
+    if(e.code === "Escape") {
+      exitScene();
+    }
+  })
+
+  window.addEventListener( 'touchstart', (e) => {
+    if(e.target.id == "pause") {
+      exitScene();
+    }
+  })
 
 circleArray = new Array(numCircles).fill(new THREE.Vector2(0, 0));
 intensityArray = new Array(numCircles).fill(0);

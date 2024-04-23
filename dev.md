@@ -1,11 +1,8 @@
-vite
 
-modules
 
 What's left (MVP)
-    make the whole website gamepad accessible
-        you could try to focus elements
-    mobile and tablet debugging
+
+    ambisonics don't work on mobile?
 
     scene switcher
         switch in settings

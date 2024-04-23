@@ -29,8 +29,8 @@ class KeyboardAccessControls {
         this.moveUp = false;
 
         this.tabularMovement = false;
-        this.discretePositions = [];
-        this.tabIndex = 0;
+        this.sceneActive = false;
+ 
 
 
         this.onKeyDown = function ( event ) {
@@ -50,13 +50,13 @@ class KeyboardAccessControls {
                 case 'KeyD': this.moveRight = true; break;
 
                 case 'Space': this.moveForward = true; break;
-
-                case 'Tab': this.nextPosition(event); break;
                   
 
 			    }
 
         }
+
+
 
         this.onKeyUp = function ( event ) {
 
@@ -75,6 +75,7 @@ class KeyboardAccessControls {
                 case 'KeyD': this.moveRight = false; break;
 
                 case 'Space': this.moveForward = false; break;
+
 
 			}
 
@@ -114,34 +115,6 @@ class KeyboardAccessControls {
 
         }
 
-        this.setDiscretePositions = function( positions ) {
-
-          //takes an array of Vector3's 
-
-          this.tabularMovement = true;
-          this.discretePositions = positions;
-
-        }
-
-        this.nextPosition = function(event) {
-
-          if(this.tabularMovement) {
-
-            event.preventDefault();
-
-            this.tabIndex++;
-
-            if (this.tabIndex > this.discretePositions.length-1) {
-                this.tabIndex = 0;
-            }
-      
-            camera.position.copy ( this.discretePositions[ this.tabIndex ] );
-
-          } else {
-            console.error("Set Discrete Positions First")
-          }
-        }
-
         this.dispose = function () {
 
           window.removeEventListener( 'keydown', _onKeyDown );
@@ -155,6 +128,25 @@ class KeyboardAccessControls {
         window.addEventListener( 'keydown', _onKeyDown );
 		    window.addEventListener( 'keyup', _onKeyUp );
 
+
+    }
+
+    setTab(callback) {
+
+      window.addEventListener( 'keydown' , (e) => this.onTab(e, callback));
+
+    }
+
+    onTab(e, callback) {
+
+      if(this.sceneActive) {
+        e.preventDefault();
+
+        switch(e.code) {
+          case 'Tab': callback(); break;
+        }
+  
+      }
 
     }
 }

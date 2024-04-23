@@ -52,7 +52,7 @@ h2 {
 }
 
 #settings {
-    width: 90%;
+    /* width: 90%; */
     max-width: 600px;
     border: 1px solid white;
     margin: auto;
@@ -125,8 +125,8 @@ h2 {
     right: 0;
     margin: auto;
     text-align: center;
-    min-width: 200px;
-    width: 300px;
+    min-width: 140px;
+    width: 140px;
     padding: 0px 10px 10px 10px;
     border-radius: 10px;
   }
@@ -193,6 +193,20 @@ hr {
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
+}
+
+#pause {
+    position: absolute;
+    z-index: 10;
+    /* background-color: transparent; */
+    right: 0px;
+    bottom: 0px;
+    width: 20%;
+    height: 15%;
+    background-image: url(./images/pause.png);
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat; 
 }
 
 /* #hitbox-sprite {

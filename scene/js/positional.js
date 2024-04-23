@@ -56,12 +56,33 @@ export function initPositionalScene() {
   touchControls = new TouchAccessControls(camera, document.body);
   touchControls.forwardMovementEnabled = true;
 
-  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-    touchControls.enabled = true;
+  const nextPosition = () => {
+
+    if(touchControls.tabularMovement) {
+
+      state.positionIndex++;
+
+      if (state.positionIndex > listenerPositions.length-1) {
+          state.positionIndex = 0;
+      }
+
+      camera.position.copy ( listenerPositions[ state.positionIndex ] );
+
+    } else {
+      console.error("Set Discrete Positions First")
+    }
   }
 
-  keyboardControls.setDiscretePositions(listenerPositions);
+  touchControls.setDoubleTap(nextPosition);
+  keyboardControls.setTab(nextPosition);
+  controls.setDblClick(nextPosition);
 
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    touchControls.enabled = true;
+    touchControls.createHitBoxes();
+  }
+
+  
   const light = new THREE.DirectionalLight( 0xffffff, 3 );
   light.position.set( 0, 0.5, 1 ).normalize();
   scene.add( light );
@@ -90,7 +111,7 @@ export function initPositionalScene() {
 
  enterScene = () => {
     hod.style.display = 'none';
-
+    keyboardControls.sceneActive = true;
     if(sounds.length < 1) {
         // create the PositionalAudio object (passing in the listener)
         audioPositions.map((soundPosition, i) => {
@@ -136,7 +157,7 @@ export function initPositionalScene() {
   }
 exitScene = () => {
     hod.style.display = 'block';
-
+    keyboardControls.sceneActive = false;
     sounds.map((sound, i) => {
       const songElement = document.getElementById( `sample${i}` );
       songElement.pause();
@@ -151,6 +172,19 @@ exitScene = () => {
       controls.addEventListener('lock', enterScene)
       controls.addEventListener('unlock', exitScene);
       scene.add( controls.getObject() );
+    }
+  })
+
+  //the exception to keyboard controls
+  window.addEventListener('keydown', (e) => {
+    if(e.code === "Escape") {
+      exitScene();
+    }
+  })
+
+  window.addEventListener( 'touchstart', (e) => {
+    if(e.target.id == "pause") {
+      exitScene();
     }
   })
 
@@ -198,34 +232,7 @@ exitScene = () => {
       scene.add(texts)
     }
   )
-
 }
-
-/* Based on this http://jsfiddle.net/brettwp/J4djY/*/
-function detectDoubleTapClosure() {
-    let lastTap = 0;
-    let timeout;
-    return function detectDoubleTap(event) {
-      const curTime = new Date().getTime();
-      const tapLen = curTime - lastTap;
-      if (tapLen < 500 && tapLen > 0) {
-        console.log('Double tapped!');
-        nextPosition();
-        event.preventDefault();
-      } else {
-        timeout = setTimeout(() => {
-          clearTimeout(timeout);
-        }, 500);
-      }
-      lastTap = curTime;
-    };
-  }
-  
-  /* Regex test to determine if user is on mobile */
-  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      document.body.addEventListener('touchend', detectDoubleTapClosure(), { passive: false });
-  }
-
 
 /**
  * Renderer
