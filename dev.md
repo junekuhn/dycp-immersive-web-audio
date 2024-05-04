@@ -3,10 +3,32 @@
 What's left (MVP)
 
     ambisonics don't work on mobile?
+        could be a chrome / brave issue
+
+    touch controls
+        if drag disable double tap
+        move forward - 1-finger hold / bottom third of screen / can be toggle or not
+        teleport - double tap / top 2/3 of screen 
+        exit - 1 finger double tap bottom of screen
+        in all, 1 finger up top
+        put in a slight opacity to show the difference
+        2 finger controls are still available for customization
+        swipe detection - I don't think this is going to work because drag is in use, unless you swipe at the bottom of the screen
+    
+        
+    instructions on scene load
+        dynamic add for positional stuff
+        test "press any key to continue" with screen reader
+        css
+        add to settings
 
     scene switcher
         switch in settings
         difficult, as you'd have to set everything up as a class etc to dispose
+
+    Sofa files
+
+    midi access controls
 
 
 

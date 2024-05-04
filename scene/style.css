@@ -33,6 +33,19 @@ h2 {
     padding: 10px;
 }
 
+h3 {
+    font-size: 18px;
+    font-family: "Exo";
+    font-weight: 100;
+    padding: 5px;
+}
+
+li {
+    list-style: none;
+    font-size: 14px;
+    font-family: "Exo";
+}
+
 .webgl
 {
     position: fixed;
@@ -61,6 +74,32 @@ h2 {
     flex-direction: column;
     padding: 20px;
     row-gap: 20px;
+}
+
+#instructions {
+    z-index: 999;
+    background-color: rgba(0,0,0,0.3);
+}
+
+#instructions-container {
+    max-width: 750px;
+    border: 1px solid white;
+    margin: auto;
+    padding: 20px;
+    background-color: black;
+    border-radius: 10px;
+}
+
+#flex-controls {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+
+#flex-controls > div {
+    flex-basis: 50%;
+    min-width: 200px;
 }
 
 .black-button {
@@ -189,7 +228,7 @@ hr {
     bottom: 0px;
     width: 20%;
     height: 15%;
-    background-image: url(./images/arrow.png);
+    background-image: url('./images/arrow.png');
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
@@ -203,7 +242,7 @@ hr {
     bottom: 0px;
     width: 20%;
     height: 15%;
-    background-image: url(./images/pause.png);
+    background-image: url('./images/pause.png');
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat; 

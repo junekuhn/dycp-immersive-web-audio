@@ -11,6 +11,7 @@ const info = document.querySelector("#info");
 const headphones = document.querySelector("#headphones");
 const continueButton = document.querySelector("#continue-button")
 const backButton = document.querySelector("#back")
+const instructions = document.querySelector("#instructions")
 
 const sceneOneButton = document.querySelector("#scene-one-button")
 const sceneTwoButton = document.querySelector("#scene-two-button")
@@ -19,6 +20,8 @@ const sceneInfo = document.querySelector("#scene-info")
 
 const settingsIcon = document.querySelector("#settings-icon");
 const exitSettings = document.querySelector("#exit-settings");
+
+
 
 
 
@@ -35,6 +38,7 @@ const enterScene = (sceneName = null) => {
     //hide previous slide
     document.querySelector(`#${state.slide}`).style.display = "none";
     sceneInfo.style.display = "block";
+    instructions.style.display = "block";
 
     if(sceneName) {
         state.scene = sceneName;
@@ -68,6 +72,13 @@ continueButton.addEventListener('click', ()=> {
 });
 backButton.addEventListener('click', () => {
     changeSlide("welcome")
+})
+
+instructions.addEventListener('click', (e) => {
+    instructions.style.display = "none";
+})
+instructions.addEventListener('keydown', (e) => {
+    instructions.style.display = "none";
 })
 
 //settings pane
