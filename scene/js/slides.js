@@ -20,8 +20,9 @@ const sceneInfo = document.querySelector("#scene-info")
 
 const settingsIcon = document.querySelector("#settings-icon");
 const exitSettings = document.querySelector("#exit-settings");
+const controlsTarget = document.querySelector("#controls-target")
 
-
+let firstEnter = true;
 
 
 
@@ -38,18 +39,35 @@ const enterScene = (sceneName = null) => {
     //hide previous slide
     document.querySelector(`#${state.slide}`).style.display = "none";
     sceneInfo.style.display = "block";
-    instructions.style.display = "block";
+
+    if(firstEnter) {
+        instructions.style.display = "flex";
+        firstEnter = false;
+    }
+
 
     if(sceneName) {
         state.scene = sceneName;
     }
 
     if(state.scene == "ambisonic") {
-        // sceneSelect.value = 0;
+
+        //add controls to settings
+        controlsTarget.appendChild(document.querySelector(".flex-controls").cloneNode(true));
+
+        //start Three.js
         initAmbisonicScene()
         tick()
+
     } else if (state.scene == "positional") {
-        // sceneSelect.value = 1;
+
+        // add all controls to settings
+        document.querySelectorAll(".flex-controls > div").forEach(div => {
+            div.style.display = "block";
+        })
+        controlsTarget.appendChild(document.querySelector(".flex-controls").cloneNode(true));
+
+        //start three.js
         initPositionalScene()
         renderPositionalScene()
     }
@@ -78,6 +96,9 @@ instructions.addEventListener('click', (e) => {
     instructions.style.display = "none";
 })
 instructions.addEventListener('keydown', (e) => {
+
+    if(e.code == "Tab") return; 
+
     instructions.style.display = "none";
 })
 

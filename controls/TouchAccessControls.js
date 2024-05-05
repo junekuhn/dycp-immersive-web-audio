@@ -44,19 +44,15 @@ class TouchAccessControls {
 
         this.domElement.ownerDocument.addEventListener( 'touchstart', this._onTouchStart );
         // this.domElement.ownerDocument.addEventListener('touchend', this.onDoubleTap, { passive: false });
-
+        this.divideScreen();
 
     }
 
-    createHitBoxes() {
+    divideScreen() {
 
         const hitbox = this.domElement.ownerDocument.createElement('div');
-        const pause = this.domElement.ownerDocument.createElement('div');
-
         hitbox.id = "hitbox";
-        pause.id = "pause";
         this.domElement.ownerDocument.body.appendChild(hitbox);
-        this.domElement.ownerDocument.body.appendChild(pause);
 
     }
 
@@ -93,13 +89,7 @@ class TouchAccessControls {
 
             this.moveForward = true;
 
-          } else if (event.target.id == "pause"){
-
-            this.domElement.ownerDocument.addEventListener( 'touchend', this._onHitBoxEnd );
-
-            this.isLocked = false;
-
-          } else {
+           } else {
 
               //set init touch for first finger only
               this.previousTouchY = event.changedTouches[0].clientY
@@ -160,10 +150,10 @@ class TouchAccessControls {
 
     }
     
-    setDoubleTap(callback) {
+    setDoubleTap(callback, hitboxCallback) {
 
       this.domElement.ownerDocument.addEventListener('touchend', 
-        (e) => this.onDoubleTap(e, callback),
+        (e) => this.onDoubleTap(e, callback, hitboxCallback),
         { passive: false }
       ); 
       this.tabularMovement = true;
@@ -171,17 +161,20 @@ class TouchAccessControls {
     }
 
     /* Based on this http://jsfiddle.net/brettwp/J4djY/*/
-    onDoubleTap (e, callback) {
+    onDoubleTap (e, callback, hitboxCallback) {
 
-      //don't teleport if clicking on hitbox
-      if(e.target.id == "hitbox" || e.target.id == "pause") return;
  
       this.curTime = new Date().getTime();
       this.tapLen = this.curTime - this.lastTap;
 
       if (this.tapLen < 500 && this.tapLen > 0) {
 
-        callback();
+        if(e.target.id =="hitbox") {
+          hitboxCallback();
+        } else {
+          callback();
+        }
+
         e.preventDefault();
 
       } else {

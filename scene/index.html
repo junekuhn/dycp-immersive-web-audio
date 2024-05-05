@@ -76,6 +76,7 @@
             <div tabindex="0" id="gamepads">
                 No Gamepads Connected
             </div>
+            <div id="controls-target"></div>
             <div tabindex="0" id="device">
                 <label for="controls-select">Controls Preference</label>
                 <select id="controls-select">
@@ -85,14 +86,11 @@
                     <option>Controller (Desktop Only)</option>
                 </select>
             </div>
-            <div tabindex="0">
-                Mouse Controls: Click to Move forward, double click to teleport <br>
-                Arrow Key to look, Spacebar to move forward, tab to teleport <br>
-                Touch Drag to look, touch box to move forward, double tap to teleport <br>
-                Joystick to look, A button to move forward, b to teleport
-            </div>
             <div tabindex="0" id="sofa">
                 Default SOFA file
+            </div>
+            <div>
+                To switch scenes, refresh page.
             </div>
             <!-- <label for="scene-select">Switch Scene</label>
             <select id="scene-select">
@@ -106,9 +104,10 @@
         <div id="instructions-container">
             <h1 tabindex="0">If you're new...</h1>
             <div id="scene-explainer"></div>
-            <div id="flex-controls">
+            <div class="flex-controls">
                 <div>
                     <h3>Looking Around</h3>
+                    <hr>
                     <ul>
                         <li>🖱️ Mouse Movement</li>
                         <li>⬆ Arrow Keys / WASD</li>
@@ -118,6 +117,7 @@
                 </div>
                 <div style="display: none;">
                     <h3>Moving Forward</h3>
+                    <hr>
                     <ul>
                         <li>🖱️ Click and Hold</li>
                         <li>⬆️ Spacebar</li>
@@ -127,6 +127,7 @@
                 </div>
                 <div style="display: none;">
                     <h3>Teleport</h3>
+                    <hr>
                     <ul>
                         <li>🖱️ Double Click</li>
                         <li>⬆️ Tab</li>
@@ -136,13 +137,14 @@
                 </div>
                 <div>
                     <h3>Exit</h3>
+                    <hr>
                     <ul>
                         <li>⬆️ Esc Key</li>
                         <li>📱 Double Tap Bottom of Screen</li>
                     </ul>
                 </div>
             </div>
-            <p>Click or Press a Key to Continue</p>
+            <p>Click or Press Any Key to Continue</p>
         </div>
     </div>
     <div id="scene-info" style="display: none;">

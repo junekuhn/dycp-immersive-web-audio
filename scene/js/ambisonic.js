@@ -214,11 +214,10 @@ const loadingManager = new THREE.LoadingManager(
     }
   })
 
-  window.addEventListener( 'touchstart', (e) => {
-    if(e.target.id == "pause") {
-      exitScene();
-    }
-  })
+  //do nothing if top, exit if bottom
+touchControls.setDoubleTap(()=>{}, () => {
+  exitScene();
+})
 
 circleArray = new Array(numCircles).fill(new THREE.Vector2(0, 0));
 intensityArray = new Array(numCircles).fill(0);

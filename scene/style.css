@@ -26,6 +26,10 @@ body
     color: white;
 }
 
+h1 {
+    font-family: "Martel";
+}
+
 h2 {
     font-size: 20px;
     font-family: "Exo";
@@ -37,13 +41,22 @@ h3 {
     font-size: 18px;
     font-family: "Exo";
     font-weight: 100;
-    padding: 5px;
+    padding: 8px;
+}
+
+p {
+    font-family: "Martel";
 }
 
 li {
     list-style: none;
     font-size: 14px;
     font-family: "Exo";
+}
+
+ul {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .webgl
@@ -90,16 +103,16 @@ li {
     border-radius: 10px;
 }
 
-#flex-controls {
+.flex-controls {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     padding: 20px;
 }
 
-#flex-controls > div {
+.flex-controls > div {
     flex-basis: 50%;
-    min-width: 200px;
+    min-width: 250px;
 }
 
 .black-button {
@@ -212,7 +225,7 @@ li {
 }
 
 hr {
-    border: 2px solid white;
+    border: 1px solid white;
 }
 
 #header {
@@ -226,12 +239,9 @@ hr {
     /* background-color: transparent; */
     left: 0px;
     bottom: 0px;
-    width: 20%;
-    height: 15%;
-    background-image: url('./images/arrow.png');
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
+    width: 100%;
+    height: 33%;
+    background-color: rgba(0,0,0,0.2);
 }
 
 #pause {

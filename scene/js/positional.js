@@ -56,60 +56,7 @@ export function initPositionalScene() {
   touchControls = new TouchAccessControls(camera, document.body);
   touchControls.forwardMovementEnabled = true;
 
-  const nextPosition = () => {
-
-    if(touchControls.tabularMovement) {
-
-      state.positionIndex++;
-
-      if (state.positionIndex > listenerPositions.length-1) {
-          state.positionIndex = 0;
-      }
-
-      camera.position.copy ( listenerPositions[ state.positionIndex ] );
-
-    } else {
-      console.error("Set Discrete Positions First")
-    }
-  }
-
-  touchControls.setDoubleTap(nextPosition);
-  keyboardControls.setTab(nextPosition);
-  controls.setDblClick(nextPosition);
-
-  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-    touchControls.enabled = true;
-    touchControls.createHitBoxes();
-  }
-
-  
-  const light = new THREE.DirectionalLight( 0xffffff, 3 );
-  light.position.set( 0, 0.5, 1 ).normalize();
-  scene.add( light );
-
-  const ambient = new THREE.AmbientLight( 0xffffff, 0.7 );
-  scene.add( ambient );
-
-  const helper = new THREE.GridHelper( 100, 20, 0xffffff, 0xffffff );
-  helper.position.y = 3;
-  scene.add( helper );
-
-
-  xbox = new GamepadAccessControls(camera);
-  xbox.forwardMovementEnabled = true;
-  const gamepadElement = document.querySelector('#gamepads');
-  const updateUI = (flag) => {
-    if (flag) {
-      gamepadElement.innerHTML = "Gamepad Connected"
-    } else {
-      gamepadElement.innerHTML = "Gamepad Disconnected"
-    }
-  }
-  window.addEventListener("gamepadconnected", () => updateUI(true));
-  window.addEventListener("gamepaddisconnected", () => updateUI(false) );
-
-
- enterScene = () => {
+  enterScene = () => {
     hod.style.display = 'none';
     keyboardControls.sceneActive = true;
     if(sounds.length < 1) {
@@ -163,6 +110,60 @@ exitScene = () => {
       songElement.pause();
     })
   }
+
+  const nextPosition = () => {
+
+    if(touchControls.tabularMovement) {
+
+      state.positionIndex++;
+
+      if (state.positionIndex > listenerPositions.length-1) {
+          state.positionIndex = 0;
+      }
+
+      camera.position.copy ( listenerPositions[ state.positionIndex ] );
+
+    } else {
+      console.error("Set Discrete Positions First")
+    }
+  }
+  //teleport if top, exit if bottom
+  touchControls.setDoubleTap(nextPosition, exitScene);
+  keyboardControls.setTab(nextPosition);
+  controls.setDblClick(nextPosition);
+
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    touchControls.enabled = true;
+  }
+
+  
+  const light = new THREE.DirectionalLight( 0xffffff, 3 );
+  light.position.set( 0, 0.5, 1 ).normalize();
+  scene.add( light );
+
+  const ambient = new THREE.AmbientLight( 0xffffff, 0.7 );
+  scene.add( ambient );
+
+  const helper = new THREE.GridHelper( 100, 20, 0xffffff, 0xffffff );
+  helper.position.y = 3;
+  scene.add( helper );
+
+
+  xbox = new GamepadAccessControls(camera);
+  xbox.forwardMovementEnabled = true;
+  const gamepadElement = document.querySelector('#gamepads');
+  const updateUI = (flag) => {
+    if (flag) {
+      gamepadElement.innerHTML = "Gamepad Connected"
+    } else {
+      gamepadElement.innerHTML = "Gamepad Disconnected"
+    }
+  }
+  window.addEventListener("gamepadconnected", () => updateUI(true));
+  window.addEventListener("gamepaddisconnected", () => updateUI(false) );
+
+
+
   splash.addEventListener('click', () => {
     if(touchControls.enabled) {
       touchControls.isLocked = true;
@@ -175,18 +176,13 @@ exitScene = () => {
     }
   })
 
-  //the exception to keyboard controls
+  //the exception to keyboard controls, 
   window.addEventListener('keydown', (e) => {
     if(e.code === "Escape") {
       exitScene();
     }
   })
 
-  window.addEventListener( 'touchstart', (e) => {
-    if(e.target.id == "pause") {
-      exitScene();
-    }
-  })
 
   // create an AudioListener and add it to the camera
   const listener = new THREE.AudioListener();
@@ -258,6 +254,8 @@ export function renderPositionalScene()
     sounds.map((sound, i) => {
       analysers[i].analyser.getByteTimeDomainData(analysers[i].data)
       const volumeValue = average(analysers[i].data) - 127;
+      
+      //slewing
       const dist = volumeValue - prevVolumes[i];
       materials[i].uniforms.volume.value = prevVolumes[i] + dist * 0.05;
       prevVolumes[i] = prevVolumes[i] + dist * 0.05 ;
