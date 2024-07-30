@@ -20,8 +20,12 @@ class TouchAccessControls {
         this.lastTap = 0;
         this.timeout;
 
+        this.cameraHeight = 0, this.prevCameraHeight = 0;
+
         this.forwardMovementEnabled = false;
         this.tabularMovement = false;
+
+        this.navigator = window.navigator;
 
 
         this.touchX = 0;
@@ -30,7 +34,7 @@ class TouchAccessControls {
         this.previousTouchY = 0;
         this.touchIdentifier;
         this.moveForward = false;
-        this.touchSpeed = 0.004;
+        this.touchSpeed = 0.003;
         this.forwardSpeed = 0.08;
 
         this.minPolarAngle = 0;
@@ -67,15 +71,34 @@ class TouchAccessControls {
 
     update() {
 
+      const direction = new Vector3();
+      this.camera.getWorldDirection( direction );
+
+
+        
+        //detect vertical zero crossing for vibration feedback
+        this.cameraHeight = direction.y 
+
+
+        if((this.cameraHeight > 0 && this.prevCameraHeight < 0) 
+          || (this.cameraHeight < 0 && this.prevCameraHeight > 0)) {
+            console.log("vibrate")
+            navigator.vibrate(75)
+          }
+
+        // set previous
+        this.prevCameraHeight = this.cameraHeight;
+
+
         if(this.moveForward && this.forwardMovementEnabled) {
-            const direction = new Vector3();
-            this.camera.getWorldDirection( direction );
-      
-            //neutralize y
-            direction.y = 0;
-      
-            this.camera.position.add( direction.multiplyScalar( this.forwardSpeed ) );
-        }
+
+
+          //neutralize y
+          direction.y = 0;
+    
+          this.camera.position.add( direction.multiplyScalar( this.forwardSpeed ) );
+      }
+        
     }
 
     onTouchStart(event) {
@@ -118,7 +141,7 @@ class TouchAccessControls {
 
     onTouchMove(event) {
 
-        for (const touch of event.changedTouches)
+      for (const touch of event.changedTouches)
         {
             if (touch.identifier == this.touchIdentifier)
             {
@@ -137,7 +160,7 @@ class TouchAccessControls {
 
         _euler.setFromQuaternion( this.camera.quaternion );
         _euler.y += this.touchX * this.touchSpeed;
-        _euler.x += this.touchY * this.touchSpeed;
+        _euler.x += this.touchY * this.touchSpeed * 0.5;
         _euler.x = Math.max( Math.PI/2 - this.maxPolarAngle, Math.min( Math.PI/2 - this.minPolarAngle, _euler.x ) );
   
         this.camera.quaternion.setFromEuler( _euler ); 

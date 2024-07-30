@@ -5,16 +5,54 @@ What's left (MVP)
     ambisonics don't work on mobile?
         could be a chrome / brave issue
 
-    debug touch controls on tablet / mobile
-    
+    vibration API
+        doesn't work on safari, safari ios
+    vibration on gamepad
+        doesn't work on firefox, safari ios
+        nonstandard and shouldn't be depended on
+    what should it be used for?
+        zero crossing of up/down looking
+            single buzz
+        moving too far away from experience
+            a periodical buzz - maybe a sonification instead
 
-    scene switcher
-        switch in settings
-        difficult, as you'd have to set everything up as a class etc to dispose
+
 
     Sofa files
+        debug converter to json
+        upload your own file?
 
     midi access controls
+        buy a midi controller with a joystick
+        midi access class
+
+    
+
+    xbox controller should navigate menu
+    gamepad should only look left / right
+    have different audio examples for both ambisonic and positional
+
+    positional - left/right only, or limit up/down
+    ambisonic - different sensitivity for up/down
+
+    reset view option - maybe a reset experience that doesn't refresh
+    a way of sonifiying your location in space
+
+    building a tutorial experience 
+    add the info screen into the experience a bit with 3D text or narration
+
+    two finger drag - look around 
+    two finger drag = one finger hold = move forward
+    teleport - four single taps
+    exit - disabled
+    two-finger hold maybe?
+
+    apple's direct touch may not apply towards websites
+
+
+
+
+
 
 
 

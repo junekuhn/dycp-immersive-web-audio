@@ -56,6 +56,8 @@ export function initPositionalScene() {
   touchControls = new TouchAccessControls(camera, document.body);
   touchControls.forwardMovementEnabled = true;
 
+  xbox = new GamepadAccessControls(camera);
+
   enterScene = () => {
     hod.style.display = 'none';
     keyboardControls.sceneActive = true;
@@ -131,6 +133,7 @@ exitScene = () => {
   touchControls.setDoubleTap(nextPosition, exitScene);
   keyboardControls.setTab(nextPosition);
   controls.setDblClick(nextPosition);
+  xbox.bButton = nextPosition;
 
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
     touchControls.enabled = true;
@@ -149,7 +152,7 @@ exitScene = () => {
   scene.add( helper );
 
 
-  xbox = new GamepadAccessControls(camera);
+
   xbox.forwardMovementEnabled = true;
   const gamepadElement = document.querySelector('#gamepads');
   const updateUI = (flag) => {

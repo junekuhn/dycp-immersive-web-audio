@@ -6,6 +6,7 @@ import { GamepadAccessControls } from "../../controls/GamepadAccessControls.js";
 import { TouchAccessControls } from "../../controls/TouchAccessControls.js";
 import { AmbisonicAudio } from "../../controls/AmbisonicAudio.js";
 import * as ambisonics from 'ambisonics';
+import { MIDIAccessControls } from "../../controls/MidiAccessControls.js";
 
 import { gsap } from 'gsap'
 
@@ -19,7 +20,7 @@ import intensityFragmentShader from '../glsl/intensityFragment.glsl'
 
 
 let sphereMat, circleArray, keyboardControls, 
-  controls, touchControls, xbox;
+  controls, touchControls, xbox, midi;
 
   const soundUrl = "./sounds/sample2.wav";
   const irUrl = "./IRs/ambisonic2binaural_filters/aalto2016_N1.wav";
@@ -32,7 +33,7 @@ let sphereMat, circleArray, keyboardControls,
   let numCircles = 30, intensityArray;
   let enterScene, exitScene
  
-export function initAmbisonicScene() {
+export async function initAmbisonicScene() {
 
   scene = new THREE.Scene()
   camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
@@ -46,6 +47,10 @@ export function initAmbisonicScene() {
  touchControls = new TouchAccessControls(camera, document.body);
 const splash = document.querySelector("#play");
 const hod = document.querySelector("#scene-info");
+
+ midi = new MIDIAccessControls(camera, document.body);
+const initMidi = async () => {await midi.init();}
+initMidi();
 
 if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
   touchControls.enabled = true;

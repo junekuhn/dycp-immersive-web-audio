@@ -14,11 +14,13 @@ class GamepadAccessControls {
           (navigator.getGamepads && navigator.getGamepads());
 
         this.camera = camera;
-        this.gamepadSpeed = 0.02;
+        this.gamepadSpeed = 0.01;
         this.ticking = false;
 
-        this.minPolarAngle = 0;
-        this.maxPolarAngle = Math.PI;
+        this.cameraHeight = 0, this.prevCameraHeight = 0;
+
+        this.minPolarAngle = Math.PI*1/4;
+        this.maxPolarAngle = Math.PI*3/4;
 
         //can be left or right
         this.joystickSelect = "left"
@@ -38,6 +40,9 @@ class GamepadAccessControls {
 
         this.buttons = new Array(17).fill({pressed: false});
         this.buttonsUp = [];
+
+        this.bButton;
+        this.previousB = 0;
 
         this.forwardMovementEnabled = false;
         this.forwardSpeed = 0.04;
@@ -84,35 +89,43 @@ class GamepadAccessControls {
       // Called externally
       update() {
         this.pollStatus();
+
+        const direction = new Vector3();
+        this.camera.getWorldDirection( direction );
+
+        this.cameraHeight = direction.y;
+
         if (this.ticking) {
           this.pollJoysticks();
+          this.pollButtons();
           //requestAnimationFrame(() => this.tick());
           _euler.setFromQuaternion( this.camera.quaternion );
         
           if(this.joystickSelect === "left") {
             _euler.y -= this.left.x * this.gamepadSpeed;
-            _euler.x -= this.left.y * this.gamepadSpeed;
+            _euler.x -= this.left.y * this.gamepadSpeed * 0.5;
             _euler.x = Math.max( Math.PI/2 - this.maxPolarAngle, Math.min( Math.PI/2 - this.minPolarAngle, _euler.x ) );
           } else if (this.joystickSelect === "right") {
             _euler.y -= this.right.x * this.gamepadSpeed;
-            _euler.x -= this.right.y * this.gamepadSpeed;
+            _euler.x -= this.right.y * this.gamepadSpeed * 0.5;
             _euler.x = Math.max( Math.PI/2 - this.maxPolarAngle, Math.min( Math.PI/2 - this.minPolarAngle, _euler.x ) );
           }
 
-          if (this.forwardMovementEnabled) {
-            const aButtonPressed = this.gamepads[0].buttons[0].pressed;
-            if (aButtonPressed){
-              const direction = new Vector3();
-              this.camera.getWorldDirection( direction );
-        
-              //neutralize y
-              direction.y = 0;
-        
-              this.camera.position.add( direction.multiplyScalar( this.forwardSpeed ) );
+
+          //detect zero crossing for vibration
+          if((this.cameraHeight > 0 && this.prevCameraHeight < 0) 
+            || (this.cameraHeight < 0 && this.prevCameraHeight > 0)) {
+              console.log("vibrate")
+              console.log(this.gamepads[0].vibrationActuator)
+              this.gamepads[0].vibrationActuator.playEffect("dual-rumble", {
+                startDelay: 0,
+                duration: 100,
+                weakMagnitude: 1.0,
+                strongMagnitude: 1.0,
+              });
             }
-          }
-    
           this.camera.quaternion.setFromEuler( _euler ); 
+          this.prevCameraHeight = this.cameraHeight;
       
         }
       }
@@ -155,11 +168,11 @@ class GamepadAccessControls {
         
         if (this.gamepads[pad]) {
           
-          let leftX  = this.gamepads[pad].axes[0]; // Pan  X || Left X
-          let leftY  = this.gamepads[pad].axes[1]; // Pan  Y || Left Y
-          let rightX  = this.gamepads[pad].axes[2]; // Pan  Z || Right X
+          let leftX  = this.gamepads[pad].axes[0];
+          let leftY  = this.gamepads[pad].axes[1]; 
+          let rightX  = this.gamepads[pad].axes[2]; 
           
-          let rightY = this.gamepads[pad].axes[3]; // Roll X || Right Y
+          let rightY = this.gamepads[pad].axes[3]; 
           
           if (leftX < -this.SPACEMOUSE_THRESHOLD ||
               leftX > this.SPACEMOUSE_THRESHOLD) {
@@ -180,20 +193,70 @@ class GamepadAccessControls {
               rightY > this.SPACEMOUSE_THRESHOLD) {
             this.right.y = rightY;
           }
-          const buttonPressedArray = this.gamepads[pad].buttons
 
-          buttonPressedArray.map((button, i) => {
-            //look for a change of state to off 
-            //comparing previous to current
-            if(!button.pressed && this.buttons[i].pressed ) {
-              this.buttonsUp[i] = true;
-            } else {
-              this.buttonsUp[i] = false;
-            }
-          })
-  
-  
-          this.buttons = buttonPressedArray;
+        }
+      }
+
+      pollButtons() {
+
+        const buttonPressedArray = this.gamepads[0].buttons
+        const dPadUp = 12, dPadDown = 13, dPadLeft = 14, dPadRight = 15;
+        const direction = new Vector3();
+        this.camera.getWorldDirection( direction );
+
+        buttonPressedArray.map((button, i) => {
+          //look for a change of state to off 
+          //comparing previous to current
+          if(!button || !this.buttons)
+
+          if(!button.pressed && this.buttons[i].pressed ) {
+            this.buttonsUp[i] = true;
+          } else {
+            this.buttonsUp[i] = false;
+          }
+        })
+
+
+        this.buttons = buttonPressedArray;
+        let currentButtons = this.gamepads[0].buttons;
+
+        if (this.forwardMovementEnabled) {
+          const aButtonPressed = currentButtons[0].pressed;
+          if (aButtonPressed){
+
+      
+            //neutralize y
+            direction.y = 0;
+      
+            this.camera.position.add( direction.multiplyScalar( this.forwardSpeed ) );
+          }
+
+          //teleport B button if previous was 0
+          if(currentButtons[1].pressed && this.previousB == 0) {
+
+            this.bButton();
+            this.previousB = 1;
+
+          } else if (!currentButtons[1].pressed) {
+
+            this.previousB = 0;
+
+          }
+
+          // D Pad actions
+          if(currentButtons[dPadUp].pressed) {
+            this.left.y = -1;
+          } else if (currentButtons[dPadDown].pressed) {
+            this.left.y = 1;
+          } else if (currentButtons[dPadLeft].pressed) {
+            this.left.x = -1;
+          } else if (currentButtons[dPadRight].pressed) {
+            this.left.x = 1;
+          }
+
+
+
+
         }
       }
       
