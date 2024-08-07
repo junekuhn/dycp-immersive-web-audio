@@ -19,14 +19,18 @@ class MIDIAccessControls {
 
         this.camera = camera;
         this.domElement = domElement;
-        this.lookSpeed = 0.01;
-        this.moveSpeed = 0.1;
+        this.lookSpeed = 0.03;
+        this.moveSpeed = 0.02;
         this.cameraHeight  = 0;
         this.prevCameraHeight = 0;
 
         this.move = new Vector2(0,0);
 
         this.forwardMovementEnabled = false;
+        this.moveForward = false;
+
+        this.minPolarAngle = 0;
+        this.maxPolarAngle = Math.PI;
     }
 
     // Initialize the MIDI system
@@ -98,6 +102,17 @@ class MIDIAccessControls {
     }
 
     update() {
+
+        //lookspeed has to be calculated here
+        _euler.setFromQuaternion( this.camera.quaternion );
+        _euler.y += this.move.x * this.moveSpeed;
+        _euler.x += this.move.y * this.moveSpeed * 0.5;
+        _euler.x = Math.max( Math.PI/2 - this.maxPolarAngle, Math.min( Math.PI/2 - this.minPolarAngle, _euler.x ) );
+
+  
+        this.camera.quaternion.setFromEuler( _euler ); 
+
+    
         const direction = new Vector3();
         this.camera.getWorldDirection( direction );
 
@@ -127,38 +142,54 @@ class MIDIAccessControls {
             if(message.data[0] == 176) {
                 switch (message.data[1]) {
                     case 111:
-                        //tab
+                        //up
                         this.move.y = parseFloat(message.data[2]) / 128
                         break;
                     case 112:
+                        // up right
                         this.move.y = parseFloat(message.data[2]) / 128
-                        this.move.x = parseFloat(message.data[2]) / 128
+                        this.move.x = -parseFloat(message.data[2]) / 128
                         break;
                     case 113:
-                        this.move.x = parseFloat(message.data[2]) / 128
+                        // right
+                        this.move.x = -parseFloat(message.data[2]) / 128
                         break;
+                    case 114:
+                        // down right
+                        this.move.y = -parseFloat(message.data[2]) / 128
+                        this.move.x = -parseFloat(message.data[2]) / 128
                     case 115:
+                        //down 
+                        this.move.y = -parseFloat(message.data[2]) / 128;
                         break;
+                    case 116:
+                        // down left
+                        this.move.y = -parseFloat(message.data[2]) / 128;
+                        this.move.x = -parseFloat(message.data[2]) / 128;
                     case 117:
+                        //left
+                        this.move.x = parseFloat(message.data[2]) / 128;
                         break;
+                    case 118:
+                        // up left 
+                        this.move.y = parseFloat(message.data[2]) / 128;
+                        this.move.x = parseFloat(message.data[2]) / 128;
+                        break;
+                    case 21:
+                        // left button - move
+                        this.moveForward = !this.moveForward;
+                    case 22:
+                        // right button - next position
+
                     default:
                         break;
     
                 }
 
-                console.log(this.move)
             }
-
-
-
-    
-            _euler.setFromQuaternion( this.camera.quaternion );
-            _euler.y += this.move.x * this.moveSpeed;
-            _euler.x += this.move.y * this.moveSpeed * 0.5;
-            _euler.x = Math.max( Math.PI/2 - this.maxPolarAngle, Math.min( Math.PI/2 - this.minPolarAngle, _euler.x ) );
-      
-            this.camera.quaternion.setFromEuler( _euler ); 
     }
+
+
 
     onTab(e, callback) {
         //for setting remotely

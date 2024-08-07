@@ -27,5 +27,17 @@ Big Questions:
 4. What other ambisonics features would be good to showcase?
 5. How do I illustrate the Tab metaphor better
     a. maybe something with a path that you travel along
-6. 
+
+Before I work on this
+
+1. Midi Access Controls
+2. see if midi / xbox can navigate menu - false, nothing can simulate a tab focus
+3. teleport to right click, two finger double tap / hold? no right click 
+4. look again at sofa file conversion
+5. why doesn't ambisonics work on mobile?
+6. reset experience option
+
+Other things
+1. 3d Alt Text
+
 

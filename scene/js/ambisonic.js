@@ -48,9 +48,8 @@ export async function initAmbisonicScene() {
 const splash = document.querySelector("#play");
 const hod = document.querySelector("#scene-info");
 
- midi = new MIDIAccessControls(camera, document.body);
-const initMidi = async () => {await midi.init();}
-initMidi();
+midi = new MIDIAccessControls(camera, document.body);
+midi.init();
 
 if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
   touchControls.enabled = true;
@@ -387,15 +386,13 @@ export function tick() {
     keyboardControls.update();
     xbox.update();
     touchControls.update();
+    midi.update();
 
-    if(controls.isLocked) {
+    if(rotator) {
         euler.setFromQuaternion(camera.quaternion);
-        rotator.yaw = -euler.y * 180 / Math.PI;
+        rotator.yaw = euler.y * 180 / Math.PI;
         rotator.pitch = euler.x * 180 / Math.PI;
         rotator.updateRotMtx();
-
-    
-
     }
 
     if(analyser) {

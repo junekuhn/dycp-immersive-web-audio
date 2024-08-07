@@ -198,7 +198,6 @@ class GamepadAccessControls {
       }
 
       pollButtons() {
-
         const buttonPressedArray = this.gamepads[0].buttons
         const dPadUp = 12, dPadDown = 13, dPadLeft = 14, dPadRight = 15;
         const direction = new Vector3();
@@ -242,6 +241,8 @@ class GamepadAccessControls {
             this.previousB = 0;
 
           }
+
+          console.log(currentButtons)
 
           // D Pad actions
           if(currentButtons[dPadUp].pressed) {

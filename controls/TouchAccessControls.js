@@ -44,9 +44,11 @@ class TouchAccessControls {
         this._onTouchMove = this.onTouchMove.bind( this );
         this._onTouchEnd = this.onTouchEnd.bind( this );
         this._onHitBoxEnd = this.onHitBoxEnd.bind( this );
+        this._onContextMenu = this.onContextMenu.bind( this );
         // this._onDoubleTap = this.onDoubleTap.bind( this );
 
         this.domElement.ownerDocument.addEventListener( 'touchstart', this._onTouchStart );
+        this.domElement.ownerDocument.addEventListener( 'contextmenu', this._onContextMenu )
         // this.domElement.ownerDocument.addEventListener('touchend', this.onDoubleTap, { passive: false });
         this.divideScreen();
 
@@ -178,7 +180,11 @@ class TouchAccessControls {
       this.domElement.ownerDocument.addEventListener('touchend', 
         (e) => this.onDoubleTap(e, callback, hitboxCallback),
         { passive: false }
-      ); 
+      );
+      this.domElement.ownerDocument.addEventListener('contextmenu', 
+        (e) => this.onContextMenu(e, callback, hitboxCallback),
+        { passive: false }
+      );  
       this.tabularMovement = true;
 
     }
@@ -211,6 +217,19 @@ class TouchAccessControls {
       this.lastTap = this.curTime;
     
      }
+
+
+     onContextMenu(e, callback, hitboxCallback) {
+      if(e.target.id =="hitbox") {
+        hitboxCallback();
+      } else {
+        callback();
+      }
+
+      e.preventDefault();
+     }
+
+
   
 
 }

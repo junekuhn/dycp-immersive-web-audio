@@ -24,7 +24,12 @@ What's left (MVP)
 
     midi access controls
         buy a midi controller with a joystick
-        midi access class
+        x/y controls
+        buttons for teleport, move forward
+        a place where you can map midi interfaces
+
+        you can't use js to control focus, so controlling the menu with any controller is kind of out of the question
+        
 
     
 
@@ -38,16 +43,14 @@ What's left (MVP)
     reset view option - maybe a reset experience that doesn't refresh
     a way of sonifiying your location in space
 
-    building a tutorial experience 
-    add the info screen into the experience a bit with 3D text or narration
-
     two finger drag - look around 
     two finger drag = one finger hold = move forward
     teleport - four single taps
     exit - disabled
     two-finger hold maybe?
 
-    apple's direct touch may not apply towards websites
+Midi controls
+
 
 
 
