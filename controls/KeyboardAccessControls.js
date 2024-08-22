@@ -9,6 +9,7 @@ const _lookDirection = new Vector3();
 const _spherical = new Spherical();
 const _target = new Vector3();
 const _euler = new Euler( 0, 0, 0, 'YXZ' );
+const _vector = new Vector3();
 
 class KeyboardAccessControls {
 
@@ -23,13 +24,14 @@ class KeyboardAccessControls {
         this.minPolarAngle = 0;
         this.maxPolarAngle = Math.PI;
         this.moveDown = false;
-        this.moveForward = false;
+        this.moveForwardEnabled = false;
         this.moveLeft = false;
         this.moveRight = false;
         this.moveUp = false;
 
         this.tabularMovement = false;
         this.sceneActive = false;
+        this.elevationControls = true;
  
 
 
@@ -38,18 +40,22 @@ class KeyboardAccessControls {
             switch(event.code) {
 
                 case 'ArrowUp':
-                case 'KeyW': this.moveUp = true; break;
+                case 'KeyW': 
+                if(this.elevationControls) this.moveUp = true; 
+                break;
 
                 case 'ArrowLeft':
                 case 'KeyA': this.moveLeft = true; break;
 
                 case 'ArrowDown':
-                case 'KeyS': this.moveDown = true; break;
+                case 'KeyS': 
+                if (this.elevationControls) this.moveDown = true; 
+                break;
 
                 case 'ArrowRight':
                 case 'KeyD': this.moveRight = true; break;
 
-                case 'Space': this.moveForward = true; break;
+                case 'Space': this.moveForwardEnabled = true; break;
                   
 
 			    }
@@ -63,18 +69,22 @@ class KeyboardAccessControls {
             switch(event.code) {
 
                 case 'ArrowUp':
-                case 'KeyW': this.moveUp = false; break;
+                case 'KeyW': 
+                if(this.elevationControls) this.moveUp = false; 
+                break;
 
                 case 'ArrowLeft':
                 case 'KeyA': this.moveLeft = false; break;
 
                 case 'ArrowDown':
-                case 'KeyS': this.moveDown = false; break;
+                case 'KeyS': 
+                if (this.elevationControls) this.moveDown = false; 
+                break;
 
                 case 'ArrowRight':
                 case 'KeyD': this.moveRight = false; break;
 
-                case 'Space': this.moveForward = false; break;
+                case 'Space': this.moveForwardEnabled = false; break;
 
 
 			}
@@ -101,15 +111,9 @@ class KeyboardAccessControls {
 
             camera.quaternion.setFromEuler( _euler ); 
 
-            if(this.moveForward) {
+            if(this.moveForwardEnabled) {
 
-              const direction = new Vector3();
-              this.camera.getWorldDirection( direction );
-
-              //neutralize y
-              direction.y = 0;
-
-              camera.position.add( direction.multiplyScalar( this.moveSpeed ) );
+              this.moveForward(this.moveSpeed);
 
             }
 
@@ -143,11 +147,26 @@ class KeyboardAccessControls {
         e.preventDefault();
 
         switch(e.code) {
-          case 'Tab': callback(); break;
+          case 'Tab': callback(e); break;
         }
   
       }
 
+    }
+
+    getDirection( v ) {
+
+      return v.set( 0, 0, - 1 ).applyQuaternion( this.camera.quaternion );
+  
+    }
+
+    moveForward(distance) {
+      //afaik the best algorithm is cross product
+      const _direction = new Vector3();
+      _direction.setFromMatrixColumn( this.camera.matrix, 0 );
+      _direction.crossVectors( this.camera.up, _direction );
+
+      this.camera.position.addScaledVector( _direction, distance );
     }
 }
 

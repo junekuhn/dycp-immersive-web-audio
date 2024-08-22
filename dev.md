@@ -2,19 +2,17 @@
 
 What's left (MVP)
 
-    ambisonics don't work on mobile?
-        could be a chrome / brave issue
 
-    vibration API
-        doesn't work on safari, safari ios
-    vibration on gamepad
-        doesn't work on firefox, safari ios
-        nonstandard and shouldn't be depended on
-    what should it be used for?
-        zero crossing of up/down looking
-            single buzz
-        moving too far away from experience
-            a periodical buzz - maybe a sonification instead
+7. shift-tab goes back
+8. barriers to prevent you moving too far
+9. the three.js script should be better organized, it feels really clunky at the moment
+    going to look into the game script
+10. what's going on with the white blurb changing position? it shouldn't
+11. can I detect a swipe from left to right? or have html dummy elements that advance the page along?
+12. any sonifications
+13. record voiceover
+14. record trampbunny tracks
+15. can I get a basic scene description read out for a 3D object?
 
 
 
@@ -22,34 +20,9 @@ What's left (MVP)
         debug converter to json
         upload your own file?
 
-    midi access controls
-        buy a midi controller with a joystick
-        x/y controls
-        buttons for teleport, move forward
-        a place where you can map midi interfaces
-
-        you can't use js to control focus, so controlling the menu with any controller is kind of out of the question
         
 
-    
 
-    xbox controller should navigate menu
-    gamepad should only look left / right
-    have different audio examples for both ambisonic and positional
-
-    positional - left/right only, or limit up/down
-    ambisonic - different sensitivity for up/down
-
-    reset view option - maybe a reset experience that doesn't refresh
-    a way of sonifiying your location in space
-
-    two finger drag - look around 
-    two finger drag = one finger hold = move forward
-    teleport - four single taps
-    exit - disabled
-    two-finger hold maybe?
-
-Midi controls
 
 
 
@@ -178,3 +151,47 @@ I need a 2D array to send to the shader
 
 I think I discovered that because the circle is inside out I have reverse the equation
 the convolver helped, and it works somehow
+
+# archive
+
+    ambisonics don't work on mobile?
+        could be a chrome / brave issue
+
+    vibration API
+        doesn't work on safari, safari ios
+    vibration on gamepad
+        doesn't work on firefox, safari ios
+        nonstandard and shouldn't be depended on
+    what should it be used for?
+        zero crossing of up/down looking
+            single buzz
+        moving too far away from experience
+
+
+    midi access controls
+        buy a midi controller with a joystick
+        x/y controls
+        buttons for teleport, move forward
+        a place where you can map midi interfaces
+
+        you can't use js to control focus, so controlling the menu with any controller is kind of out of the question
+
+            
+
+    xbox controller should navigate menu
+    gamepad should only look left / right
+    have different audio examples for both ambisonic and positional
+
+    positional - left/right only, or limit up/down
+    ambisonic - different sensitivity for up/down
+
+    reset view option - maybe a reset experience that doesn't refresh
+    a way of sonifiying your location in space
+
+    two finger drag - look around 
+    two finger drag = one finger hold = move forward
+    teleport - four single taps
+    exit - disabled
+    two-finger hold maybe?
+
+Midi controls

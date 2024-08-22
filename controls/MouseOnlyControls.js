@@ -34,9 +34,6 @@ class MouseOnlyControls extends EventDispatcher {
         this.movementEnabled = true;
         this.movingForward = false;
         this.distance = 0.05;
-		this.tabularMovement = false;
-		this.tabIndex = 0;
-		this.discretePositions = [];
 
 		this._onMouseMove = onMouseMove.bind( this );
 		this._onPointerlockChange = onPointerlockChange.bind( this );
@@ -96,10 +93,7 @@ class MouseOnlyControls extends EventDispatcher {
 		// move forward parallel to the xz-plane
 		// assumes camera.up is y-up
 
-		const camera = this.camera;
-
 		_vector.setFromMatrixColumn( camera.matrix, 0 );
-
 		_vector.crossVectors( camera.up, _vector );
 
 		camera.position.addScaledVector( _vector, distance );

@@ -31,6 +31,10 @@ const audioPositions = [
     new THREE.Vector3(-3,5,-5),
 ]
 let sounds = [];
+let playerBounds = {
+  min: new THREE.Vector2(-15, -15),
+  max: new THREE.Vector2(15, 15)
+}
 
 let scene, camera,
   controls, keyboardControls, touchControls, xbox,
@@ -55,6 +59,7 @@ export function initPositionalScene() {
   keyboardControls = new KeyboardAccessControls(camera, document.body);
   touchControls = new TouchAccessControls(camera, document.body);
   touchControls.forwardMovementEnabled = true;
+  keyboardControls.elevationControls = false;
 
   xbox = new GamepadAccessControls(camera);
 
@@ -113,14 +118,21 @@ exitScene = () => {
     })
   }
 
-  const nextPosition = () => {
+  const nextPosition = (e) => {
 
     if(touchControls.tabularMovement) {
 
-      state.positionIndex++;
+      if(e.shiftKey) {
+        state.positionIndex--;
+      } else {
+        state.positionIndex++;
+      }
+
 
       if (state.positionIndex > listenerPositions.length-1) {
           state.positionIndex = 0;
+      } else if (state.positionIndex < 0) {
+          state.positionIndex = listenerPositions.length-1;
       }
 
       camera.position.copy ( listenerPositions[ state.positionIndex ] );
@@ -252,6 +264,12 @@ export function renderPositionalScene()
     keyboardControls.update();
     touchControls.update();
     xbox.update();
+
+    //bounds checking
+    if(camera.position.x < playerBounds.min.x) camera.position.x = playerBounds.min.x;
+    if(camera.position.x > playerBounds.max.x) camera.position.x = playerBounds.max.x;
+    if(camera.position.z < playerBounds.min.y) camera.position.z = playerBounds.min.y;
+    if(camera.position.z > playerBounds.max.y) camera.position.z = playerBounds.max.y;
 
     //analyse volume manually because three.js hasn't implemented this yet
     sounds.map((sound, i) => {
