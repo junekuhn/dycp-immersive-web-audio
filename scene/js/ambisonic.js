@@ -105,9 +105,9 @@ initAmbisonicScene.initAmbisonics = (e) => {
   // connect graph
   convolver.out.connect(converter.in);
   converter.out.connect(mirror.in);
+  mirror.out.connect(analyser.in);
     mirror.out.connect(rotator.in);
     rotator.out.connect(decoder.in);
-    rotator.out.connect(analyser.in);
     decoder.out.connect(gainOut);
     gainOut.connect(context.destination);
   
@@ -240,6 +240,7 @@ sphereMat = new THREE.RawShaderMaterial({
   side: THREE.BackSide,
 })
 const intensityMesh = new THREE.Mesh(sphereGeom, sphereMat);
+intensityMesh.rotation.y = Math.PI/2;
 scene.add(intensityMesh);
 
 //font
@@ -400,6 +401,7 @@ export function tick() {
       analyser.updateBuffers();
       const params = analyser.computeIntensity();
 
+      console.log(params[2])
       intensityArray.shift();
       intensityArray.push(Math.log(params[2]) / (-20))
       sphereMat.uniforms.uIntensity.value = intensityArray;

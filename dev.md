@@ -3,16 +3,21 @@
 What's left (MVP)
 
 
-7. shift-tab goes back
-8. barriers to prevent you moving too far
+7. shift-tab goes back - done
+8. barriers to prevent you moving too far - done
 9. the three.js script should be better organized, it feels really clunky at the moment
-    going to look into the game script
-10. what's going on with the white blurb changing position? it shouldn't
+    going to look into the game script - done
+10. what's going on with the white blurb changing position? it shouldn't - done
 11. can I detect a swipe from left to right? or have html dummy elements that advance the page along?
+    yes, tabindex allows you to access html outside the canvas
+    you can manually change focus with javascript
 12. any sonifications
+    elevation sensing
+    navigation sensing (look over icad proceedings)
 13. record voiceover
 14. record trampbunny tracks
 15. can I get a basic scene description read out for a 3D object?
+    using html, yes I'm sure
 
 
 

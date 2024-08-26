@@ -1,10 +1,13 @@
 import {
     Vector3,
     Euler,
-    ImageLoader
+    ImageLoader,
+    Vector2
 } from 'three';
 
 const _euler = new Euler(0,0,0,'YXZ');
+const _touchCoords = new Vector2(0,0);
+const _prevTouchCoords = new Vector2(0,0);
 
 class TouchAccessControls {
 
@@ -22,18 +25,12 @@ class TouchAccessControls {
 
         this.cameraHeight = 0, this.prevCameraHeight = 0;
 
-        this.forwardMovementEnabled = false;
+        this.moveForwardEnabled = false;
         this.tabularMovement = false;
 
         this.navigator = window.navigator;
 
-
-        this.touchX = 0;
-        this.touchY = 0;
-        this.previousTouchX = 0;
-        this.previousTouchY = 0;
         this.touchIdentifier;
-        this.moveForward = false;
         this.touchSpeed = 0.003;
         this.forwardSpeed = 0.08;
 
@@ -92,13 +89,12 @@ class TouchAccessControls {
         this.prevCameraHeight = this.cameraHeight;
 
 
-        if(this.moveForward && this.forwardMovementEnabled) {
+        if(this.moveForwardEnabled) {
 
 
-          //neutralize y
-          direction.y = 0;
-    
-          this.camera.position.add( direction.multiplyScalar( this.forwardSpeed ) );
+          this.moveForward(this.forwardSpeed)
+
+
       }
         
     }
@@ -117,8 +113,8 @@ class TouchAccessControls {
            } else {
 
               //set init touch for first finger only
-              this.previousTouchY = event.changedTouches[0].clientY
-              this.previousTouchX = event.changedTouches[0].clientX
+              _prevTouchCoords.y = event.changedTouches[0].clientY
+              _prevTouchCoords.x = event.changedTouches[0].clientX
               this.touchIdentifier = event.changedTouches[0].identifier;
               this.domElement.ownerDocument.addEventListener( 'touchmove', this._onTouchMove );
               this.domElement.ownerDocument.addEventListener( 'touchend', this._onTouchEnd );
@@ -132,9 +128,9 @@ class TouchAccessControls {
     
     onTouchEnd(event) {
 
-        this.previousTouchY = undefined;
-        this.touchX = 0;
-        this.touchY = 0;
+        _prevTouchCoords.y = undefined;
+        _touchCoords.x = 0;
+        _touchCoords.y = 0;
         this.domElement.ownerDocument.removeEventListener( 'touchmove', this._onTouchMove );
         this.domElement.ownerDocument.removeEventListener( 'touchend', this._onTouchEnd );
         // event.preventDefault(); 
@@ -148,21 +144,17 @@ class TouchAccessControls {
             if (touch.identifier == this.touchIdentifier)
             {
                 // event.preventDefault(); // avoid scrolling whilst dragging
-                this.touchX = touch.clientX - this.previousTouchX;
-                this.previousTouchX = touch.clientX;
-                this.touchY = touch.clientY - this.previousTouchY;
-                this.previousTouchY = touch.clientY;
+                _touchCoords.x = touch.clientX - _prevTouchCoords.x;
+                _prevTouchCoords.x = touch.clientX;
+                _touchCoords.y = touch.clientY - _prevTouchCoords.y;
+                _prevTouchCoords.y = touch.clientY;
 
             } 
-            else 
-            {
-    
-            }
         }
 
         _euler.setFromQuaternion( this.camera.quaternion );
-        _euler.y += this.touchX * this.touchSpeed;
-        _euler.x += this.touchY * this.touchSpeed * 0.5;
+        _euler.y += _touchCoords.x * this.touchSpeed;
+        _euler.x += _touchCoords.y * this.touchSpeed * 0.5;
         _euler.x = Math.max( Math.PI/2 - this.maxPolarAngle, Math.min( Math.PI/2 - this.minPolarAngle, _euler.x ) );
   
         this.camera.quaternion.setFromEuler( _euler ); 
@@ -229,7 +221,14 @@ class TouchAccessControls {
       e.preventDefault();
      }
 
+     moveForward(distance) {
+      //afaik the best algorithm is cross product
+      const _direction = new Vector3();
+      _direction.setFromMatrixColumn( this.camera.matrix, 0 );
+      _direction.crossVectors( this.camera.up, _direction );
 
+      this.camera.position.addScaledVector( _direction, distance );
+     }
   
 
 }
