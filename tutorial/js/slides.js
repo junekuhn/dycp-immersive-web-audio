@@ -1,18 +1,24 @@
-window.global ||= window;
+import "./init.js";
 import { state } from "./state.js";
+import { initScene, renderScene } from "./scene.js";
 
 const enterButton = document.querySelector("#enter-button")
 const infoButton = document.querySelector("#info-button")
 
-const info = document.querySelector("#info");
-const headphones = document.querySelector("#headphones");
 const continueButton = document.querySelector("#continue-button")
 const backButton = document.querySelector("#back")
-const sceneInfo = document.querySelector("#scene-info")
 
-const settingsIcon = document.querySelector("#settings-icon");
-const exitSettings = document.querySelector("#exit-settings");
-const controlsTarget = document.querySelector("#controls-target")
+//menu buttons
+const menuResumeButton = document.querySelector("#menu-resume");
+const menuSettingsButton = document.querySelector("#menu-settings");
+const menuInfoButton = document.querySelector("#menu-info")
+
+//settings buttons
+const settingsBack = document.querySelector("#settings-back");
+
+
+
+
 
 const changeSlide = (slide) => {
     //hide previous slide
@@ -21,6 +27,19 @@ const changeSlide = (slide) => {
     //show next slide
     state.slide = slide;
     document.querySelector(`#${state.slide}`).style.display = "flex";
+}
+
+const enterScene = () => {
+
+    changeSlide("scene")
+    state.inScene = true;
+    initScene();
+    renderScene();
+
+    //set listener for menu
+    document.addEventListener("menu", () => {
+        changeSlide("menu")
+    })
 }
 
 enterButton.addEventListener('click', () => {
@@ -32,7 +51,29 @@ infoButton.addEventListener('click', () => {
 });
 
 backButton.addEventListener('click', () => {
-    changeSlide("welcome")
+    if (state.inScene) {
+        changeSlide("menu")
+    } else  {
+        changeSlide("welcome")
+    }
+})
+
+continueButton.addEventListener('click', enterScene);
+
+menuResumeButton.addEventListener('click', () => {
+    //todo
+})
+
+menuSettingsButton.addEventListener('click', () => {
+    changeSlide("settings");
+})
+
+menuInfoButton.addEventListener('click', () => {
+    changeSlide("info")
+})
+
+settingsBack.addEventListener('click', () => {
+    changeSlide("menu")
 })
 
 //initial state

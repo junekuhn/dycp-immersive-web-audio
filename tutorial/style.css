@@ -185,6 +185,10 @@ ul {
     border-radius: 10px;
   }
 
+  #scene {
+    background-color: transparent;
+  }
+
 
 .button-container {
     display: flex;

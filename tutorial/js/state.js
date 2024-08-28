@@ -12,6 +12,7 @@ export const state = new Proxy(
     {
       mode: "tab",
       slide: "welcome",
+      positionIndex: 0,
       preferences: {
         controls: "",
         joystick: "",
