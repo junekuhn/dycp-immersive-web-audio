@@ -41,6 +41,7 @@ let playerBounds = {
   min: new THREE.Vector2(-15, -15),
   max: new THREE.Vector2(15, 15)
 }
+let boxGroup;
 
 export const initScene = () => {
 
@@ -50,6 +51,7 @@ export const initScene = () => {
     camera.position.set(0, 0, 0)
     scene.add(camera)
     canvas = document.querySelector('canvas.webgl')
+    boxGroup = new THREE.Group();
 
     //init controls
     mouseControls = new MouseOnlyControls(camera, document.body)
@@ -104,14 +106,18 @@ export const initScene = () => {
         const boxGeometry = new THREE.BoxGeometry(3, 3, 3);
         const boxMaterial = new THREE.MeshBasicMaterial({
             color: new THREE.Color(`rgb(${Math.random() * 255}, 255, 255)`),
-            transparent: true
+            transparent: true,
+            opacity: 0.2,
+            side: THREE.DoubleSide
         });
         const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
         boxMesh.geometry.computeBoundingBox()
         boxMesh.position.set(position.x, position.y, position.z);
-        scene.add(boxMesh)
+        boxGroup.add(boxMesh);
 
     })
+
+    scene.add(boxGroup);
 
     const enterScene = () => {
         //hide previous slide
@@ -194,6 +200,19 @@ export const renderScene = () => {
     if(camera.position.x > playerBounds.max.x) camera.position.x = playerBounds.max.x;
     if(camera.position.z < playerBounds.min.y) camera.position.z = playerBounds.min.y;
     if(camera.position.z > playerBounds.max.y) camera.position.z = playerBounds.max.y;
+
+
+    //check where listener is
+    boxGroup.children.map((box, i) => {
+        const bb = new THREE.Box3();
+        //if camera is inside box
+        // in the animation loop, compute the current bounding box with the world matrix
+        bb.copy( box.geometry.boundingBox ).applyMatrix4( box.matrixWorld );
+
+        // if(bb.containsPoint(camera.position)) {
+        //     console.log("box in " + i + "box")
+        // }
+    })
 
         
     // Render
