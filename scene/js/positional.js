@@ -122,11 +122,12 @@ exitScene = () => {
 
     if(touchControls.tabularMovement) {
 
-      if(e.shiftKey) {
-        state.positionIndex--;
-      } else {
-        state.positionIndex++;
-      }
+      // if(e.shiftKey) {
+      //   state.positionIndex--;
+      // } else {
+      //   state.positionIndex++;
+      // }
+      state.positionIndex++;
 
 
       if (state.positionIndex > listenerPositions.length-1) {

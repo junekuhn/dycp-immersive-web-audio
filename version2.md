@@ -19,12 +19,14 @@ Screens and Screens-within-experience
     - small ambisonic instructions
     - maybe the audio itself is the instruction on loop
 ---- detect that listener has been looking around ----
-5. Settings and exit and next scene controls
+5. Menu
+    - Resume
     - 5.1 settings screen   
         haptics can be turned off
         mouse controls
         an instruction to use gamepad if desired
     - 5.2 screen midi configuration available
+    - Info
 ---- optional: change calibration / other settings ---
 ---- credits and info are also in settings ---
 ---- ambisonic experience ----
@@ -81,4 +83,11 @@ The Spatial Sonic Webpage
 3. there's a visible path for sighted people.  Darkness implies that we should be listening.
 4. scene description? ideally
 5. bounding boxes for each part, and upon entering the sounds change
-6. 
+6. swipe / tab through everything
+
+
+Ideas:
+- combine touch and mouse controls
+- sonification to locate next scene
+- play audio only when inside scene
+- instead of a menu control, just locate it after the list and listen for focus

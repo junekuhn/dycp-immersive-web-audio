@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Exo">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Martel">
     <link rel="stylesheet" href="./style.css">
+    <link type="image/png" sizes="16x16" rel="icon" href="./icons8-favicon-16.png">
 </head>
 <body>
     <canvas class="webgl"></canvas>
@@ -42,10 +43,8 @@
             <button class="big-button" id="play">Loading</button>
         </div>
     </div>
-    <div id="three-d" style="display: none;">
-        <!-- this is where the navigable html elements will be that propel you through the scene -->
-         <ol tabindex="0" id="scene-list"></ol>
-    </div>
+    <!-- this is where the navigable html elements will be that propel you through the scene -->
+    <ol style="display: none;" id="scene-list" class="screenreader"></ol>
     <div id="menu" class="slide" style="display: none;">
         <div class="container">
             <h1 class="title">Menu</h2>
@@ -127,17 +126,20 @@
         </div>
     </div>
 
-    <audio id="sample0" loop preload="auto" style="display: none">
+    <audio id="sample0" preload="auto" style="display: none">
+        <source src="./sounds/female_vo_0.ogg" type="audio/ogg">
+    </audio>
+    <audio id="sample1" preload="auto" style="display: none">
+        <source src="./sounds/female_vo_1.ogg" type="audio/ogg">
+    </audio>
+    <audio id="sample2" preload="auto" style="display: none">
+        <source src="./sounds/female_vo_2.ogg" type="audio/ogg">
+    </audio>
+    <audio id="sample3" preload="auto" style="display: none">
         <source src="./sounds/baselayer.mp3" type="audio/mpeg">
     </audio>
-    <audio id="sample1" loop preload="auto" style="display: none">
-        <source src="./sounds/melody1.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="sample2" loop preload="auto" style="display: none">
-        <source src="./sounds/melody2.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="sample3" loop preload="auto" style="display: none">
-        <source src="./sounds/bitsbobs.mp3" type="audio/mpeg">
+    <audio id="sample4" preload="auto" style="display: none">
+        <source src="./sounds/female_vo_4.ogg" type="audio/ogg">
     </audio>
 </body>
 </html>

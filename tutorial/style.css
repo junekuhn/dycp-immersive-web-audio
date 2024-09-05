@@ -189,6 +189,12 @@ ul {
     background-color: transparent;
   }
 
+  .screenreader {
+    position: absolute !important; /* Outside the DOM flow */
+    height: 1px; width: 1px; /* Nearly collapsed */
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px); /* All other browsers */
+}
 
 .button-container {
     display: flex;

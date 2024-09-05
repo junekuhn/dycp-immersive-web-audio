@@ -7,6 +7,7 @@ const infoButton = document.querySelector("#info-button")
 
 const continueButton = document.querySelector("#continue-button")
 const backButton = document.querySelector("#back")
+const playButton = document.querySelector("#play")
 
 //menu buttons
 const menuResumeButton = document.querySelector("#menu-resume");
@@ -34,7 +35,10 @@ const enterScene = () => {
     changeSlide("scene")
     state.inScene = true;
     initScene();
-    renderScene();
+    //set listener for menu
+    playButton.addEventListener("click", () => {
+        renderScene();
+    })
 
     //set listener for menu
     document.addEventListener("menu", () => {

@@ -8,6 +8,9 @@ import { AmbisonicAudio } from "../../controls/AmbisonicAudio.js";
 import * as ambisonics from 'ambisonics';
 import { MIDIAccessControls } from "../../controls/MidiAccessControls.js";
 
+import volumeFragmentShader from '../glsl/volumeFragment.glsl';
+import volumeVertexShader from '../glsl/volumeVertex.glsl'
+
 import { gsap } from 'gsap'
 
 import { state } from './state.js';
@@ -28,15 +31,26 @@ const listenerPositions = [
     new THREE.Vector3(3,0,-3),
     new THREE.Vector3(-3,0,3),
     new THREE.Vector3(-3,0,10),
-    new THREE.Vector3(3,0,-10),
+    new THREE.Vector3(10,0,-10),
 ]
 const audioPositions = [
-    new THREE.Vector3(2,5,1),
-    new THREE.Vector3(3,5,-5),
-    new THREE.Vector3(4,5,-2),
-    new THREE.Vector3(-3,5,-5),
+    new THREE.Vector3(0,0,2),
+    new THREE.Vector3(3,0,-1),
+    new THREE.Vector3(-3,0,5),
+    new THREE.Vector3(-3,0,12),
+    new THREE.Vector3(10,0,-8)
 ]
-let sounds = [];
+
+const descriptions = [
+    "scene one",
+    "scene two",
+    "scene three",
+    "scene four",
+    "scene five"
+]
+let sounds = [],
+audioTimer,
+materials = [], analysers = [];
 let playerBounds = {
   min: new THREE.Vector2(-15, -15),
   max: new THREE.Vector2(15, 15)
@@ -52,6 +66,9 @@ export const initScene = () => {
     scene.add(camera)
     canvas = document.querySelector('canvas.webgl')
     boxGroup = new THREE.Group();
+      // create an AudioListener and add it to the camera
+    const listener = new THREE.AudioListener();
+    camera.add( listener );
 
     //init controls
     mouseControls = new MouseOnlyControls(camera, document.body)
@@ -97,10 +114,28 @@ export const initScene = () => {
         listItem.tabIndex = 0;
         listItem.setAttribute("data-index", i);
         listItem.addEventListener("focus", (e) => {
-            console.log("list item" + listItem.getAttribute("data-index"));
+
+            clearTimeout(audioTimer);
+            let songElement = document.getElementById( `sample${state.positionIndex}` );
+            songElement.pause();
+
+            //set new state
             state.positionIndex = i;
             setPosition(i)
+
+            // play relevant audio in loop
+            songElement = document.getElementById( `sample${state.positionIndex}` );
+            songElement.play();
+            //delayed loop
+            songElement.addEventListener('ended', () => {
+                audioTimer = setTimeout(() => {
+                    //delayed start
+                    songElement.play();
+                }, 1000) 
+            })
         })
+        listItem.innerHTML = descriptions[i];
+        // listItem.ariaHidden = "true";
         sceneListElement.appendChild(listItem);
 
         const boxGeometry = new THREE.BoxGeometry(3, 3, 3);
@@ -122,7 +157,50 @@ export const initScene = () => {
     const enterScene = () => {
         //hide previous slide
         document.querySelector("#scene").style.display = "none";
-        document.querySelector("#three-d").style.display = "block";
+        document.querySelector("#scene-list").style.display = "block";
+
+        if(sounds.length < 1) {
+            // create the PositionalAudio object (passing in the listener)
+            audioPositions.map((soundPosition, i) => {
+                const sound = new THREE.PositionalAudio(listener) 
+                sounds.push( sound );
+    
+                const analyser = new THREE.AudioAnalyser(sound)
+                analysers.push(analyser)
+    
+                const sphere = new THREE.SphereGeometry( 10, 32, 16 );
+    
+                const material1 = new THREE.ShaderMaterial({
+                  vertexShader: volumeVertexShader,
+                  fragmentShader: volumeFragmentShader,
+                  uniforms: {
+                    volume: { value: 0 }
+                  },
+                  transparent: true,
+                  side: THREE.FrontSide
+                })
+    
+                materials.push(material1);
+    
+                const mesh1 = new THREE.Mesh( sphere, material1 );
+                mesh1.position.set( soundPosition.x, soundPosition.y, soundPosition.z );
+                mesh1.scale.set(.02,.02,.02)
+                scene.add( mesh1 );
+    
+                const songElement = document.getElementById( `sample${i}` );
+    
+                sound.setMediaElementSource( songElement );
+                sound.setRefDistance( 0.5 );
+
+                
+                mesh1.add( sound );
+            })
+        } else {
+          sounds.map((sound, i) => {
+            const songElement = document.getElementById( `sample${i}` ); 
+            // songElement.play();
+          })
+        }
 }
 
     //the exception to keyboard controls, 
@@ -189,6 +267,7 @@ export const initScene = () => {
     
 }
 
+
 export const renderScene = () => {
     mouseControls.update();
     keyboardControls.update();
@@ -201,6 +280,7 @@ export const renderScene = () => {
     if(camera.position.z < playerBounds.min.y) camera.position.z = playerBounds.min.y;
     if(camera.position.z > playerBounds.max.y) camera.position.z = playerBounds.max.y;
 
+    state.box = -1;
 
     //check where listener is
     boxGroup.children.map((box, i) => {
@@ -209,10 +289,48 @@ export const renderScene = () => {
         // in the animation loop, compute the current bounding box with the world matrix
         bb.copy( box.geometry.boundingBox ).applyMatrix4( box.matrixWorld );
 
-        // if(bb.containsPoint(camera.position)) {
-        //     console.log("box in " + i + "box")
-        // }
+        // listener is in a box
+        if(bb.containsPoint(camera.position)) {
+            // console.log("box in " + i + "box")
+                state.box = i;
+        } 
     })
+
+    if(state.positionIndex != state.box) {
+        console.log("mismatch", state.positionIndex, state.box)
+
+        //bug at beginning
+        if(state.positionIndex == 0 && state.box ==4 ) {
+
+        } else if (state.box == -1) {
+            sounds.map((sound, i) => {
+                //turn off all audio
+                clearTimeout(audioTimer);
+                let songElement = document.getElementById( `sample${i}` );
+                songElement.pause(); 
+            })
+
+            state.positionIndex = -1;
+        } else {
+            // play relevant audio in loop
+            let songElement = document.getElementById( `sample${state.box}` );
+            songElement.play();
+            //delayed loop
+            songElement.addEventListener('ended', () => {
+                audioTimer = setTimeout(() => {
+                    //delayed start
+                    songElement.play();
+                }, 1000) 
+            })
+            }
+
+            state.positionIndex = state.box;    
+
+
+    }
+
+    if(state.needsUpdate) updateAudio();
+
 
         
     // Render
