@@ -129,6 +129,7 @@ exitScene = () => {
       // }
       state.positionIndex++;
 
+      
 
       if (state.positionIndex > listenerPositions.length-1) {
           state.positionIndex = 0;
