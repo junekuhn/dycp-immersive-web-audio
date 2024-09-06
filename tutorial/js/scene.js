@@ -79,16 +79,7 @@ export const initScene = () => {
 
     // gamepad setup
     gamepadControls = new GamepadAccessControls(camera);
-    const gamepadElement = document.querySelector('#gamepads');
-    const updateUI = (flag) => {
-    if (flag) {
-        gamepadElement.innerHTML = "Gamepad Connected"
-    } else {
-        gamepadElement.innerHTML = "Gamepad Disconnected"
-    }
-    }
-    window.addEventListener("gamepadconnected", () => updateUI(true));
-    window.addEventListener("gamepaddisconnected", () => updateUI(false) );
+
 
     renderer = new THREE.WebGLRenderer({
         canvas: canvas,
@@ -115,9 +106,15 @@ export const initScene = () => {
         listItem.setAttribute("data-index", i);
         listItem.addEventListener("focus", (e) => {
 
-            clearTimeout(audioTimer);
-            let songElement = document.getElementById( `sample${state.positionIndex}` );
-            songElement.pause();
+            let songElement;
+
+            //if you're outside the boxes , it's already paused
+            if(state.positionIndex > -1) {
+                //pause current audio
+                clearTimeout(audioTimer);
+                songElement = document.getElementById( `sample${state.positionIndex}` );
+                songElement.pause();
+            }
 
             //set new state
             state.positionIndex = i;

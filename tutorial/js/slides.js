@@ -10,6 +10,7 @@ const backButton = document.querySelector("#back")
 const playButton = document.querySelector("#play")
 
 //menu buttons
+const menu = document.querySelector("#menu")
 const menuResumeButton = document.querySelector("#menu-resume");
 const menuSettingsButton = document.querySelector("#menu-settings");
 const menuInfoButton = document.querySelector("#menu-info")
@@ -38,12 +39,14 @@ const enterScene = () => {
     //set listener for menu
     playButton.addEventListener("click", () => {
         renderScene();
+        menu.style.display = "flex"
     })
 
     //set listener for menu
     document.addEventListener("menu", () => {
-        changeSlide("menu")
+        menu.focus()
     })
+
 }
 
 enterButton.addEventListener('click', () => {
@@ -57,6 +60,7 @@ infoButton.addEventListener('click', () => {
 backButton.addEventListener('click', () => {
     if (state.inScene) {
         changeSlide("menu")
+        document.querySelector("#scene-list").style.display = "block";
     } else  {
         changeSlide("welcome")
     }
@@ -65,19 +69,46 @@ backButton.addEventListener('click', () => {
 continueButton.addEventListener('click', enterScene);
 
 menuResumeButton.addEventListener('click', () => {
-    //todo
+    menu.classList.remove("slide");
+    menu.classList.add("screenreader") 
+
+    //change focus to the last list element
+    let firstLiElement = document.querySelector(`li[data-index='${state.positionIndex}']`)
+    firstLiElement.focus()
+})
+
+menu.addEventListener('focusin', () => {
+    
+    //pause current audio
+    let songElement = document.getElementById( `sample${state.positionIndex}` );
+    songElement.pause();
+
+    menu.classList.remove("screenreader");
+    menu.classList.add("slide")
+    
+    changeSlide("menu")
+})
+
+menu.addEventListener('focusout', () => {
+    menu.classList.remove("slide");
+    menu.classList.add("screenreader")
+
 })
 
 menuSettingsButton.addEventListener('click', () => {
     changeSlide("settings");
+    document.querySelector("#scene-list").style.display = "none";
 })
 
 menuInfoButton.addEventListener('click', () => {
     changeSlide("info")
+    document.querySelector("#scene-list").style.display = "none";
 })
 
 settingsBack.addEventListener('click', () => {
     changeSlide("menu")
+    menu.focus();
+    document.querySelector("#scene-list").style.display = "block";
 })
 
 //initial state
