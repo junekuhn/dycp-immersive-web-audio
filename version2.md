@@ -91,3 +91,14 @@ Ideas:
 - sonification to locate next scene
 - play audio only when inside scene
 - instead of a menu control, just locate it after the list and listen for focus
+
+
+todo
+- trampbunny music for outside scene
+- ambisonic voiceover production
+- session with olivia to figure out fun things to include
+- combine mouse and touch controls
+- 3D scene building
+- settings
+- refactoring
+- xbox controls

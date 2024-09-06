@@ -104,6 +104,7 @@ export const initScene = () => {
         const listItem = document.createElement("li");
         listItem.tabIndex = 0;
         listItem.setAttribute("data-index", i);
+        listItem.role = "button";
         listItem.addEventListener("focus", (e) => {
 
             let songElement;

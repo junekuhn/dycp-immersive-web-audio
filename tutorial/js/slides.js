@@ -60,6 +60,7 @@ infoButton.addEventListener('click', () => {
 backButton.addEventListener('click', () => {
     if (state.inScene) {
         changeSlide("menu")
+        menu.focus();
         document.querySelector("#scene-list").style.display = "block";
     } else  {
         changeSlide("welcome")

@@ -79,9 +79,9 @@ ul {
     background-color: black;
 }
 
-#settings {
+#settings-container {
     /* width: 90%; */
-    max-width: 600px;
+    /* max-width: 600px; */
     border: 1px solid white;
     margin: auto;
     border-radius: 10px;

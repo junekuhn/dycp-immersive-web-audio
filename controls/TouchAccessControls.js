@@ -101,14 +101,15 @@ class TouchAccessControls {
 
     onTouchStart(event) {
 
-        if(this.isLocked) {
+      console.log("touchstart")
+
 
           //if in hitbox
           if(event.target.id == "hitbox" ) {
 
             this.domElement.ownerDocument.addEventListener( 'touchend', this._onHitBoxEnd );
 
-            this.moveForward = true;
+            this.moveForwardEnabled = true;
 
            } else {
 
@@ -122,8 +123,7 @@ class TouchAccessControls {
               
           }
     
-        //   event.preventDefault();
-        }
+
     };
     
     onTouchEnd(event) {
@@ -162,7 +162,7 @@ class TouchAccessControls {
     
     onHitBoxEnd(event) {
 
-      this.moveForward = false;
+      this.moveForwardEnabled = false;
       this.domElement.ownerDocument.removeEventListener( 'touchend', this._onHitBoxEnd );
 
     }
