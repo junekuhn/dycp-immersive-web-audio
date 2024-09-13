@@ -153,6 +153,7 @@ export const initScene = () => {
     scene.add(boxGroup);
 
     const enterScene = () => {
+        mouseControls.lock();
         //hide previous slide
         document.querySelector("#scene").style.display = "none";
         document.querySelector("#scene-list").style.display = "block";

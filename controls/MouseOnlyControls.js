@@ -93,10 +93,10 @@ class MouseOnlyControls extends EventDispatcher {
 		// move forward parallel to the xz-plane
 		// assumes camera.up is y-up
 
-		_vector.setFromMatrixColumn( camera.matrix, 0 );
-		_vector.crossVectors( camera.up, _vector );
+		_vector.setFromMatrixColumn( this.camera.matrix, 0 );
+		_vector.crossVectors( this.camera.up, _vector );
 
-		camera.position.addScaledVector( _vector, distance );
+		this.camera.position.addScaledVector( _vector, distance );
 
 	}
 
@@ -164,15 +164,15 @@ function onMouseMove( event ) {
 	const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 	const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
-	const camera = this.camera;
-	_euler.setFromQuaternion( camera.quaternion );
+	// const camera = this.camera;
+	_euler.setFromQuaternion( this.camera.quaternion );
 
 	_euler.y -= movementX * 0.002 * this.pointerSpeed;
 	_euler.x -= movementY * 0.002 * this.pointerSpeed;
 
 	_euler.x = Math.max( _PI_2 - this.maxPolarAngle, Math.min( _PI_2 - this.minPolarAngle, _euler.x ) );
 
-	camera.quaternion.setFromEuler( _euler );
+	this.camera.quaternion.setFromEuler( _euler );
 
 	this.dispatchEvent( _changeEvent );
 
