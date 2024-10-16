@@ -1,6 +1,6 @@
 import "./init.js";
 import * as THREE from 'three'
-import { MouseOnlyControls } from "../../controls/MouseOnlyControls.js";
+import { PointerControls } from "../../controls/PointerControls.js";
 import { KeyboardAccessControls } from "../../controls/KeyboardAccessControls.js";
 import { GamepadAccessControls } from "../../controls/GamepadAccessControls.js";
 import { TouchAccessControls } from "../../controls/TouchAccessControls.js";
@@ -16,7 +16,7 @@ import { gsap } from 'gsap'
 import { state } from './state.js';
 
 let scene, camera, renderer, canvas,
-mouseControls, keyboardControls, touchControls, gamepadControls;
+mouseControls, keyboardControls,  gamepadControls;
 
 
 /**
@@ -71,9 +71,9 @@ export const initScene = () => {
     camera.add( listener );
 
     //init controls
-    mouseControls = new MouseOnlyControls(camera, document.body)
+    mouseControls = new PointerControls(camera, document.body)
     keyboardControls = new KeyboardAccessControls(camera, document.body);
-    touchControls = new TouchAccessControls(camera, document.body);
+    // touchControls = new TouchAccessControls(camera, document.body);
     // midiControls = new MIDIAccessControls(camera, document.body);
     // midiControls.init();
 
@@ -153,6 +153,7 @@ export const initScene = () => {
     scene.add(boxGroup);
 
     const enterScene = () => {
+        if(!state.mobile) mouseControls.lock();
         //hide previous slide
         document.querySelector("#scene").style.display = "none";
         document.querySelector("#scene-list").style.display = "block";
@@ -269,7 +270,7 @@ export const initScene = () => {
 export const renderScene = () => {
     mouseControls.update();
     keyboardControls.update();
-    touchControls.update();
+    // touchControls.update();
     gamepadControls.update();
 
     //bounds checking

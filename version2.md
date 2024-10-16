@@ -34,48 +34,9 @@ Screens and Screens-within-experience
 ---- positional audio experience ----
 7. instrumentation / additional interactivity
 
-Big Questions:
-1. How does the instruction get relayed well for both sighted and nonsighted people?
-2. Will there be any prompts for using or changing settings on the screen reader?
-3. What audio will be used?
-4. What other ambisonics features would be good to showcase?
-5. How do I illustrate the Tab metaphor better
-    a. maybe something with a path that you travel along
 
 Before I work on this
-
-1. Midi Access Controls
-    in progress, impossible to have by default anyway
-2. see if midi / xbox can navigate menu - false, nothing can simulate a tab focus
-    no
-3. teleport to right click, two finger double tap / hold? no right click
-    there's no touch equivalent
-4. look again at sofa file conversion
-    maybe ask for help from imperial
-5. why doesn't ambisonics work on mobile?
-    fixed
-6. reset experience option
-    no elevation for 3d
-    use tab if it's ambisonics
-    you shouldn't need to reset view if using touch controls, no one's had difficulty
-7. shift-tab goes back
-8. barriers to prevent you moving too far
-9. the three.js script should be better organized, it feels really clunky at the moment
-    going to look into the game script
-10. what's going on with the white blurb changing position? it shouldn't
-11. can I detect a swipe from left to right? or have html dummy elements that advance the page along?
 12. any sonifications
-
-Other things
-1. 3d Alt Text
-
-Answering the Big Questions
-1. Instead of writing a piece, I'm going to produce a spatial audio instruction
-2. answered
-3. for the music section maybe the trampbunny stuff I've been working on
-    with rhythmic sections separated by kick, percussion, bass, and leads
-    I'd like to make better use of the analogy I'm describing with tab, where teleport actually 
-    moves you through space to a different sonic landscape
 
 The Spatial Sonic Webpage
 1. not much but some audible music in the distance, introduction to controls
@@ -91,14 +52,46 @@ Ideas:
 - sonification to locate next scene
 - play audio only when inside scene
 - instead of a menu control, just locate it after the list and listen for focus
+- class for instancing accessible scenes
 
 
 todo
 - trampbunny music for outside scene
 - ambisonic voiceover production
-- session with olivia to figure out fun things to include
 - combine mouse and touch controls
+    - right now it's stuck a buggy inbetween state between my code and orbit controls code
+    - i think we could just start with orbit controls code 
 - 3D scene building
 - settings
-- refactoring
 - xbox controls
+- take advantage of pmndrs' work
+
+What's different about this project
+- using immersive audio or sonification for navigation
+- no dependancies other than three.js and jsambisonics
+
+How does PMNDRS do it?
+section (aria-label, out of sight)
+    p (innerhtml)
+    div
+        div
+            button
+    div 
+        div
+            p (innerhtml, tabindex=-1)
+    div
+        div
+            button
+    div 
+        div
+            button
+a (link out)
+div(aria-atomic, aria-live)
+
+they have 4 a11y roles - button, content, togglebutton, link
+link and button already exist
+content - probably the p tags + text
+togglebutton - probably just button tag, with aria-pressed
+
+
+

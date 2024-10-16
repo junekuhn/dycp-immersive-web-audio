@@ -12,6 +12,7 @@ export const state = new Proxy(
     {
       mode: "tab",
       slide: "welcome",
+      mobile: false,
       positionIndex: 0,
       // -1 if none
       box: -1,

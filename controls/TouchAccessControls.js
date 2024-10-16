@@ -167,59 +167,58 @@ class TouchAccessControls {
 
     }
     
-    setDoubleTap(callback, hitboxCallback) {
+    // setDoubleTap(callback, hitboxCallback) {
 
-      this.domElement.ownerDocument.addEventListener('touchend', 
-        (e) => this.onDoubleTap(e, callback, hitboxCallback),
-        { passive: false }
-      );
-      this.domElement.ownerDocument.addEventListener('contextmenu', 
-        (e) => this.onContextMenu(e, callback, hitboxCallback),
-        { passive: false }
-      );  
-      this.tabularMovement = true;
+    //   this.domElement.ownerDocument.addEventListener('touchend', 
+    //     (e) => this.onDoubleTap(e, callback, hitboxCallback),
+    //     { passive: false }
+    //   );
+    //   this.domElement.ownerDocument.addEventListener('contextmenu', 
+    //     (e) => this.onContextMenu(e, callback, hitboxCallback),
+    //     { passive: false }
+    //   );  
+    //   this.tabularMovement = true;
 
-    }
+    // }
 
-    /* Based on this http://jsfiddle.net/brettwp/J4djY/*/
-    onDoubleTap (e, callback, hitboxCallback) {
+    // /* Based on this http://jsfiddle.net/brettwp/J4djY/*/
+    // onDoubleTap (e, callback, hitboxCallback) {
 
  
-      this.curTime = new Date().getTime();
-      this.tapLen = this.curTime - this.lastTap;
+    //   this.curTime = new Date().getTime();
+    //   this.tapLen = this.curTime - this.lastTap;
 
-      if (this.tapLen < 500 && this.tapLen > 0) {
+    //   if (this.tapLen < 500 && this.tapLen > 0) {
 
-        if(e.target.id =="hitbox") {
-          hitboxCallback();
-        } else {
-          callback();
-        }
+    //     if(e.target.id =="hitbox") {
+    //       hitboxCallback();
+    //     } else {
+    //       callback();
+    //     }
 
-        e.preventDefault();
+    //     e.preventDefault();
 
-      } else {
+    //   } else {
 
-        this.timeout = setTimeout(() => {
-          clearTimeout(this.timeout);
-        }, 500);
+    //     this.timeout = setTimeout(() => {
+    //       clearTimeout(this.timeout);
+    //     }, 500);
 
-      }
+    //   }
 
-      this.lastTap = this.curTime;
+    //   this.lastTap = this.curTime;
     
-     }
+    //  }
 
 
-     onContextMenu(e, callback, hitboxCallback) {
-      if(e.target.id =="hitbox") {
-        hitboxCallback();
-      } else {
-        callback();
-      }
-
-      e.preventDefault();
-     }
+    //  onContextMenu(e, callback, hitboxCallback) {
+    //   if(e.target.id =="hitbox") {
+    //     hitboxCallback();
+    //   } else {
+    //     callback();
+    //   }
+    //   e.preventDefault();
+    //  }
 
      moveForward(distance) {
       //afaik the best algorithm is cross product
