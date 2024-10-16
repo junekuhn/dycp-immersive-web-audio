@@ -26,27 +26,21 @@ class TouchAccessControls {
         this.cameraHeight = 0, this.prevCameraHeight = 0;
 
         this.moveForwardEnabled = false;
-        this.tabularMovement = false;
 
         this.navigator = window.navigator;
 
-        this.touchIdentifier;
+        this.rotationTouches = [];
+        this.moveTouches = [];
         this.touchSpeed = 0.003;
         this.forwardSpeed = 0.08;
 
         this.minPolarAngle = 0;
         this.maxPolarAngle = Math.PI;
 
-        this._onTouchStart = this.onTouchStart.bind( this );
-        this._onTouchMove = this.onTouchMove.bind( this );
-        this._onTouchEnd = this.onTouchEnd.bind( this );
-        this._onHitBoxEnd = this.onHitBoxEnd.bind( this );
-        this._onContextMenu = this.onContextMenu.bind( this );
-        // this._onDoubleTap = this.onDoubleTap.bind( this );
-
-        this.domElement.ownerDocument.addEventListener( 'touchstart', this._onTouchStart );
-        this.domElement.ownerDocument.addEventListener( 'contextmenu', this._onContextMenu )
-        // this.domElement.ownerDocument.addEventListener('touchend', this.onDoubleTap, { passive: false });
+        this.domElement.ownerDocument.addEventListener( 'touchstart', this.onTouchStart.bind(this) );
+        this.domElement.ownerDocument.addEventListener( 'touchmove', this.onTouchMove.bind(this) );
+        this.domElement.ownerDocument.addEventListener( 'touchend', this.onTouchEnd.bind(this) );
+        this.domElement.ownerDocument.addEventListener( 'touchcancel', this.onTouchEnd.bind(this) );
         this.divideScreen();
 
     }
@@ -61,9 +55,9 @@ class TouchAccessControls {
 
     dispose() {
 
-        this.domElement.ownerDocument.removeEventListener( 'touchstart', this._onTouchStart );
-        this.domElement.ownerDocument.removeEventListener( 'touchmove', this._onTouchMove );
-        this.domElement.ownerDocument.removeEventListener( 'touchend', this._onTouchEnd );
+        // this.domElement.ownerDocument.removeEventListener( 'touchstart', this._onTouchStart );
+        // this.domElement.ownerDocument.removeEventListener( 'touchmove', this._onTouchMove );
+        // this.domElement.ownerDocument.removeEventListener( 'touchend', this._onTouchEnd );
 
     }
 
@@ -100,28 +94,31 @@ class TouchAccessControls {
     }
 
     onTouchStart(event) {
+      let itemIndex = 0;
 
-      console.log("touchstart")
+      while(event.changedTouches.item(itemIndex) != null) {
+        let touch = event.changedTouches.item(itemIndex);
+        console.log(touch)
+        console.log(touch.identifier)
+        console.log(touch.target)
 
+        if(touch.target.id == "hitbox") {
+          
+          this.moveTouches.push(touch.identifier)
+          this.moveForwardEnabled = true;
 
-          //if in hitbox
-          if(event.target.id == "hitbox" ) {
+        } else if(touch.target.id == "canvas") {
 
-            this.domElement.ownerDocument.addEventListener( 'touchend', this._onHitBoxEnd );
+          this.moveTouches.push(touch.identifier)
 
-            this.moveForwardEnabled = true;
+          //set init touch for first finger only
+          _prevTouchCoords.y = touch.clientY
+          _prevTouchCoords.x = touch.clientX
 
-           } else {
+        }
 
-              //set init touch for first finger only
-              _prevTouchCoords.y = event.changedTouches[0].clientY
-              _prevTouchCoords.x = event.changedTouches[0].clientX
-              this.touchIdentifier = event.changedTouches[0].identifier;
-              this.domElement.ownerDocument.addEventListener( 'touchmove', this._onTouchMove );
-              this.domElement.ownerDocument.addEventListener( 'touchend', this._onTouchEnd );
-
-              
-          }
+        itemIndex++;
+      }
     
 
     };
@@ -131,9 +128,18 @@ class TouchAccessControls {
         _prevTouchCoords.y = undefined;
         _touchCoords.x = 0;
         _touchCoords.y = 0;
-        this.domElement.ownerDocument.removeEventListener( 'touchmove', this._onTouchMove );
-        this.domElement.ownerDocument.removeEventListener( 'touchend', this._onTouchEnd );
-        // event.preventDefault(); 
+
+        let itemIndex = 0;
+
+        while(event.changedTouches.item(itemIndex) != null) {
+          let touch = event.changedTouches.item(itemIndex);
+
+          //filter out touches with id
+          this.moveTouches.filter(moveTouch => touch.identifier === moveTouch);
+          this.rotationTouches.filter(rotationTouch => touch.identifier === rotationTouch);
+          
+          itemIndex++;
+        }
 
     }
 
@@ -165,61 +171,7 @@ class TouchAccessControls {
       this.moveForwardEnabled = false;
       this.domElement.ownerDocument.removeEventListener( 'touchend', this._onHitBoxEnd );
 
-    }
-    
-    setDoubleTap(callback, hitboxCallback) {
-
-      this.domElement.ownerDocument.addEventListener('touchend', 
-        (e) => this.onDoubleTap(e, callback, hitboxCallback),
-        { passive: false }
-      );
-      this.domElement.ownerDocument.addEventListener('contextmenu', 
-        (e) => this.onContextMenu(e, callback, hitboxCallback),
-        { passive: false }
-      );  
-      this.tabularMovement = true;
-
-    }
-
-    /* Based on this http://jsfiddle.net/brettwp/J4djY/*/
-    onDoubleTap (e, callback, hitboxCallback) {
-
- 
-      this.curTime = new Date().getTime();
-      this.tapLen = this.curTime - this.lastTap;
-
-      if (this.tapLen < 500 && this.tapLen > 0) {
-
-        if(e.target.id =="hitbox") {
-          hitboxCallback();
-        } else {
-          callback();
-        }
-
-        e.preventDefault();
-
-      } else {
-
-        this.timeout = setTimeout(() => {
-          clearTimeout(this.timeout);
-        }, 500);
-
-      }
-
-      this.lastTap = this.curTime;
-    
-     }
-
-
-     onContextMenu(e, callback, hitboxCallback) {
-      if(e.target.id =="hitbox") {
-        hitboxCallback();
-      } else {
-        callback();
-      }
-
-      e.preventDefault();
-     }
+    } 
 
      moveForward(distance) {
       //afaik the best algorithm is cross product

@@ -123,12 +123,12 @@ export const initScene = () => {
 
             // play relevant audio in loop
             songElement = document.getElementById( `sample${state.positionIndex}` );
-            songElement.play();
+            // songElement.play();
             //delayed loop
             songElement.addEventListener('ended', () => {
                 audioTimer = setTimeout(() => {
                     //delayed start
-                    songElement.play();
+                    // songElement.play();
                 }, 1000) 
             })
         })
@@ -313,12 +313,12 @@ export const renderScene = () => {
         } else {
             // play relevant audio in loop
             let songElement = document.getElementById( `sample${state.box}` );
-            songElement.play();
+            // songElement.play();
             //delayed loop
             songElement.addEventListener('ended', () => {
                 audioTimer = setTimeout(() => {
                     //delayed start
-                    songElement.play();
+                    // songElement.play();
                 }, 1000) 
             })
             }
