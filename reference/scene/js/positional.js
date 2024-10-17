@@ -1,9 +1,9 @@
 import "./init.js";
 import * as THREE from 'three'
-import { MouseOnlyControls } from "../../controls/MouseOnlyControls.js";
-import { KeyboardAccessControls } from "../../controls/KeyboardAccessControls.js";
-import { TouchAccessControls } from "../../controls/TouchAccessControls.js";
-import { GamepadAccessControls } from "../../controls/GamepadAccessControls.js";
+import { MouseOnlyControls } from "../../../controls/MouseOnlyControls.js";
+import { KeyboardAccessControls } from "../../../controls/KeyboardAccessControls.js";
+import { TouchAccessControls } from "../../../controls/TouchAccessControls.js";
+import { GamepadAccessControls } from "../../../controls/GamepadAccessControls.js";
 import { state, actions } from './state.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'

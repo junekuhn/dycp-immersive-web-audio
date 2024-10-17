@@ -1,6 +1,6 @@
 /* notes
 Multi Channel Audio Elements not supported still as of 2024, must use buffersource
-
+I'm not sure if this class is a good idea
 */
 
 

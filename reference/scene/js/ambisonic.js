@@ -1,12 +1,12 @@
 import "./init.js";
 import * as THREE from 'three'
-import { MouseOnlyControls } from "../../controls/MouseOnlyControls.js";
-import { KeyboardAccessControls } from "../../controls/KeyboardAccessControls.js";
-import { GamepadAccessControls } from "../../controls/GamepadAccessControls.js";
-import { TouchAccessControls } from "../../controls/TouchAccessControls.js";
-import { AmbisonicAudio } from "../../controls/AmbisonicAudio.js";
+import { MouseOnlyControls } from "../../../controls/MouseOnlyControls.js";
+import { KeyboardAccessControls } from "../../../controls/KeyboardAccessControls.js";
+import { GamepadAccessControls } from "../../../controls/GamepadAccessControls.js";
+import { TouchAccessControls } from "../../../controls/TouchAccessControls.js";
+import { AmbisonicAudio } from "../../../controls/AmbisonicAudio.js";
 import * as ambisonics from 'ambisonics';
-import { MIDIAccessControls } from "../../controls/MidiAccessControls.js";
+import { MIDIAccessControls } from "../../../controls/MidiAccessControls.js";
 
 import { gsap } from 'gsap'
 

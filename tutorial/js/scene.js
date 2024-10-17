@@ -74,8 +74,6 @@ export const initScene = () => {
     mouseControls = new MouseOnlyControls(camera, document.body)
     keyboardControls = new KeyboardAccessControls(camera, document.body);
     touchControls = new TouchAccessControls(camera, document.body);
-    // midiControls = new MIDIAccessControls(camera, document.body);
-    // midiControls.init();
 
     // gamepad setup
     gamepadControls = new GamepadAccessControls(camera);
@@ -219,13 +217,6 @@ export const initScene = () => {
     const setPosition = (i) => {
           camera.position.copy ( listenerPositions[i] );
       }
-    //   //teleport if top, exit if bottom
-    //   touchControls.setDoubleTap(nextPosition, exitScene);
-    // //   keyboardControls.setTab(nextPosition);
-    //   mouseControls.setDblClick(nextPosition);
-    //   gamepadControls.bButton = nextPosition;
-
-
 
     const loadingBarElement = document.querySelector(".loading-bar")
     const loadingManager = new THREE.LoadingManager(
@@ -271,10 +262,15 @@ export const initScene = () => {
 
 
 export const renderScene = () => {
-    mouseControls.update();
-    keyboardControls.update();
-    touchControls.update();
-    gamepadControls.update();
+
+    if(state.mobile) {
+        keyboardControls.update();
+        touchControls.update(); 
+    } else {
+        mouseControls.update();
+        keyboardControls.update();
+        gamepadControls.update();
+    }
 
     //bounds checking
     if(camera.position.x < playerBounds.min.x) camera.position.x = playerBounds.min.x;

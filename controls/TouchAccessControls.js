@@ -31,7 +31,6 @@ class TouchAccessControls {
 
         this.rotationTouches = [];
         this.moveTouches = [];
-        this.rotationNeedsUpdate = false;
         this.touchSpeed = 0.003;
         this.forwardSpeed = 0.08;
 

@@ -96,9 +96,27 @@ Ideas:
 todo
 - trampbunny music for outside scene
 - ambisonic voiceover production
-- session with olivia to figure out fun things to include
-- combine mouse and touch controls
 - 3D scene building
 - settings
-- refactoring
-- xbox controls
+
+Settings menu
+    Ambisonics 
+        reverb
+    Touch
+        move speed
+        rotation speed
+        enable elevation
+        inertia
+    Lock
+        move speed
+        rotation speed
+        double click
+    Gamepad
+        move speed 
+        rotation speed
+        teleport button
+        move button
+        which joystick
+    Shaders
+        variables
+    captions on/off
