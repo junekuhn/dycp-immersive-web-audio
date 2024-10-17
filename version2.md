@@ -89,7 +89,7 @@ The Spatial Sonic Webpage
 Ideas:
 - combine touch and mouse controls
 - sonification to locate next scene
-- play audio only when inside scene
+
 - instead of a menu control, just locate it after the list and listen for focus
 
 

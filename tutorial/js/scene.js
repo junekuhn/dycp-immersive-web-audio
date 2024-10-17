@@ -153,7 +153,10 @@ export const initScene = () => {
     scene.add(boxGroup);
 
     const enterScene = () => {
-        mouseControls.lock();
+        if(!state.mobile) {
+            mouseControls.lock();
+        }
+
         //hide previous slide
         document.querySelector("#scene").style.display = "none";
         document.querySelector("#scene-list").style.display = "block";
@@ -328,7 +331,7 @@ export const renderScene = () => {
 
     }
 
-    if(state.needsUpdate) updateAudio();
+    // if(state.needsUpdate) updateAudio();
 
 
         

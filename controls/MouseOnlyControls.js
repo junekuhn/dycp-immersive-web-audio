@@ -1,7 +1,8 @@
 import {
 	Euler,
 	EventDispatcher,
-	Vector3
+	Vector3,
+	Controls
 } from 'three';
 
 const _euler = new Euler( 0, 0, 0, 'YXZ' );
@@ -13,7 +14,7 @@ const _unlockEvent = { type: 'unlock' };
 
 const _PI_2 = Math.PI / 2;
 
-class MouseOnlyControls extends EventDispatcher {
+class MouseOnlyControls extends Controls {
 
 	constructor( camera, domElement ) {
 
@@ -35,44 +36,11 @@ class MouseOnlyControls extends EventDispatcher {
         this.movingForward = false;
         this.distance = 0.05;
 
-		this._onMouseMove = onMouseMove.bind( this );
-		this._onPointerlockChange = onPointerlockChange.bind( this );
-		this._onPointerlockError = onPointerlockError.bind( this );
-        this._onMouseDown = onMouseDown.bind( this );
-        this._onMouseUp = onMouseUp.bind( this );
-		this._onContextMenu = onContextMenu.bind( this );
-
-		this.connect();
-
-	}
-
-	connect() {
-
-		this.domElement.ownerDocument.addEventListener( 'mousemove', this._onMouseMove );
-		this.domElement.ownerDocument.addEventListener( 'pointerlockchange', this._onPointerlockChange );
-		this.domElement.ownerDocument.addEventListener( 'pointerlockerror', this._onPointerlockError );
-        this.domElement.ownerDocument.addEventListener( 'mousedown' , this._onMouseDown );
-        this.domElement.ownerDocument.addEventListener( 'mouseup', this._onMouseUp );
-		this.domElement.ownerDocument.addEventListener( 'dblclick', this.onDblClick );
-		this.domElement.ownerDocument.addEventListener( 'contextmenu' , this._onContextMenu );
-
-	}
-
-	disconnect() {
-
-		this.domElement.ownerDocument.removeEventListener( 'mousemove', this._onMouseMove );
-		this.domElement.ownerDocument.removeEventListener( 'pointerlockchange', this._onPointerlockChange );
-		this.domElement.ownerDocument.removeEventListener( 'pointerlockerror', this._onPointerlockError );
-        this.domElement.ownerDocument.removeEventListener( 'mousedown', this._onMouseDown );
-        this.domElement.ownerDocument.removeEventListener( 'mouseup', this._onMouseUp );
-		this.domElement.ownerDocument.removeEventListener( 'dblclick', this.onDblClick );
-		this.domElement.ownerDocument.removeEventListener( 'oncontextmenu', this._onContextMenu )
-
-	}
-
-	dispose() {
-
-		this.disconnect();
+		this.domElement.ownerDocument.addEventListener( 'mousemove', this.onMouseMove.bind(this) );
+		this.domElement.ownerDocument.addEventListener( 'pointerlockchange', this.onPointerlockChange.bind(this) );
+		this.domElement.ownerDocument.addEventListener( 'pointerlockerror', this.onPointerlockError.bind(this) );
+        this.domElement.ownerDocument.addEventListener( 'mousedown' , this.onMouseDown.bind(this) );
+        this.domElement.ownerDocument.addEventListener( 'mouseup', this.onMouseUp.bind(this) );
 
 	}
 
@@ -92,7 +60,6 @@ class MouseOnlyControls extends EventDispatcher {
 
 		// move forward parallel to the xz-plane
 		// assumes camera.up is y-up
-
 		_vector.setFromMatrixColumn( this.camera.matrix, 0 );
 		_vector.crossVectors( this.camera.up, _vector );
 
@@ -103,8 +70,6 @@ class MouseOnlyControls extends EventDispatcher {
 	setDblClick(callback) {
 		window.addEventListener( 'dblclick' , (e) => this.onDblClick(e, callback));
 	}
-
-
 
 	lock() {
 
@@ -134,11 +99,9 @@ class MouseOnlyControls extends EventDispatcher {
 		}
 	}
 
-}
+	// event listeners
 
-// event listeners
-
-function onMouseDown() {
+onMouseDown() {
 
     if (this.isLocked === false) return;
 
@@ -148,7 +111,7 @@ function onMouseDown() {
 
 }
 
-function onMouseUp() {
+onMouseUp() {
 
     if (this.isLocked === false ) return;
 
@@ -157,7 +120,7 @@ function onMouseUp() {
     this.dispatchEvent( _changeEvent );
 }
 
-function onMouseMove( event ) {
+onMouseMove( event ) {
 
 	if ( this.isLocked === false ) return;
 
@@ -178,7 +141,7 @@ function onMouseMove( event ) {
 
 }
 
-function onPointerlockChange() {
+onPointerlockChange() {
 
 	if ( this.domElement.ownerDocument.pointerLockElement === this.domElement ) {
 
@@ -196,7 +159,7 @@ function onPointerlockChange() {
 
 }
 
-function onPointerlockError() {
+onPointerlockError() {
 
 	console.error( 'THREE.MouseOnlyControls: Unable to use Pointer Lock API' );
 
@@ -204,12 +167,16 @@ function onPointerlockError() {
 
 
 
-  function onContextMenu(event) {
+  onContextMenu(event) {
 
 	if(this.isLocked === true) {
 		this.unlock();
 	}
 
   }
+
+}
+
+
 
 export { MouseOnlyControls };

@@ -35,76 +35,73 @@ class KeyboardAccessControls {
  
 
 
-        this.onKeyDown = function ( event ) {
-
-            switch(event.code) {
-
-                case 'ArrowUp':
-                case 'KeyW': 
-                if(this.elevationControls) this.moveUp = true; 
-                break;
-
-                case 'ArrowLeft':
-                case 'KeyA': this.moveLeft = true; break;
-
-                case 'ArrowDown':
-                case 'KeyS': 
-                if (this.elevationControls) this.moveDown = true; 
-                break;
-
-                case 'ArrowRight':
-                case 'KeyD': this.moveRight = true; break;
-
-                case 'Space': this.moveForwardEnabled = true; break;
-                  
-
-			    }
-
-        }
 
 
-
-        this.onKeyUp = function ( event ) {
-
-          switch(event.code) {
-
-              case 'ArrowUp':
-              case 'KeyW': 
-              if(this.elevationControls) this.moveUp = false; 
-              break;
-
-              case 'ArrowLeft':
-              case 'KeyA': this.moveLeft = false; break;
-
-              case 'ArrowDown':
-              case 'KeyS': 
-              if (this.elevationControls) this.moveDown = false; 
-              break;
-
-              case 'ArrowRight':
-              case 'KeyD': this.moveRight = false; break;
-
-              case 'Space': this.moveForwardEnabled = false; break;
-          }
-        }
-
-
-
-        this.dispose = function () {
-
-          window.removeEventListener( 'keydown', _onKeyDown );
-          window.removeEventListener( 'keyup', _onKeyUp );
-
-        };
-
-        const _onKeyDown = this.onKeyDown.bind( this );
-		    const _onKeyUp = this.onKeyUp.bind( this );
-
-        window.addEventListener( 'keydown', _onKeyDown );
-		    window.addEventListener( 'keyup', _onKeyUp );
+        window.addEventListener( 'keydown', this.onKeyDown.bind(this) );
+		    window.addEventListener( 'keyup', this.onKeyUp.bind(this) );
 
 
     }
+
+    onKeyDown(event) {
+
+      switch(event.code) {
+
+          case 'ArrowUp':
+          case 'KeyW': 
+          if(this.elevationControls) this.moveUp = true; 
+          break;
+
+          case 'ArrowLeft':
+          case 'KeyA': this.moveLeft = true; break;
+
+          case 'ArrowDown':
+          case 'KeyS': 
+          if (this.elevationControls) this.moveDown = true; 
+          break;
+
+          case 'ArrowRight':
+          case 'KeyD': this.moveRight = true; break;
+
+          case 'Space': this.moveForwardEnabled = true; break;
+            
+
+    }
+
+  }
+
+  onKeyUp(event) {
+
+    switch(event.code) {
+
+        case 'ArrowUp':
+        case 'KeyW': 
+        if(this.elevationControls) this.moveUp = false; 
+        break;
+
+        case 'ArrowLeft':
+        case 'KeyA': this.moveLeft = false; break;
+
+        case 'ArrowDown':
+        case 'KeyS': 
+        if (this.elevationControls) this.moveDown = false; 
+        break;
+
+        case 'ArrowRight':
+        case 'KeyD': this.moveRight = false; break;
+
+        case 'Space': this.moveForwardEnabled = false; break;
+    }
+  }
+
+
+
+    dispose() {
+
+      window.removeEventListener( 'keydown', this.onKeyDown );
+      window.removeEventListener( 'keyup', this.onKeyUp );
+
+    };
 
     setTab(callback) {
 

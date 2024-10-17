@@ -14,6 +14,7 @@ export const state = new Proxy(
       slide: "welcome",
       positionIndex: 0,
       // -1 if none
+      mobile: false,
       box: -1,
       needsUpdate: false,
       preferences: {

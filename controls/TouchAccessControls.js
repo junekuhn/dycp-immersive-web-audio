@@ -6,8 +6,8 @@ import {
 } from 'three';
 
 const _euler = new Euler(0,0,0,'YXZ');
-const _touchCoords = new Vector2(0,0);
-const _prevTouchCoords = new Vector2(0,0);
+const _rotTouchCoords = new Vector2(0,0);
+const _prevRotTouchCoords = new Vector2(0,0);
 
 class TouchAccessControls {
 
@@ -31,6 +31,7 @@ class TouchAccessControls {
 
         this.rotationTouches = [];
         this.moveTouches = [];
+        this.rotationNeedsUpdate = false;
         this.touchSpeed = 0.003;
         this.forwardSpeed = 0.08;
 
@@ -82,14 +83,21 @@ class TouchAccessControls {
         // set previous
         this.prevCameraHeight = this.cameraHeight;
 
-
-        if(this.moveForwardEnabled) {
-
+        // update() => if this.moveTouches.length > 0, move forward
+        if(this.moveTouches.length > 0) {
 
           this.moveForward(this.forwardSpeed)
 
-
       }
+
+      _euler.setFromQuaternion( this.camera.quaternion );
+      _euler.y += _rotTouchCoords.x * this.touchSpeed;
+      _euler.x += _rotTouchCoords.y * this.touchSpeed * 0.5;
+      _euler.x = Math.max( Math.PI/2 - this.maxPolarAngle, Math.min( Math.PI/2 - this.minPolarAngle, _euler.x ) );
+
+      this.camera.quaternion.setFromEuler( _euler ); 
+
+
         
     }
 
@@ -98,22 +106,24 @@ class TouchAccessControls {
 
       while(event.changedTouches.item(itemIndex) != null) {
         let touch = event.changedTouches.item(itemIndex);
-        console.log(touch)
-        console.log(touch.identifier)
-        console.log(touch.target)
+        // console.log(touch)
+        // console.log(touch.identifier)
+        // console.log(touch.target)
 
         if(touch.target.id == "hitbox") {
           
           this.moveTouches.push(touch.identifier)
-          this.moveForwardEnabled = true;
 
         } else if(touch.target.id == "canvas") {
 
-          this.moveTouches.push(touch.identifier)
+          //limit rotationtouches to length 1
+          if(this.rotationTouches.length == 0) {
+            this.rotationTouches.push(touch.identifier)
+          }
 
           //set init touch for first finger only
-          _prevTouchCoords.y = touch.clientY
-          _prevTouchCoords.x = touch.clientX
+          _prevRotTouchCoords.y = touch.clientY
+          _prevRotTouchCoords.x = touch.clientX
 
         }
 
@@ -121,49 +131,64 @@ class TouchAccessControls {
       }
     
 
+
     };
     
     onTouchEnd(event) {
 
-        _prevTouchCoords.y = undefined;
-        _touchCoords.x = 0;
-        _touchCoords.y = 0;
+        // _prevRotTouchCoords.y = 0;
+        // _prevRotTouchCoords.x = 0;
+        
+
 
         let itemIndex = 0;
 
         while(event.changedTouches.item(itemIndex) != null) {
           let touch = event.changedTouches.item(itemIndex);
 
+          //stop rotation
+          if(touch.identifier == this.rotationTouches[0]) {
+            _rotTouchCoords.x = 0;
+            _rotTouchCoords.y = 0;
+          }
+
           //filter out touches with id
-          this.moveTouches.filter(moveTouch => touch.identifier === moveTouch);
-          this.rotationTouches.filter(rotationTouch => touch.identifier === rotationTouch);
+          this.moveTouches = this.moveTouches.filter(moveTouch => touch.identifier != moveTouch);
+          this.rotationTouches = this.rotationTouches.filter(rotationTouch => touch.identifier != rotationTouch);
           
           itemIndex++;
         }
+
 
     }
 
     onTouchMove(event) {
 
-      for (const touch of event.changedTouches)
-        {
-            if (touch.identifier == this.touchIdentifier)
-            {
-                // event.preventDefault(); // avoid scrolling whilst dragging
-                _touchCoords.x = touch.clientX - _prevTouchCoords.x;
-                _prevTouchCoords.x = touch.clientX;
-                _touchCoords.y = touch.clientY - _prevTouchCoords.y;
-                _prevTouchCoords.y = touch.clientY;
+      
+      let itemIndex = 0;
 
-            } 
-        }
+      
+      let touch = event.changedTouches.item(itemIndex);
 
-        _euler.setFromQuaternion( this.camera.quaternion );
-        _euler.y += _touchCoords.x * this.touchSpeed;
-        _euler.x += _touchCoords.y * this.touchSpeed * 0.5;
-        _euler.x = Math.max( Math.PI/2 - this.maxPolarAngle, Math.min( Math.PI/2 - this.minPolarAngle, _euler.x ) );
-  
-        this.camera.quaternion.setFromEuler( _euler ); 
+      this.rotationTouches.map((rotationTouch, i) => {
+
+        console.log(i)
+
+        //limit to first touch
+        if (rotationTouch == touch.identifier && i == 0)
+          {
+              // event.preventDefault(); // avoid scrolling whilst dragging
+              _rotTouchCoords.x = touch.clientX - _prevRotTouchCoords.x;
+              _prevRotTouchCoords.x = touch.clientX;
+              _rotTouchCoords.y = touch.clientY - _prevRotTouchCoords.y;
+              _prevRotTouchCoords.y = touch.clientY;
+
+          } 
+
+
+      })
+
+
     }
     
     onHitBoxEnd(event) {
