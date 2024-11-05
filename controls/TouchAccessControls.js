@@ -18,6 +18,8 @@ class TouchAccessControls {
 
         this.enabled = false;
         this.isLocked = false;
+        this.inertia = false;
+        this.elevationControls = true;
 
         this.curTime, this.tapLen;
         this.lastTap = 0;
@@ -90,7 +92,7 @@ class TouchAccessControls {
       }
 
       _euler.setFromQuaternion( this.camera.quaternion );
-      _euler.y += _rotTouchCoords.x * this.touchSpeed;
+      if(this.elevationControls) _euler.y += _rotTouchCoords.x * this.touchSpeed;
       _euler.x += _rotTouchCoords.y * this.touchSpeed * 0.5;
       _euler.x = Math.max( Math.PI/2 - this.maxPolarAngle, Math.min( Math.PI/2 - this.minPolarAngle, _euler.x ) );
 
@@ -146,7 +148,7 @@ class TouchAccessControls {
           let touch = event.changedTouches.item(itemIndex);
 
           //stop rotation
-          if(touch.identifier == this.rotationTouches[0]) {
+          if(touch.identifier == this.rotationTouches[0] && !this.inertia) {
             _rotTouchCoords.x = 0;
             _rotTouchCoords.y = 0;
           }

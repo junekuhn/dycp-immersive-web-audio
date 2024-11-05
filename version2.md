@@ -97,7 +97,24 @@ todo
 - trampbunny music for outside scene
 - ambisonic voiceover production
 - 3D scene building
+- something happens with clicking a button
 - settings
+when gamepad connects, replace description automatically
+
+- instrumentation (laptop, mobile, gamepad)
+    - egirl performance with gamepad
+    - laptop performance, hdmi, audio out
+    - mobile not really possible at this time
+    - tablet?
+    - cmpsr?  other midi?
+
+
+changing parameters for screenreader
+verbosity - low
+ralph - 70
+cyborg realities with the personalisation of screenreader tech
+portable preferences
+
 
 Settings menu
     Ambisonics 
