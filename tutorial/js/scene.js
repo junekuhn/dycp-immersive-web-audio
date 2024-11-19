@@ -4,77 +4,25 @@ import { MouseOnlyControls } from "../../controls/MouseOnlyControls.js";
 import { KeyboardAccessControls } from "../../controls/KeyboardAccessControls.js";
 import { GamepadAccessControls } from "../../controls/GamepadAccessControls.js";
 import { TouchAccessControls } from "../../controls/TouchAccessControls.js";
-import { AmbisonicAudio } from "../../controls/AmbisonicAudio.js";
-import * as ambisonics from 'ambisonics';
-import { MIDIAccessControls } from "../../controls/MidiAccessControls.js";
-
+import { MIDIAccessControls } from "../../controls/MidiAccessControls.js"
+import { sizes, listenerPositions, audioPositions, desktopDescriptions, mobileDescriptions} from "./data.js"
 import volumeFragmentShader from '../glsl/volumeFragment.glsl';
 import volumeVertexShader from '../glsl/volumeVertex.glsl'
-
 import { gsap } from 'gsap'
-
 import { state } from './state.js';
 
 let scene, camera, renderer, canvas,
  keyboardControls, gamepadControls;
-
-
-
-/**
- * Constants
- */
-const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight
-  }
-const listenerPositions = [
-    new THREE.Vector3(0,0,0),
-    new THREE.Vector3(3,0,-3),
-    new THREE.Vector3(-3,0,3),
-    new THREE.Vector3(-3,0,10),
-    new THREE.Vector3(10,0,-10),
-]
-const audioPositions = [
-    new THREE.Vector3(0,0,2),
-    new THREE.Vector3(3,0,-1),
-    new THREE.Vector3(-3,0,5),
-    new THREE.Vector3(-3,0,12),
-    new THREE.Vector3(10,0,-8)
-]
-
-const desktopDescriptions = [
-    "This is AllEars, a playable introduction to screenreader-accessible immersive audio on the web.  You can navigate through the experience using the tab key, just like any other accessible website.  Each 3D position is mapped to an HTML list item. If you’ve never used a screen reader before, I challenge you to turn it on, close your eyes, and find out if you can navigate the 3D space.",
-    "To look around, use the left and right arrow keys. You can optionally use the mouse to look around, but that tends to be more difficult if your eyes are closed.",
-    "This experience i ncorporates a standard 3D virtual space and spatial audio you might incounter in video games, virtual reality, or other kinds of simulations.  To move forward, press spacebar, or hold a single click.",
-    "This special kind of spatial audio, however, is called ambisonics, and it allows you to experience * an entire soundfield * without reference to objects in 3D space. All spatial information is contained within the audio file itself, and you need a special player called a binaural decoder to perceive that information. A helpful metaphor, I find, is thinking of it like listening to the sky, since it’s a spherical audio format.",
-    "To change settings, navigate to the menu with the escape key.  If you’re using a screenreader, the menu is just after this position. There you can learn more about this project, change control preferences, or connect a game controller."
-]
-
-const mobileDescriptions = [" This is AllEars, a playable introduction to screenreader-accessible immersive audio on the web.  If you’re using a screenreader, you can navigate through the experience by swiping left or right, just like any other accessible website.   Each 3D position is mapped to an HTML list item. Otherwise, you can teleport to the next position with a double tap on the top half of the screen.  If you’ve never used a screen reader before, I challenge you to turn it on, close your eyes, and find out if you can navigate the 3D space.",
-"To look around, use a one-finger drag on the top half of the screen. This will also work if you have Direct Touch enabled on iOS.  If you’re using Talkback on Android, a two-finger drag would be the equivalent.",
-"This experience incorporates the standard 3D virtual space you might incounter in video games, virtual reality, or other kinds of simulations.  To move forward, with a single finger, press and hold in the lower half of the screen.  If you’re using Talkback on Android, use a two-finger hold.",
-"This special kind of spatial audio, however, is called ambisonics, and it allows you to experience * an entire soundfield * without reference to objects in 3D space.  * All spatial information is contained within the audio file itself, and you need a special player called a binaural decoder to perceive that information. A helpful metaphor, I find, is thinking of it like listening to the sky, since it’s a spherical audio format.",
-"To change settings, navigate to the menu with a double tap on the bottom half of the screen.  If you’re using a screenreader, the menu is just after this position. There you can learn more about this project, change control preferences, or connect a game controller."
-]
-
-const gamepadDescription = [
-"This is AllEars, a playable introduction to screenreader-accessible immersive audio on the web.   You can teleport to the next position with a tap of the right button, b.  To move back, tap the left button, x.",
-"Congratulations gamer, you’ve unlocked your first achievement.  To look around, use the left joystick or the D-Pad. ",
-"This experience is incorporates the standard 3D virtual space you might encounter in video games, virtual reality, or other kinds of simulations.  To move forward, press the bottom button, a. ",
-"This special kind of spatial audio, however, is called ambisonics, and it allows you to experience an entire soundfield without reference to objects in 3D space. All spatial information is contained within the audio file itself, and you need a special player called a binaural decoder to perceive that information. A helpful metaphor, I find, is thinking of it like listening to the sky, since it’s a spherical audio format.",
-"To change settings, navigate to the menu with another tap of the right button, b. There you can learn more about this project, change control preferences, or go back to using normie controls."
-]
 let sounds = [],
 audioTimer,
 materials = [], analysers = [];
 let playerBounds = {
-  min: new THREE.Vector2(-15, -15),
-  max: new THREE.Vector2(15, 15)
+  min: new THREE.Vector3(-2, -0.5, -15),
+  max: new THREE.Vector3(2, 2, 1),
 }
 let boxGroup;
 
 export function initScene() {
-
 
     //init scene
     scene = new THREE.Scene()
@@ -112,6 +60,55 @@ export function initScene() {
 
     const sceneListElement = document.querySelector("#scene-list")
 
+
+    //instructions
+    let planeGeometry = new THREE.PlaneGeometry(1,1, 4, 4);
+    // load a texture, set wrap mode to repeat
+    const texture = new THREE.TextureLoader().load( "textures/allears0.png" );
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set( 1, 1 );
+    let planeMaterial  = new THREE.MeshBasicMaterial({
+        map: texture,
+        side: THREE.DoubleSide
+    })
+    let planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
+    planeMesh.position.set(0,0,-1);
+    scene.add(planeMesh)
+
+    //construct meshes from bounds
+    let boundingGeometry = new THREE.BoxGeometry(1, 1, 1);
+    let boundingMaterial = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(0x330055),
+        side: THREE.DoubleSide
+    });
+    let boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    boundingMesh.position.set(0, playerBounds.min.y, (playerBounds.min.z - playerBounds.max.z)/2 + playerBounds.max.z);
+    boundingMesh.scale.set(playerBounds.max.x - playerBounds.min.x, 0.01, playerBounds.max.z - playerBounds.min.z);
+    scene.add(boundingMesh)
+
+    //left
+    let boundingMesh2 = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    boundingMesh2.position.set(playerBounds.min.x, (playerBounds.max.y - playerBounds.min.y)/2 + playerBounds.min.y, (playerBounds.min.z - playerBounds.max.z)/2 + playerBounds.max.z);
+    boundingMesh2.scale.set(0.01, playerBounds.max.y - playerBounds.min.y, playerBounds.max.z - playerBounds.min.z);
+    scene.add(boundingMesh2)
+    // right
+    let boundingMesh3 = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    boundingMesh3.position.set(playerBounds.max.x, (playerBounds.max.y - playerBounds.min.y)/2 + playerBounds.min.y, (playerBounds.min.z - playerBounds.max.z)/2 + playerBounds.max.z);
+    boundingMesh3.scale.set(0.01, playerBounds.max.y - playerBounds.min.y, playerBounds.max.z - playerBounds.min.z);
+    scene.add(boundingMesh3)
+    //back 
+    let boundingMesh4 = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    boundingMesh4.position.set((playerBounds.max.x - playerBounds.min.x)/2 + playerBounds.min.x, (playerBounds.max.y - playerBounds.min.y)/2 + playerBounds.min.y, playerBounds.min.z);
+    boundingMesh4.scale.set(playerBounds.max.x - playerBounds.min.x, playerBounds.max.y - playerBounds.min.y, 0.01);
+    scene.add(boundingMesh4)
+
+    //front
+    let boundingMesh5 = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    boundingMesh5.position.set((playerBounds.max.x - playerBounds.min.x)/2 + playerBounds.min.x, (playerBounds.max.y - playerBounds.min.y)/2 + playerBounds.min.y, playerBounds.max.z);
+    boundingMesh5.scale.set(playerBounds.max.x - playerBounds.min.x, playerBounds.max.y - playerBounds.min.y, 0.01);
+    scene.add(boundingMesh5)
+
     //construct bounding boxes
     listenerPositions.map((position, i) => {
 
@@ -136,6 +133,10 @@ export function initScene() {
             state.positionIndex = i;
             setPosition(i)
 
+
+
+
+
             // play relevant audio in loop
             songElement = document.getElementById( `sample${state.positionIndex}` );
             // songElement.play();
@@ -155,17 +156,17 @@ export function initScene() {
         // listItem.ariaHidden = "true";
         sceneListElement.appendChild(listItem);
 
-        const boxGeometry = new THREE.BoxGeometry(3, 3, 3);
+        const boxGeometry = new THREE.BoxGeometry(1,1,1.1);
         const boxMaterial = new THREE.MeshBasicMaterial({
             color: new THREE.Color(`rgb(${Math.random() * 255}, 255, 255)`),
             transparent: true,
-            opacity: 0.2,
+            opacity: 0.8,
             side: THREE.DoubleSide
         });
         const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
         boxMesh.geometry.computeBoundingBox()
         boxMesh.position.set(position.x, position.y, position.z);
-        boxGroup.add(boxMesh);
+        // boxGroup.add(boxMesh);
 
     })
 
@@ -269,12 +270,9 @@ export function initScene() {
     light.position.set( 0, 0.5, 1 ).normalize();
     scene.add( light );
   
-    const ambient = new THREE.AmbientLight( 0xffffff, 0.7 );
+    const ambient = new THREE.AmbientLight( 0xffffff, 1 );
     scene.add( ambient );
-  
-    const helper = new THREE.GridHelper( 100, 20, 0xffffff, 0xffffff );
-    helper.position.y = -2;
-    scene.add( helper );
+
 
 
 
@@ -296,8 +294,8 @@ export const renderScene = () => {
     //bounds checking
     if(camera.position.x < playerBounds.min.x) camera.position.x = playerBounds.min.x;
     if(camera.position.x > playerBounds.max.x) camera.position.x = playerBounds.max.x;
-    if(camera.position.z < playerBounds.min.y) camera.position.z = playerBounds.min.y;
-    if(camera.position.z > playerBounds.max.y) camera.position.z = playerBounds.max.y;
+    if(camera.position.z < playerBounds.min.z) camera.position.z = playerBounds.min.z;
+    if(camera.position.z > playerBounds.max.z) camera.position.z = playerBounds.max.z;
 
     state.box = -1;
 

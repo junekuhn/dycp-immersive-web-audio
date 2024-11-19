@@ -95,10 +95,16 @@ Ideas:
 
 todo
 - trampbunny music for outside scene
-- ambisonic voiceover production
+- andy's piece
 - 3D scene building
-- something happens with clicking a button
+    text as a texture on some cubes or planes
+    a straight line to travel through
+    environment building 
+- something happens with clicking a button (mobile?)
 - settings
+    keyboard
+    mobile
+    gamepad
 when gamepad connects, replace description automatically
 
 - instrumentation (laptop, mobile, gamepad)
@@ -116,24 +122,10 @@ cyborg realities with the personalisation of screenreader tech
 portable preferences
 
 
-Settings menu
-    Ambisonics 
-        reverb
-    Touch
-        move speed
-        rotation speed
-        enable elevation
-        inertia
-    Lock
-        move speed
-        rotation speed
-        double click
-    Gamepad
-        move speed 
-        rotation speed
-        teleport button
-        move button
-        which joystick
-    Shaders
-        variables
-    captions on/off
+
+    captions yes or no?
+        on screen readers for mac the text appears
+
+        captions only appear in the track element when there's audio and video elements
+        so is this case it wouldn't work unless I had spoken narration
+        so it would be good to put the captions as 3D text in the experience

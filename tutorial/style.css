@@ -96,12 +96,13 @@ select {
     /* width: 90%; */
     /* max-width: 600px; */
     border: 1px solid white;
-    margin: auto;
+    margin: 3em auto;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     padding: 20px;
     row-gap: 20px;
+    /* width: 50%; */
 }
 
 #instructions {

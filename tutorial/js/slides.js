@@ -86,6 +86,7 @@ menuResumeButton.addEventListener('click', () => {
 menu.addEventListener('focusin', () => {
     
     //pause current audio
+    console.log(state.positionIndex)
     let songElement = document.getElementById( `sample${state.positionIndex}` );
     if(!songElement.paused) songElement.pause();
 
