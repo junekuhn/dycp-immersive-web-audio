@@ -1,0 +1,49 @@
+@font-face {
+    font-family: "Martel";
+    font-display: swap;
+    src: url('https://fonts.googleapis.com/css?family=Martel');
+  }
+
+  @font-face {
+    font-family: "Exo";
+    font-display: swap;
+    src: url('https://fonts.googleapis.com/css?family=Exo');
+  }
+
+
+
+
+
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body
+{
+    overflow: hidden;
+    /* touch-action: none; */
+    background-color: black;
+    color: white;
+}
+
+h1 {
+    font-family: "Martel";
+}
+
+h2 {
+    font-size: 20px;
+    font-family: "Exo";
+    font-weight: 100;
+    padding: 10px;
+}
+
+h3 {
+    font-size: 18px;
+    font-family: "Exo";
+    font-weight: 100;
+    padding: 8px;
+}

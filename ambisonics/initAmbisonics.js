@@ -2,8 +2,6 @@ import * as ambisonics from 'ambisonics';
 
 export const initAmbisonics = (context) => {
 
-    console.log(context)
-
     const maxOrder = 1;
 
     // initialize encoder

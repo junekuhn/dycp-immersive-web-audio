@@ -5,7 +5,6 @@ import { KeyboardAccessControls } from "../../controls/KeyboardAccessControls.js
 import { GamepadAccessControls } from "../../controls/GamepadAccessControls.js";
 import { TouchAccessControls } from "../../controls/TouchAccessControls.js";
 import { MIDIAccessControls } from "../../controls/MidiAccessControls.js";
-import * as ambisonics from 'ambisonics';
 import { sizes, listenerPositions, audioPositions, desktopDescriptions, mobileDescriptions } from "./data.js"
 import volumeFragmentShader from '../glsl/volumeFragment.glsl';
 import volumeVertexShader from '../glsl/volumeVertex.glsl'
