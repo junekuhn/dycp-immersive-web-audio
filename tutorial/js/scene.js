@@ -256,7 +256,7 @@ var assignSample2SoundBuffer = function(decodedBuffer) {
         boxMesh.position.set(position.x, position.y+0.5, position.z);
         boxGroup.add(boxMesh);
 
-        const texture = textureLoader.load( `textures/allears${i}.png` );
+        const texture = textureLoader.load( `./textures/allears${i}.png` );
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.set( 1, 1 );
