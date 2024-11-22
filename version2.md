@@ -96,16 +96,14 @@ Ideas:
 todo
 - trampbunny music for outside scene
 - andy's piece
+- ambisonics for 4th bit - morning
 - 3D scene building
-    text as a texture on some cubes or planes
-    a straight line to travel through
     environment building 
 - something happens with clicking a button (mobile?)
 - settings
-    keyboard
-    mobile
+    mobile - morning
     gamepad
-when gamepad connects, replace description automatically
+- when gamepad connects, replace description automatically
 
 - instrumentation (laptop, mobile, gamepad)
     - egirl performance with gamepad

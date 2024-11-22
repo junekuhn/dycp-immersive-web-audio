@@ -79,6 +79,7 @@ menuResumeButton.addEventListener('click', () => {
     }
 
     //change focus to the last list element
+    // if(state.positionIndex == -1) state.positionIndex = 0;
     let firstLiElement = document.querySelector(`li[data-index='${state.positionIndex}']`)
     firstLiElement.focus()
 })
@@ -88,7 +89,7 @@ menu.addEventListener('focusin', () => {
     //pause current audio
     console.log(state.positionIndex)
     let songElement = document.getElementById( `sample${state.positionIndex}` );
-    if(!songElement.paused) songElement.pause();
+    if(songElement != null && !songElement.paused) songElement.pause();
 
     menu.classList.remove("screenreader");
     menu.classList.add("slide")
@@ -151,6 +152,18 @@ elevationCheckbox.addEventListener("change", (e) => {
 let inertiaCheckbox = document.querySelector("#elevationCheckbox");
 inertiaCheckbox.addEventListener("change", (e) => {
     initScene.touchControls.inertia = e.target.value;
+})
+
+let spacebarMoveSpeed = document.querySelector("#spacebarMoveSpeed");
+spacebarMoveSpeed.addEventListener("change", (e) => {
+    let mappedInput = map(e.target.value, spacebarMoveSpeed.min, spacebarMoveSpeed.max, 0.003, 0.1);
+    initScene.keyboardControls.moveSpeed = mappedInput;
+})
+
+let arrowKeysSpeed = document.querySelector("#arrowKeysSpeed");
+arrowKeysSpeed.addEventListener("change", (e) => {
+    let mappedInput = map(e.target.value, arrowKeysSpeed.min, arrowKeysSpeed.max, 0.003, 0.1);
+    initScene.keyboardControls.lookSpeed = mappedInput;
 })
 
 //helper functions

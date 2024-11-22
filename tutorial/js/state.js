@@ -16,7 +16,10 @@ export const state = new Proxy(
       // -1 if none
       mobile: false,
       box: -1,
+      ambisonics: null,
       needsUpdate: false,
+      pausedAt: 0,
+      isPlaying: false,
       preferences: {
         controls: "",
         joystick: "",

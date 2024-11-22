@@ -14,16 +14,16 @@ export const listenerPositions = [
     new THREE.Vector3(0,0,-12),
 ]
 export const audioPositions = [
-    new THREE.Vector3(0,0,2),
-    new THREE.Vector3(3,0,-1),
-    new THREE.Vector3(-3,0,5),
-    new THREE.Vector3(-3,0,12),
-    new THREE.Vector3(10,0,-8)
+    new THREE.Vector3(-1,0,-4),
+    new THREE.Vector3(1,0,-7),
+    new THREE.Vector3(-1,0,-7),
+    new THREE.Vector3(-1,0,-3),
+    new THREE.Vector3(1,0,-8)
 ]
 
 export const desktopDescriptions = [
     "This is AllEars, a playable introduction to screenreader-accessible immersive audio on the web.  You can navigate through the experience using the tab key, just like any other accessible website.  Each 3D position is mapped to an HTML list item. If you’ve never used a screen reader before, I challenge you to turn it on, close your eyes, and find out if you can navigate the 3D space.",
-    "To look around, use the left and right arrow keys. You can optionally use the mouse to look around, but that tends to be more difficult if your eyes are closed.",
+    "To look around, use the left and right arrow keys, and spacebar to move forward. You can optionally use the mouse and mouse click to look around, but that tends to be more difficult if your eyes are closed.",
     "This experience i ncorporates a standard 3D virtual space and spatial audio you might incounter in video games, virtual reality, or other kinds of simulations.  To move forward, press spacebar, or hold a single click.",
     "This special kind of spatial audio, however, is called ambisonics, and it allows you to experience * an entire soundfield * without reference to objects in 3D space. All spatial information is contained within the audio file itself, and you need a special player called a binaural decoder to perceive that information. A helpful metaphor, I find, is thinking of it like listening to the sky, since it’s a spherical audio format.",
     "To change settings, navigate to the menu with the escape key.  If you’re using a screenreader, the menu is just after this position. There you can learn more about this project, change control preferences, or connect a game controller."
