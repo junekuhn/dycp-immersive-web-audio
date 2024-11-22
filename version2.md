@@ -94,12 +94,8 @@ Ideas:
 
 
 todo
-- trampbunny music for outside scene
 - andy's piece
-- ambisonics for 4th bit - morning
-- 3D scene building
-    environment building 
-- something happens with clicking a button (mobile?)
+- something happens with clicking a button (screenreader desktop)
 - settings
     mobile - morning
     gamepad

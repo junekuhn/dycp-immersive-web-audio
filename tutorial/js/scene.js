@@ -178,7 +178,7 @@ var assignSample2SoundBuffer = function(decodedBuffer) {
         playButton.addEventListener('click',enterScene)
     }, 500);
 
-    const sceneListElement = document.querySelector("#scene-list")
+    initScene.sceneListElement = document.querySelector("#scene-list")
 
 
     //instructions
@@ -230,42 +230,19 @@ var assignSample2SoundBuffer = function(decodedBuffer) {
         listItem.role = "button";
         listItem.addEventListener("focus", (e) => {
 
-            let songElement;
-
-            //if you're outside the boxes , it's already paused
-            if(state.positionIndex > -1) {
-                //pause current audio
-                clearTimeout(audioTimer);
-                songElement = document.getElementById( `sample${state.positionIndex}` );
-                songElement.pause();
-            }
+            // if not already in right box
+            if(state.positionIndex != -1)
+            setPosition(i)
 
             //set new state
             state.positionIndex = i;
-            setPosition(i)
-
-
-
-
-
-            // play relevant audio in loop
-            songElement = document.getElementById( `sample${state.positionIndex}` );
-            // songElement.play();
-            //delayed loop
-            songElement.addEventListener('ended', () => {
-                audioTimer = setTimeout(() => {
-                    //delayed start
-                    // songElement.play();
-                }, 1000) 
-            })
         })
         if(state.mobile) {
-            listItem.innerHTML = mobileDescriptions[i];
+            listItem.innerHTML = "Position " + i + mobileDescriptions[i];
         } else {
             listItem.innerHTML = desktopDescriptions[i];
         }
-        // listItem.ariaHidden = "true";
-        sceneListElement.appendChild(listItem);
+        initScene.sceneListElement.appendChild(listItem);
 
         const boxGeometry = new THREE.BoxGeometry(2,2,2.1);
         const boxMaterial = new THREE.MeshBasicMaterial({
@@ -297,6 +274,7 @@ var assignSample2SoundBuffer = function(decodedBuffer) {
 
     const enterScene = () => {
         if(!state.mobile) {
+            console.log("locking")
             initScene.mouseControls.lock();
         }
 
@@ -428,6 +406,11 @@ export const renderScene = () => {
                 let songElement = document.getElementById( `sample${i}` );
                 songElement.pause();
             })
+
+            //focus that LI element
+            let currentLI = initScene.sceneListElement.querySelector(`li[data-index="${state.box}"]`);
+            currentLI.focus();
+
 
         }
 

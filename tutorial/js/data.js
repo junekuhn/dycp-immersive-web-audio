@@ -17,8 +17,8 @@ export const audioPositions = [
     new THREE.Vector3(-1,0,-4),
     new THREE.Vector3(1,0,-7),
     new THREE.Vector3(-1,0,-7),
-    new THREE.Vector3(-1,0,-3),
-    new THREE.Vector3(1,0,-8)
+    new THREE.Vector3(-1,0,-3)
+    // new THREE.Vector3(1,0,-8)
 ]
 
 export const desktopDescriptions = [

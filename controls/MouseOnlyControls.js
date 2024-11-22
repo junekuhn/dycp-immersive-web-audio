@@ -34,7 +34,7 @@ class MouseOnlyControls extends Controls {
 
         this.movementEnabled = true;
         this.movingForward = false;
-        this.distance = 0.05;
+        this.distance = 0.02;
 
 		this.domElement.ownerDocument.addEventListener( 'mousemove', this.onMouseMove.bind(this) );
 		this.domElement.ownerDocument.addEventListener( 'pointerlockchange', this.onPointerlockChange.bind(this) );
