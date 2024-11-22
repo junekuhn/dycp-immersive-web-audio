@@ -1,10 +1,13 @@
 import {
     Vector3,
     Euler,
-    ImageLoader
+    ImageLoader,
+    Vector2
 } from 'three';
 
 const _euler = new Euler(0,0,0,'YXZ');
+const _rotTouchCoords = new Vector2(0,0);
+const _prevRotTouchCoords = new Vector2(0,0);
 
 class TouchAccessControls {
 
@@ -15,6 +18,8 @@ class TouchAccessControls {
 
         this.enabled = false;
         this.isLocked = false;
+        this.inertia = false;
+        this.elevationControls = true;
 
         this.curTime, this.tapLen;
         this.lastTap = 0;
@@ -22,34 +27,22 @@ class TouchAccessControls {
 
         this.cameraHeight = 0, this.prevCameraHeight = 0;
 
-        this.forwardMovementEnabled = false;
-        this.tabularMovement = false;
+        this.moveForwardEnabled = false;
 
         this.navigator = window.navigator;
 
-
-        this.touchX = 0;
-        this.touchY = 0;
-        this.previousTouchX = 0;
-        this.previousTouchY = 0;
-        this.touchIdentifier;
-        this.moveForward = false;
-        this.touchSpeed = 0.003;
-        this.forwardSpeed = 0.08;
+        this.rotationTouches = [];
+        this.moveTouches = [];
+        this.touchSpeed = 0.005;
+        this.forwardSpeed = 0.01;
 
         this.minPolarAngle = 0;
         this.maxPolarAngle = Math.PI;
 
-        this._onTouchStart = this.onTouchStart.bind( this );
-        this._onTouchMove = this.onTouchMove.bind( this );
-        this._onTouchEnd = this.onTouchEnd.bind( this );
-        this._onHitBoxEnd = this.onHitBoxEnd.bind( this );
-        this._onContextMenu = this.onContextMenu.bind( this );
-        // this._onDoubleTap = this.onDoubleTap.bind( this );
-
-        this.domElement.ownerDocument.addEventListener( 'touchstart', this._onTouchStart );
-        this.domElement.ownerDocument.addEventListener( 'contextmenu', this._onContextMenu )
-        // this.domElement.ownerDocument.addEventListener('touchend', this.onDoubleTap, { passive: false });
+        this.domElement.ownerDocument.addEventListener( 'touchstart', this.onTouchStart.bind(this) );
+        this.domElement.ownerDocument.addEventListener( 'touchmove', this.onTouchMove.bind(this) );
+        this.domElement.ownerDocument.addEventListener( 'touchend', this.onTouchEnd.bind(this) );
+        this.domElement.ownerDocument.addEventListener( 'touchcancel', this.onTouchEnd.bind(this) );
         this.divideScreen();
 
     }
@@ -64,9 +57,9 @@ class TouchAccessControls {
 
     dispose() {
 
-        this.domElement.ownerDocument.removeEventListener( 'touchstart', this._onTouchStart );
-        this.domElement.ownerDocument.removeEventListener( 'touchmove', this._onTouchMove );
-        this.domElement.ownerDocument.removeEventListener( 'touchend', this._onTouchEnd );
+        // this.domElement.ownerDocument.removeEventListener( 'touchstart', this._onTouchStart );
+        // this.domElement.ownerDocument.removeEventListener( 'touchmove', this._onTouchMove );
+        // this.domElement.ownerDocument.removeEventListener( 'touchend', this._onTouchEnd );
 
     }
 
@@ -91,145 +84,129 @@ class TouchAccessControls {
         // set previous
         this.prevCameraHeight = this.cameraHeight;
 
+        // update() => if this.moveTouches.length > 0, move forward
+        if(this.moveTouches.length > 0) {
 
-        if(this.moveForward && this.forwardMovementEnabled) {
+          this.moveForward(this.forwardSpeed)
 
-
-          //neutralize y
-          direction.y = 0;
-    
-          this.camera.position.add( direction.multiplyScalar( this.forwardSpeed ) );
       }
+
+      _euler.setFromQuaternion( this.camera.quaternion );
+      if(this.elevationControls) _euler.y += _rotTouchCoords.x * this.touchSpeed;
+      _euler.x += _rotTouchCoords.y * this.touchSpeed * 0.5;
+      _euler.x = Math.max( Math.PI/2 - this.maxPolarAngle, Math.min( Math.PI/2 - this.minPolarAngle, _euler.x ) );
+
+      this.camera.quaternion.setFromEuler( _euler ); 
+
+
         
     }
 
     onTouchStart(event) {
+      let itemIndex = 0;
 
-        if(this.isLocked) {
+      while(event.changedTouches.item(itemIndex) != null) {
+        let touch = event.changedTouches.item(itemIndex);
+        // console.log(touch)
+        // console.log(touch.identifier)
+        // console.log(touch.target)
 
-          //if in hitbox
-          if(event.target.id == "hitbox" ) {
+        if(touch.target.id == "hitbox") {
+          
+          this.moveTouches.push(touch.identifier)
 
-            this.domElement.ownerDocument.addEventListener( 'touchend', this._onHitBoxEnd );
+        } else if(touch.target.id == "canvas") {
 
-            this.moveForward = true;
-
-           } else {
-
-              //set init touch for first finger only
-              this.previousTouchY = event.changedTouches[0].clientY
-              this.previousTouchX = event.changedTouches[0].clientX
-              this.touchIdentifier = event.changedTouches[0].identifier;
-              this.domElement.ownerDocument.addEventListener( 'touchmove', this._onTouchMove );
-              this.domElement.ownerDocument.addEventListener( 'touchend', this._onTouchEnd );
-
-              
+          //limit rotationtouches to length 1
+          if(this.rotationTouches.length == 0) {
+            this.rotationTouches.push(touch.identifier)
           }
-    
-        //   event.preventDefault();
+
+          //set init touch for first finger only
+          _prevRotTouchCoords.y = touch.clientY
+          _prevRotTouchCoords.x = touch.clientX
+
         }
+
+        itemIndex++;
+      }
+    
+
+
     };
     
     onTouchEnd(event) {
 
-        this.previousTouchY = undefined;
-        this.touchX = 0;
-        this.touchY = 0;
-        this.domElement.ownerDocument.removeEventListener( 'touchmove', this._onTouchMove );
-        this.domElement.ownerDocument.removeEventListener( 'touchend', this._onTouchEnd );
-        // event.preventDefault(); 
+        // _prevRotTouchCoords.y = 0;
+        // _prevRotTouchCoords.x = 0;
+        
+
+
+        let itemIndex = 0;
+
+        while(event.changedTouches.item(itemIndex) != null) {
+          let touch = event.changedTouches.item(itemIndex);
+
+          //stop rotation
+          if(touch.identifier == this.rotationTouches[0] && !this.inertia) {
+            _rotTouchCoords.x = 0;
+            _rotTouchCoords.y = 0;
+          }
+
+          //filter out touches with id
+          this.moveTouches = this.moveTouches.filter(moveTouch => touch.identifier != moveTouch);
+          this.rotationTouches = this.rotationTouches.filter(rotationTouch => touch.identifier != rotationTouch);
+          
+          itemIndex++;
+        }
+
 
     }
 
     onTouchMove(event) {
 
-      for (const touch of event.changedTouches)
-        {
-            if (touch.identifier == this.touchIdentifier)
-            {
-                // event.preventDefault(); // avoid scrolling whilst dragging
-                this.touchX = touch.clientX - this.previousTouchX;
-                this.previousTouchX = touch.clientX;
-                this.touchY = touch.clientY - this.previousTouchY;
-                this.previousTouchY = touch.clientY;
+      
+      let itemIndex = 0;
 
-            } 
-            else 
-            {
-    
-            }
-        }
+      
+      let touch = event.changedTouches.item(itemIndex);
 
-        _euler.setFromQuaternion( this.camera.quaternion );
-        _euler.y += this.touchX * this.touchSpeed;
-        _euler.x += this.touchY * this.touchSpeed * 0.5;
-        _euler.x = Math.max( Math.PI/2 - this.maxPolarAngle, Math.min( Math.PI/2 - this.minPolarAngle, _euler.x ) );
-  
-        this.camera.quaternion.setFromEuler( _euler ); 
+      this.rotationTouches.map((rotationTouch, i) => {
+
+        console.log(i)
+
+        //limit to first touch
+        if (rotationTouch == touch.identifier && i == 0)
+          {
+              // event.preventDefault(); // avoid scrolling whilst dragging
+              _rotTouchCoords.x = touch.clientX - _prevRotTouchCoords.x;
+              _prevRotTouchCoords.x = touch.clientX;
+              _rotTouchCoords.y = touch.clientY - _prevRotTouchCoords.y;
+              _prevRotTouchCoords.y = touch.clientY;
+
+          } 
+
+
+      })
+
+
     }
     
     onHitBoxEnd(event) {
 
-      this.moveForward = false;
+      this.moveForwardEnabled = false;
       this.domElement.ownerDocument.removeEventListener( 'touchend', this._onHitBoxEnd );
 
-    }
-    
-    setDoubleTap(callback, hitboxCallback) {
+    } 
 
-      this.domElement.ownerDocument.addEventListener('touchend', 
-        (e) => this.onDoubleTap(e, callback, hitboxCallback),
-        { passive: false }
-      );
-      this.domElement.ownerDocument.addEventListener('contextmenu', 
-        (e) => this.onContextMenu(e, callback, hitboxCallback),
-        { passive: false }
-      );  
-      this.tabularMovement = true;
+     moveForward(distance) {
+      //afaik the best algorithm is cross product
+      const _direction = new Vector3();
+      _direction.setFromMatrixColumn( this.camera.matrix, 0 );
+      _direction.crossVectors( this.camera.up, _direction );
 
-    }
-
-    /* Based on this http://jsfiddle.net/brettwp/J4djY/*/
-    onDoubleTap (e, callback, hitboxCallback) {
-
- 
-      this.curTime = new Date().getTime();
-      this.tapLen = this.curTime - this.lastTap;
-
-      if (this.tapLen < 500 && this.tapLen > 0) {
-
-        if(e.target.id =="hitbox") {
-          hitboxCallback();
-        } else {
-          callback();
-        }
-
-        e.preventDefault();
-
-      } else {
-
-        this.timeout = setTimeout(() => {
-          clearTimeout(this.timeout);
-        }, 500);
-
-      }
-
-      this.lastTap = this.curTime;
-    
+      this.camera.position.addScaledVector( _direction, distance );
      }
-
-
-     onContextMenu(e, callback, hitboxCallback) {
-      if(e.target.id =="hitbox") {
-        hitboxCallback();
-      } else {
-        callback();
-      }
-
-      e.preventDefault();
-     }
-
-
   
 
 }

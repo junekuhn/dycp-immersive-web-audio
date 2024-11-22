@@ -19,12 +19,14 @@ Screens and Screens-within-experience
     - small ambisonic instructions
     - maybe the audio itself is the instruction on loop
 ---- detect that listener has been looking around ----
-5. Settings and exit and next scene controls
+5. Menu
+    - Resume
     - 5.1 settings screen   
         haptics can be turned off
         mouse controls
         an instruction to use gamepad if desired
     - 5.2 screen midi configuration available
+    - Info
 ---- optional: change calibration / other settings ---
 ---- credits and info are also in settings ---
 ---- ambisonic experience ----
@@ -81,4 +83,43 @@ The Spatial Sonic Webpage
 3. there's a visible path for sighted people.  Darkness implies that we should be listening.
 4. scene description? ideally
 5. bounding boxes for each part, and upon entering the sounds change
-6. 
+6. swipe / tab through everything
+
+
+Ideas:
+- combine touch and mouse controls
+- sonification to locate next scene
+
+- instead of a menu control, just locate it after the list and listen for focus
+
+
+todo
+- andy's piece
+- something happens with clicking a button (screenreader desktop)
+- settings
+    mobile - morning
+    gamepad
+- when gamepad connects, replace description automatically
+
+- instrumentation (laptop, mobile, gamepad)
+    - egirl performance with gamepad
+    - laptop performance, hdmi, audio out
+    - mobile not really possible at this time
+    - tablet?
+    - cmpsr?  other midi?
+
+
+changing parameters for screenreader
+verbosity - low
+ralph - 70
+cyborg realities with the personalisation of screenreader tech
+portable preferences
+
+
+
+    captions yes or no?
+        on screen readers for mac the text appears
+
+        captions only appear in the track element when there's audio and video elements
+        so is this case it wouldn't work unless I had spoken narration
+        so it would be good to put the captions as 3D text in the experience

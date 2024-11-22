@@ -5,6 +5,7 @@ import {
 } from 'three';
 
 const _euler = new Euler( 0, 0, 0, 'YXZ' );
+const _direction = new Vector3();
 
 class GamepadAccessControls {
     constructor(camera) {
@@ -90,10 +91,8 @@ class GamepadAccessControls {
       update() {
         this.pollStatus();
 
-        const direction = new Vector3();
-        this.camera.getWorldDirection( direction );
-
-        this.cameraHeight = direction.y;
+        this.camera.getWorldDirection(_direction)
+        this.cameraHeight = _direction.y;
 
         if (this.ticking) {
           this.pollJoysticks();
@@ -200,8 +199,8 @@ class GamepadAccessControls {
       pollButtons() {
         const buttonPressedArray = this.gamepads[0].buttons
         const dPadUp = 12, dPadDown = 13, dPadLeft = 14, dPadRight = 15;
-        const direction = new Vector3();
-        this.camera.getWorldDirection( direction );
+
+        this.camera.getWorldDirection( _direction );
 
         buttonPressedArray.map((button, i) => {
           //look for a change of state to off 
@@ -222,12 +221,7 @@ class GamepadAccessControls {
         if (this.forwardMovementEnabled) {
           const aButtonPressed = currentButtons[0].pressed;
           if (aButtonPressed){
-
-      
-            //neutralize y
-            direction.y = 0;
-      
-            this.camera.position.add( direction.multiplyScalar( this.forwardSpeed ) );
+            this.moveForward(this.forwardSpeed)
           }
 
           //teleport B button if previous was 0
@@ -254,11 +248,15 @@ class GamepadAccessControls {
           } else if (currentButtons[dPadRight].pressed) {
             this.left.x = 1;
           }
-
-
-
-
         }
+      }
+
+      moveForward(distance) {
+        //afaik the best algorithm is cross product
+        _direction.setFromMatrixColumn( this.camera.matrix, 0 );
+        _direction.crossVectors( this.camera.up, _direction );
+
+        this.camera.position.addScaledVector( _direction, distance );
       }
       
       onGamepadConnect(event) {

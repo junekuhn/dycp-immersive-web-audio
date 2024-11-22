@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>AllEars - Immersive Web Audio Tutorial</title>
+    <meta name="description" content="An immersive experience and tutorial to introduce screen-reader accessible immersive web audio.  With mouse, keyboard, gamepad, touch, and MIDI controls, possibilities are endless in exploring sound- and haptic-based 3D nagivation.">
+    <meta name="keywords" content="ambisonics, three.js, web audio, gamepad, screen reader, experimental, tutorial">
+    <meta name="author" content="June Kuhn">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Exo">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Martel">
+    <link rel="stylesheet" href="./style.css">
+    <link type="image/png" sizes="16x16" rel="icon" href="./icons8-favicon-16.png">
+</head>
+<body>
+    <canvas id="canvas" class="webgl"></canvas>
+    <script type="module" src="./js/scene.js"></script>
+    <script type="module" src="./js/slides.js"></script>
+    <div class="slide" id="welcome">
+        <div class="container">
+            <h1 class="title">AllEars - Immersive Web Audio Tutorial</h1>
+        </div>
+        <div class="button-container">
+            <button class="big-button" id="enter-button">Enter</button>
+            <hr/>
+            <button class="big-button" id="info-button">Info</button>
+        </div>
+        <div class="grant-container">
+            <img class="grant-img" src="./images/grant_png_white.png" alt="Supported using public funding by Arts Council England"/>
+        </div>
+    </div>
+    <div class="slide" id="headphones" style="display: none;">
+        <div class="container">
+            <h1 class="title">Put on headphones, wired or bluetooth</h1>
+        </div>
+        <div class="button-container">
+            <button class="big-button" id="continue-button">Continue</button>
+        </div>
+    </div>
+    <div class="slide" id="scene"  style="display: none;">
+        <div class="loading-bar"></div>
+        <div class="button-container">
+            <button class="big-button" id="play">Loading</button>
+        </div>
+    </div>
+    <!-- this is where the navigable html elements will be that propel you through the scene -->
+    <ol style="display: none;" id="scene-list" class="screenreader">
+    </ol>
+    <div id="menu" tabindex="0" role="list" class="screenreader" style="display: none;">
+        <div class="container">
+            <h1 class="title">Menu</h2>
+        </div>
+        <div class="button-container">
+            <button class="big-button" id="menu-resume">Resume</button>
+            <button class="big-button" id="menu-settings">Settings</button>
+            <button class="big-button" id="menu-info">Info</button>
+        </div>
+        <div class="loading-bar"></div>
+    </div>
+    <div class="slide" id="info" style="display: none;">
+        <div class="container">
+            <h1 class="title">Info</h1>
+        </div>
+        <div class="outbound-links">
+            <h3>All code, music, and audio designed and produced by June Kuhn</h3>
+            <h3><a href="https://github.com/junekuhn/dycp-immersive-web-audio">Source</a></h3>
+            <h3><a href="https://junebug.codes">June's Website</a></h3>
+        </div>
+        <section>
+            <article>
+                <p>I’m a neurodivergent computational artist, looking to divest the sensorial wonders of immersive media from the directives of profit and ableism.</p>
+                <br>
+                <p>I argue that Meta, Google, Microsoft, and Apple present this medium as a pay-to-play, whether you’re trading your money, privacy, or more recently the autonomy of your own body.  And with their approach comes a one-size-fits-most that maintains the heteronormative patriarchal ableist hegemony. I collect no data, and the controls provided are open-source and designed for online gallery settings.</p>
+                <br>
+                <p>Through the Develop Your Creative Practice grant, I am building a toolkit for artists,  web developers, and musicians to build immersive experiences accessible to screen readers in the browser. This approach aims to utilize open web standards to enable myself and others to create website installations that allow for hybridity with in-person immersive installations like projections and speaker arrays.</p>
+                <br>
+                <p>Through this development opportunity I am building community and interest around immersive web audio.  If you or your organisation would like to get involved, please reach out with your community building ideas.  If you or your organisation would like to hire me or a member of this artist/developer  community in the future, please reach out via contact details below:</p>
+                <br>
+                <p><a href="mailto:june@junebug.codes">june [at] junebug [dot] codes</a></p>
+            </article>
+        </section>
+        <div id="acknowledgements">
+            <h2>Acknowledgements</h2>
+                <h3>Collaborators / Mentors</h3>
+                <ul>
+                    <li>Andy Slater</li>
+                    <li>Christian Duka</li>
+                    <li>Tim Yates</li>
+                    <li>Olivia Jack</li>
+                </ul>
+                <h3>Beta Testers / Open Call Participants</h3>
+                <ul>
+                    <li>Lynn Cox</li>
+                    <li>Tafsila Khan</li>
+                    <li>Net Warner</li>
+                    <li>Karina Jones</li>
+                    <li>Anonymous Tester</li>
+                </ul>
+        </div>
+        <div class="button-container">
+            <hr>
+            <button class="big-button" id="back">Back</button>
+        </div>
+    </div>
+    <div class="slide" id="settings" style="display: none;">
+        <div id="settings-container">
+            <h1 tabindex="0">Settings</h1>
+            <div tabindex="0" id="gamepads">
+                No Gamepads Connected
+            </div>
+            <div>
+                <h3>Touch</h3>
+                <label for="touchRotationSpeed">Touch Rotation Speed</label>
+                <input type="range" min="1" max="10" value="5" class="slider" id="touchRotationSpeed">
+                <label for="touchMoveSpeed">Touch Move Speed</label>
+                <input type="range" min="1" max="10" value="5" class="slider" id="touchMoveSpeed">
+                <label for="elevationCheckbox">Enable Elevation</label>
+                <input type="checkbox" id="elevationCheckbox">
+                <label for="inertiaCheckbox">Enable Inertia</label>
+                <input type="checkbox" id="inertiaCheckbox">
+            </div>
+            <div>
+                <h3>Pointer</h3>
+                <label for="pointerRotationSpeed">Pointer Rotation Speed</label>
+                <input type="range" min="1" max="10" value="5" class="slider" id="pointerRotationSpeed">
+            </div>
+            <div>
+                <h3>Keyboard</h3>
+                <label for="spacebarMoveSpeed">Spacebar Move Speed</label>
+                <input type="range" min="1" max="10" value="5" class="slider" id="spacebarMoveSpeed">
+                <label for="arrowKeysSpeed">Arrow Keys Speed</label>
+                <input type="range" min="1" max="10" value="5" class="slider" id="arrowKeysSpeed">
+            </div>
+            <div>
+                <h3>Gamepad</h3>
+                <label for="gamepadRotationSpeed">Gamepad Rotation Speed</label>
+                <input type="range" min="1" max="10" value="5" class="slider" id="gamepadRotationSpeed">
+                <label for="gamepadMoveSpeed">Gamepad Move Speed</label>
+                <input type="range" min="1" max="10" value="5" class="slider" id="gamepadRotationSpeed">
+                <label for="teleport">Teleport</label>
+                <select id="teleport" name="teleport">
+                    <option value="0">Down Button</option>
+                    <option selected value="1">Right Button</option>
+                    <option value="2">Left Button</option>
+                    <option value="3">Up Button</option>
+                    <option value="4">L1</option>
+                    <option value="5">R1</option>
+                    <option value="6">L2</option>
+                    <option value="7">R2</option>
+                    <option value="8">Left Start</option>
+                    <option value="9">Right Start</option>
+                    <option value="10">Left Joystick</option>
+                    <option value="11">Left Joystick</option>
+                    <option value="12">DPAD Up</option>
+                    <option value="13">DPAD Down</option>
+                    <option value="14">DPAD Left</option>
+                    <option value="15">DPAD Right</option>
+                </select>
+                <label for="move">Move</label>
+                <select id="move" name="move">
+                    <option selected value="0">Down Button</option>
+                    <option value="1">Right Button</option>
+                    <option value="2">Left Button</option>
+                    <option value="3">Up Button</option>
+                    <option value="4">L1</option>
+                    <option value="5">R1</option>
+                    <option value="6">L2</option>
+                    <option value="7">R2</option>
+                    <option value="8">Left Start</option>
+                    <option value="9">Right Start</option>
+                    <option value="10">Left Joystick</option>
+                    <option value="11">Left Joystick</option>
+                    <option value="12">DPAD Up</option>
+                    <option value="13">DPAD Down</option>
+                    <option value="14">DPAD Left</option>
+                    <option value="15">DPAD Right</option>
+                </select>
+                <label for="whichJoystick">Rotation Joystick</label>
+                <select id="whichJoystick">
+                    <option selected value="0">Left</option>
+                    <option value="1">Right</option>
+                </select>
+            </div>
+            <div tabindex="0" id="sofa">
+                Default SOFA file
+            </div>
+            <div class="button-container">
+                <button class="big-button" id="settings-back">Exit Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="sample0" preload="auto" style="display: none">
+        <source src="./sounds/allears0.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sample1" preload="auto" style="display: none">
+        <source src="./sounds/allears1.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sample2" preload="auto" style="display: none">
+        <source src="./sounds/allears2.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sample3" preload="auto" style="display: none">
+        <source src="./sounds/allears3.mp3" type="audio/mpeg">
+    </audio>
+    <!-- <audio id="sample4" preload="auto" style="display: none">
+        <source src="./sounds/female_vo_4.ogg" type="audio/ogg">
+    </audio> -->
+</body>
+</html>

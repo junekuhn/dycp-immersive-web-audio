@@ -1,0 +1,369 @@
+
+@font-face {
+    font-family: "Martel";
+    font-display: swap;
+    src: url('https://fonts.googleapis.com/css?family=Martel');
+  }
+
+  @font-face {
+    font-family: "Exo";
+    font-display: swap;
+    src: url('https://fonts.googleapis.com/css?family=Exo');
+  }
+
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body
+{
+    overflow: hidden;
+    /* touch-action: none; */
+    background-color: black;
+    color: white;
+}
+
+h1 {
+    font-family: "Martel";
+}
+
+h2 {
+    font-size: 20px;
+    font-family: "Exo";
+    font-weight: 100;
+    padding: 10px;
+}
+
+h3 {
+    font-size: 18px;
+    font-family: "Exo";
+    font-weight: 100;
+    padding: 8px;
+}
+
+p {
+    font-family: "Martel";
+}
+
+li {
+    list-style: none;
+    font-size: 14px;
+    font-family: "Exo";
+}
+
+ul {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 10px;
+}
+
+
+input[type="checkbox"] {
+    display: block;
+}
+
+input[type="range"] {
+    display:block;
+}
+
+select {
+    display: block;
+}
+
+.webgl
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+}
+
+#splash {
+    z-index: 100;
+    position: absolute;
+    color: white;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    background-color: black;
+}
+
+#settings-container {
+    /* width: 90%; */
+    /* max-width: 600px; */
+    border: 1px solid white;
+    margin: 3em auto;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    row-gap: 20px;
+    /* width: 50%; */
+}
+
+#instructions {
+    z-index: 999;
+    background-color: rgba(0,0,0,0.3);
+}
+
+#instructions-container {
+    max-width: 750px;
+    border: 1px solid white;
+    margin: auto;
+    padding: 20px;
+    background-color: black;
+    border-radius: 10px;
+}
+
+.flex-controls {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+
+.flex-controls > div {
+    flex-basis: 50%;
+    min-width: 250px;
+}
+
+.black-button {
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+    border-radius: 5px;
+}
+
+.slide {
+    z-index: 100;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: none;
+    justify-content: space-around;
+    overflow: scroll;
+}
+
+.loading-bar {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 2px;
+    background: #ffffff;
+    transform: scaleX(0);
+    transform-origin: top left;
+    transition: transform 0.5s;
+
+}
+
+.loading-bar.ended
+{
+    transform: scaleX(0);
+    transform-origin: 100% 0;
+    transition: transform 1.5s ease-in-out;
+}
+
+.container {
+    width: 100%;
+    margin-top: 5%;
+}
+
+.title {
+    font-size: 30px;
+    text-align: left;
+    padding-left: 5%;
+    font-family: "Exo";
+    font-weight: 100;
+    /* font-style: italic; */
+}
+
+#audio-player {
+    position: absolute;
+    border: 1px solid white;
+    top: 5%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    text-align: center;
+    min-width: 140px;
+    width: 140px;
+    padding: 0px 10px 10px 10px;
+    border-radius: 10px;
+  }
+
+  #scene {
+    background-color: transparent;
+  }
+
+  .screenreader {
+    position: absolute !important; /* Outside the DOM flow */
+    height: 1px; width: 1px; /* Nearly collapsed */
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px); /* All other browsers */
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    row-gap: 5%;
+    width: 90%;
+    padding-left: 5%;
+
+    flex: 1 1 auto;
+
+}
+
+.big-button {
+    font-size: 45px;
+    color: white;
+    background-color: transparent;
+    border: none;
+    border-radius: 2px;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Martel';
+}
+
+.big-button:hover {
+    color: black;
+    background-color: white;
+}
+
+.grant-container {
+    width: 50%;
+    max-width: 350px;
+    height: auto;
+    margin-left: 5%;
+    margin-bottom: 5%;
+}
+
+.grant-img {
+    width: 100%;
+}
+
+hr {
+    border: 1px solid white;
+}
+
+#info {
+    row-gap: 5%;
+    padding-bottom: 5%;
+}
+
+#header {
+    font-size: 20px;
+    padding: 20px;
+}
+
+#hitbox {
+    position: absolute;
+    z-index: 10;
+    /* background-color: transparent; */
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    height: 33%;
+    background-color: rgba(0,0,0,0.2);
+}
+
+#pause {
+    position: absolute;
+    z-index: 10;
+    /* background-color: transparent; */
+    right: 0px;
+    bottom: 0px;
+    width: 20%;
+    height: 15%;
+    background-image: url('./images/pause.png');
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat; 
+}
+
+/* #hitbox-sprite {
+    width: 100%;
+    height: 100%;
+} */
+
+
+/* #HOD {
+    z-index: 1;
+    background-color: transparent;
+    position: absolute;
+    color: white;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+} */
+
+#settings-icon {
+    position: absolute;
+    right: 5%;
+    top: 5%;
+    width: 50px;
+}
+
+section {
+    margin-left: 5%;
+    width: 80%;
+}
+
+p {
+    font-size: 14px;
+}
+
+a:visited, a:hover, a:active, a:link {
+    color: white;
+    font-weight: 300;
+}
+
+.outbound-links {
+    font-size: 18px;
+    margin-left: 5%;
+    width: 50%;
+    padding: 5% 0px 5% 0px;
+}
+
+#acknowledgements {
+    margin-left: 5%;
+    padding: 5% 0%;
+}
+
+@media only screen and (min-width: 1000px) {
+    .title {
+        font-size: 40px;
+    }
+    .big-button {
+        font-size: 75px;
+    }
+    p {
+        font-size: 20px;
+    }
+    section {
+        width: 60%;
+    }
+
+    h3 {
+    font-size: 22px;
+    }
+    h2 {
+        font-size: 30px;
+    }
+
+    li {
+        font-size: 16px;
+    }
+
+    .button-container {
+        width: 65%;
+    }
+}

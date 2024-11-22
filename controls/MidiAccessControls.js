@@ -1,3 +1,5 @@
+// ***** not implemented, experimental ******
+
 import {
     Vector3,
     Vector2,
@@ -139,6 +141,8 @@ class MIDIAccessControls {
 
         // mappings\        // Add an event listener to a specific input device (if available)
             // looking for cc value
+
+            //MAPPINGS SPECIFIC TO CMPSR
             if(message.data[0] == 176) {
                 switch (message.data[1]) {
                     case 111:
