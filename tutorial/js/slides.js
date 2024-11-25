@@ -173,6 +173,34 @@ arrowKeysSpeed.addEventListener("change", (e) => {
     initScene.keyboardControls.lookSpeed = mappedInput;
 })
 
+let gamepadMoveSpeed = document.querySelector("#gamepadMoveSpeed");
+gamepadMoveSpeed.addEventListener("change", (e) => {
+    let mappedInput = map(e.target.value, gamepadMoveSpeed.min, gamepadMoveSpeed.max, 0.0, 0.05);
+    console.log(mappedInput);
+    initScene.gamepadControls.forwardSpeed = mappedInput;
+})
+
+let gamepadRotationSpeed = document.querySelector("#gamepadRotationSpeed");
+gamepadRotationSpeed.addEventListener("change", (e) => {
+    let mappedInput = map(e.target.value, gamepadRotationSpeed.min, gamepadRotationSpeed.max, 0.001, 0.05);
+    console.log(mappedInput);
+    initScene.gamepadControls.gamepadSpeed = mappedInput;
+})
+
+let teleport = document.querySelector("#teleport");
+teleport.addEventListener("change", (e) => {
+    initScene.gamepadControls.bButtonValue = e.target.value
+})
+let teleportBack = document.querySelector("#teleportBack");
+teleport.addEventListener("change", (e) => {
+    initScene.gamepadControls.xButtonValue = e.target.value
+})
+
+let moveButton = document.querySelector("#move");
+moveButton.addEventListener("change", (e) => {
+    initScene.gamepadControls.aButtonValue = e.target.value;
+})
+
 //helper functions
 const map = function(n, start1, stop1, start2, stop2, withinBounds) {
     const newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
