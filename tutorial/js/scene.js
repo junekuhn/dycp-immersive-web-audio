@@ -46,7 +46,8 @@ export function initScene() {
     initScene.touchControls = new TouchAccessControls(camera, document.body);
 
     // gamepad setup
-    gamepadControls = new GamepadAccessControls(camera);
+    initScene.gamepadControls = new GamepadAccessControls(camera);
+    initScene.gamepadControls.forwardMovementEnabled = true;
 
 
     renderer = new THREE.WebGLRenderer({
@@ -195,7 +196,7 @@ var assignSample2SoundBuffer = function(decodedBuffer) {
     });
     let boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
     boundingMesh.position.set(0, playerBounds.min.y, (playerBounds.min.z - playerBounds.max.z)/2 + playerBounds.max.z);
-    boundingMesh.scale.set(playerBounds.max.x - playerBounds.min.x, 0.01, playerBounds.max.z - playerBounds.min.z);
+    boundingMesh.scale.set(playerBounds.max.x - playerBounds.min.x, 0.1, playerBounds.max.z - playerBounds.min.z);
     scene.add(boundingMesh)
 
     //left
@@ -206,7 +207,7 @@ var assignSample2SoundBuffer = function(decodedBuffer) {
     // right
     let boundingMesh3 = new THREE.Mesh(boundingGeometry, boundingMaterial);
     boundingMesh3.position.set(playerBounds.max.x, (playerBounds.max.y - playerBounds.min.y)/2 + playerBounds.min.y, (playerBounds.min.z - playerBounds.max.z)/2 + playerBounds.max.z);
-    boundingMesh3.scale.set(0.01, playerBounds.max.y - playerBounds.min.y, playerBounds.max.z - playerBounds.min.z);
+    boundingMesh3.scale.set(0.1, playerBounds.max.y - playerBounds.min.y, playerBounds.max.z - playerBounds.min.z);
     scene.add(boundingMesh3)
     //back 
     let boundingMesh4 = new THREE.Mesh(boundingGeometry, boundingMaterial);
@@ -232,7 +233,9 @@ var assignSample2SoundBuffer = function(decodedBuffer) {
 
             // if not already in right box
             if(state.positionIndex != -1)
-            setPosition(i)
+            initScene.setPosition(i)
+
+            initScene.gamepadControls.needsUpdate = true;
 
             //set new state
             state.positionIndex = i;
@@ -269,6 +272,8 @@ var assignSample2SoundBuffer = function(decodedBuffer) {
         scene.add(planeMesh)
 
     })
+
+
 
     scene.add(boxGroup);
 
@@ -313,7 +318,8 @@ var assignSample2SoundBuffer = function(decodedBuffer) {
                 const songElement = document.getElementById( `sample${i}` );
     
                 sound.setMediaElementSource( songElement );
-                sound.setRefDistance( 0.5 );
+                sound.setRefDistance( 1 );
+                sound.setRolloffFactor(0.9 )
 
                 
                 mesh1.add( sound );
@@ -332,9 +338,16 @@ var assignSample2SoundBuffer = function(decodedBuffer) {
         document.dispatchEvent(new Event("menu"));
     }
 
-    const setPosition = (i) => {
-          camera.position.copy ( listenerPositions[i] );
+    initScene.setPosition = (i) => {
+        if (i >= 0 && i < listenerPositions.length) {
+            camera.position.copy ( listenerPositions[i] );
+        }
       }
+
+    initScene.gamepadControls.setBButton(initScene.setPosition, state.positionIndex+1)
+    initScene.gamepadControls.setXButton(initScene.setPosition, state.positionIndex-1)
+    initScene.gamepadControls.setStartButton(exitScene)
+
 
     const audioLoader = new THREE.AudioLoader();
     const light = new THREE.DirectionalLight( 0xffffff, 3 );
@@ -359,7 +372,12 @@ export const renderScene = () => {
     } else {
         initScene.mouseControls.update();
         initScene.keyboardControls.update();
-        gamepadControls.update();
+        initScene.gamepadControls.update();
+        if (initScene.gamepadControls.needsUpdate) {
+            initScene.gamepadControls.setBButton(initScene.setPosition, state.positionIndex+1)
+            initScene.gamepadControls.setXButton(initScene.setPosition, state.positionIndex-1)
+            initScene.gamepadControls.needsUpdate = false;
+        }
     }
 
     //bounds checking

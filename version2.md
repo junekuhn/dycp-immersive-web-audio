@@ -94,12 +94,19 @@ Ideas:
 
 
 todo
-- andy's piece
-- something happens with clicking a button (screenreader desktop)
 - settings
     mobile - morning
     gamepad
 - when gamepad connects, replace description automatically
+
+
+Ideas for future Websites
+- something happens with clicking a button (screenreader desktop)
+    sonification - like a sonar
+    nonessential navigation
+- andy's piece
+
+
 
 - instrumentation (laptop, mobile, gamepad)
     - egirl performance with gamepad
