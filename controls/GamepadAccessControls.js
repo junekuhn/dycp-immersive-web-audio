@@ -15,7 +15,7 @@ class GamepadAccessControls {
           (navigator.getGamepads && navigator.getGamepads());
 
         this.camera = camera;
-        this.gamepadSpeed = 0.01;
+        this.gamepadSpeed = 0.015;
         this.ticking = false;
 
         this.cameraHeight = 0, this.prevCameraHeight = 0;
@@ -23,6 +23,7 @@ class GamepadAccessControls {
         this.minPolarAngle = Math.PI*1/4;
         this.maxPolarAngle = Math.PI*3/4;
 
+        this.state = 0;
         //can be left or right
         this.joystickSelect = "left"
         
@@ -43,10 +44,21 @@ class GamepadAccessControls {
         this.buttonsUp = [];
 
         this.bButton;
+        this.xButton;
+        this.startButton;
         this.previousB = 0;
+        this.previousX = 0;
+        this.previousStart = 0;
+
+        this.aButtonValue = 0;
+        this.bButtonValue = 1;
+        this.xButtonValue = 2;
+        this.startButtonValue = 9;
 
         this.forwardMovementEnabled = false;
-        this.forwardSpeed = 0.04;
+        this.forwardSpeed = 0.01;
+        
+        this.needsUpdate = false;
     
         this.init();
       }
@@ -219,24 +231,42 @@ class GamepadAccessControls {
         let currentButtons = this.gamepads[0].buttons;
 
         if (this.forwardMovementEnabled) {
-          const aButtonPressed = currentButtons[0].pressed;
+          const aButtonPressed = currentButtons[this.aButtonValue].pressed;
           if (aButtonPressed){
             this.moveForward(this.forwardSpeed)
           }
 
+
           //teleport B button if previous was 0
-          if(currentButtons[1].pressed && this.previousB == 0) {
+          if(currentButtons[this.bButtonValue].pressed && this.previousB == 0) {
 
             this.bButton();
+            this.needsUpdate = true;
             this.previousB = 1;
 
-          } else if (!currentButtons[1].pressed) {
+          } else if (!currentButtons[this.bButtonValue].pressed) {
 
             this.previousB = 0;
 
+          } 
+          //X
+          if(currentButtons[this.xButtonValue].pressed && this.previousX === 0) {
+
+            this.xButton();
+            this.needsUpdate = true;
+            this.previousX = 1;
+          } else if(!currentButtons[this.xButtonValue].pressed) {
+            this.previousX = 0;
           }
 
-          console.log(currentButtons)
+          if(currentButtons[this.startButtonValue].pressed && this.previousStart == 0) {
+            this.startButton();
+            this.previousStart = 1;
+          } else if(!currentButtons[this.startButtonValue].pressed) {
+            this.previousStart = 0;
+          }
+
+          // console.log(currentButtons)
 
           // D Pad actions
           if(currentButtons[dPadUp].pressed) {
@@ -264,6 +294,25 @@ class GamepadAccessControls {
         let gamepad = event.gamepad;
         this.gamepads[event.gamepad.id] = gamepad;
         this.startPolling();
+      }
+
+      setBButton(callback, state) {
+        this.bButton = () => {
+          console.log(callback, state)
+          callback(state)
+        }
+      }
+
+      setXButton(callback, state) {
+        this.xButton = () => {
+          callback(state)
+        }
+      }
+
+      setStartButton(callback, state) {
+        this.startButton = () => {
+          callback(state)
+        }
       }
       
       onGamepadDisconnect(event) {

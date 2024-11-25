@@ -94,16 +94,19 @@ Ideas:
 
 
 todo
-- trampbunny music for outside scene
-- andy's piece
-- ambisonics for 4th bit - morning
-- 3D scene building
-    environment building 
-- something happens with clicking a button (mobile?)
 - settings
     mobile - morning
     gamepad
 - when gamepad connects, replace description automatically
+
+
+Ideas for future Websites
+- something happens with clicking a button (screenreader desktop)
+    sonification - like a sonar
+    nonessential navigation
+- andy's piece
+
+
 
 - instrumentation (laptop, mobile, gamepad)
     - egirl performance with gamepad
