@@ -28,7 +28,7 @@ window.mobileCheck = function() {
 
   state.mobile = window.mobileCheck();
 
-initScene();
+
 
 const changeSlide = (slide) => {
     //hide previous slide
@@ -58,6 +58,7 @@ const enterScene = () => {
 }
 
 enterButton.addEventListener('click', () => {
+    initScene();
     changeSlide("headphones");
 });
 
@@ -138,7 +139,7 @@ pointerRotationSpeed.addEventListener("change", (e) => {
 
 let touchMoveSpeed = document.querySelector("#touchMoveSpeed");
 touchMoveSpeed.addEventListener("change", (e) => {
-    let mappedInput = map(e.target.value, touchMoveSpeed.min, touchMoveSpeed.max, 0.001, 0.1);
+    let mappedInput = map(e.target.value, touchMoveSpeed.min, touchMoveSpeed.max, 0.0, 0.1);
     console.log(mappedInput);
     initScene.touchControls.forwardSpeed = mappedInput;
 })
